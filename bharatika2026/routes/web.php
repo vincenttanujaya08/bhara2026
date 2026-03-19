@@ -1,9 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+use App\Models\Category;
+use App\Models\Competition;
 
 Route::get('/', function () {
-    return view('home');
+    return Inertia::render('Home', [
+        'categories'   => Category::with('competitions')->get(),
+        'competitions' => Competition::with('category')->get(),
+    ]);
+});
+
+Route::get('/about', function () {
+    return Inertia::render('About');
 });
 
 

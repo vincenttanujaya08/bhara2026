@@ -8,30 +8,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationSuccess;
+use Inertia\Inertia;
 
 class AdminController extends Controller
 {
     public function index()
     {
         $stats = [
-            'total' => Registration::count(),
-            'pending' => Registration::where('payment_status', 'pending')->count(),
+            'total'    => Registration::count(),
+            'pending'  => Registration::where('payment_status', 'pending')->count(),
             'approved' => Registration::where('payment_status', 'approved')->count(),
             'rejected' => Registration::where('payment_status', 'rejected')->count(),
         ];
-        return view('admin.dashboard', compact('stats'));
+
+        return Inertia::render('Admin/Dashboard', compact('stats'));
     }
 
     public function registrations()
     {
         $registrations = Registration::with(['competition', 'user'])->latest()->get();
-        return view('admin.registrations.index', compact('registrations'));
+
+        return Inertia::render('Admin/Registrations/Index', compact('registrations'));
     }
 
     public function showRegistration($id)
     {
         $registration = Registration::with(['competition', 'user', 'members', 'logs'])->findOrFail($id);
-        return view('admin.registrations.show', compact('registration'));
+
+        return Inertia::render('Admin/Registrations/Show', compact('registration'));
     }
 
     public function verify(Request $request, $id)
@@ -40,7 +44,7 @@ class AdminController extends Controller
 
         $request->validate([
             'status' => 'required|in:approved,rejected',
-            'notes' => 'nullable|string',
+            'notes'  => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($request, $registration) {
@@ -62,11 +66,15 @@ class AdminController extends Controller
 
             RegistrationLog::create([
                 'registration_id' => $registration->id,
-                'status' => $request->status,
-                'notes' => $request->notes ?? ($request->status === 'approved' ? 'Pembayaran valid dan kode peserta telah diterbitkan.' : 'Data tidak sesuai.')
+                'status'          => $request->status,
+                'notes'           => $request->notes ?? ($request->status === 'approved'
+                    ? 'Pembayaran valid dan kode peserta telah diterbitkan.'
+                    : 'Data tidak sesuai.')
             ]);
         });
 
-        return redirect()->route('admin.registrations.index')->with('success', 'Status diperbarui. Kode Peserta: ' . $registration->participant_code);
+        return redirect()
+            ->route('admin.registrations.index')
+            ->with('success', 'Status diperbarui. Kode Peserta: ' . $registration->participant_code);
     }
 }
