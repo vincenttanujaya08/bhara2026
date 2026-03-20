@@ -7,6 +7,73 @@ const C = {
   crimson: '#8B1A1A', dark: '#1A1410', charcoal: '#2A2420', black: '#0F0A05',
 }
 
+function TLink({ href, children, style: s, onMouseEnter, onMouseLeave, onClick }) {
+  const handle = (e) => { e.preventDefault(); onClick?.(e); navigateWithTransition(href) }
+  return <a href={href} onClick={handle} style={{ cursor: 'pointer', ...s }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>{children}</a>
+}
+
+function Navbar({ activeLink = '' }) {
+  const [scrolled, setScrolled] = useState(false)
+  const { auth } = usePage().props
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', fn)
+    return () => window.removeEventListener('scroll', fn)
+  }, [])
+  const NC = { gold: '#C8A84B', cream: '#E8D9A0', crimson: '#8B1A1A', dark: '#1A1410' }
+  const navLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'Events', href: '/#events' },
+    { label: 'Competition', href: '/competitions' },
+    { label: 'About', href: '/about' },
+  ]
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 1.75rem',
+      background: scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)',
+      backdropFilter: 'blur(6px)',
+      borderBottom: scrolled ? '1px solid rgba(139,26,26,0.25)' : 'none',
+      transition: 'background 0.35s, border 0.35s',
+    }}>
+      <TLink href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <img src="/images/BHRTK MERAH 1.png" alt="bharatika" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+      </TLink>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+        {navLinks.map(({ label, href }) => {
+          const isActive = activeLink === label.toLowerCase()
+          return (
+            <TLink key={label} href={href} style={{
+              fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
+              color: isActive ? NC.crimson : NC.dark,
+              textDecoration: 'none', textTransform: 'uppercase',
+              opacity: isActive ? 1 : 0.75,
+              borderBottom: isActive ? `1px solid ${NC.crimson}` : 'none',
+              paddingBottom: isActive ? 2 : 0,
+              transition: 'opacity 0.2s, color 0.2s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = NC.crimson }}
+              onMouseLeave={e => {
+                e.currentTarget.style.opacity = isActive ? '1' : '0.75'
+                e.currentTarget.style.color = isActive ? NC.crimson : NC.dark
+              }}
+            >{label}</TLink>
+          )
+        })}
+        <TLink href={auth?.user ? '/history' : '/login'}
+          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', opacity: 0.75, transition: 'opacity 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
+        >
+          <img src="/images/Group 3.png" alt="profile" style={{ height: 22, width: 'auto', objectFit: 'contain' }} />
+        </TLink>
+      </div>
+    </nav>
+  )
+}
+
+
 function useFonts() {
   useEffect(() => {
     if (document.getElementById('bh-fonts')) return
@@ -30,44 +97,7 @@ function XBox({ style = {} }) {
   )
 }
 
-function TLink({ href, children, style: s, onMouseEnter, onMouseLeave, onClick }) {
-  const handle = (e) => { e.preventDefault(); onClick?.(e); navigateWithTransition(href) }
-  return <a href={href} onClick={handle} style={{ cursor: 'pointer', ...s }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>{children}</a>
-}
 
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const { auth } = usePage().props
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', fn)
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
-  const navLinks = [{ label: 'Home', href: '/' }, { label: 'Events', href: '/#events' }, { label: 'Competition', href: '/competitions' }, { label: 'About', href: '/about' }]
-  return (
-    <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.75rem', background: scrolled ? 'rgba(15,10,5,0.96)' : 'rgba(15,10,5,0.55)', backdropFilter: 'blur(6px)', borderBottom: scrolled ? '1px solid rgba(200,168,75,0.18)' : 'none', transition: 'background 0.35s, border 0.35s' }}>
-      <TLink href="/" style={{ textDecoration: 'none' }}>
-        <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 17, color: C.cream, fontWeight: 400, letterSpacing: 0.5 }}>bharatika</span>
-      </TLink>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        {navLinks.map(({ label, href }) => (
-          <TLink key={label} href={href} style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2, color: C.cream, textDecoration: 'none', textTransform: 'uppercase', opacity: 0.75, transition: 'opacity 0.2s, color 0.2s' }}
-            onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = C.gold }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = '0.75'; e.currentTarget.style.color = C.cream }}
-          >{label}</TLink>
-        ))}
-        <TLink href={auth?.user ? '/history' : '/login'} style={{ color: C.cream, textDecoration: 'none', display: 'flex', alignItems: 'center', opacity: 0.75, transition: 'opacity 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-          onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.cream} strokeWidth="1.8">
-            <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-          </svg>
-        </TLink>
-      </div>
-    </nav>
-  )
-}
 
 function Hero() {
   return (
@@ -211,7 +241,7 @@ export default function Home({ competitions = [] }) {
   useFonts()
   return (
     <div style={{ background: C.black, minHeight: '100vh' }}>
-      <Navbar /><Hero /><About /><RegisterEvents /><RedDivider /><Merch /><Partners /><Footer />
+      <Navbar activeLink="home" /><Hero /><About /><RegisterEvents /><RedDivider /><Merch /><Partners /><Footer />
     </div>
   )
 }
