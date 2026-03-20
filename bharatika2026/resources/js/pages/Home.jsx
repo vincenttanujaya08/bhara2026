@@ -20,7 +20,7 @@ function Navbar({ activeLink = '' }) {
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
   }, [])
-  const NC = { gold: '#C8A84B', cream: '#E8D9A0', crimson: '#8B1A1A', dark: '#1A1410' }
+  const NC = { gold: '#C8A84B', cream: '#E8D9A0', crimson: '#8B1A1A', dark: '#1A1410', black: '#0F0A05' }
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Events', href: '/#events' },
@@ -32,13 +32,13 @@ function Navbar({ activeLink = '' }) {
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: '0 1.75rem',
-      background: scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)',
+      background: scrolled ? 'rgba(15,10,5,0.96)' : 'rgba(15,10,5,0.55)',
       backdropFilter: 'blur(6px)',
-      borderBottom: scrolled ? '1px solid rgba(139,26,26,0.25)' : 'none',
+      borderBottom: scrolled ? '1px solid rgba(200,168,75,0.18)' : 'none',
       transition: 'background 0.35s, border 0.35s',
     }}>
-      <TLink href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-        <img src="/images/BHRTK MERAH 1.png" alt="bharatika" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+      <TLink href="/" style={{ textDecoration: 'none' }}>
+        <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 17, color: NC.cream, fontWeight: 400, letterSpacing: 0.5 }}>bharatika</span>
       </TLink>
       <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
         {navLinks.map(({ label, href }) => {
@@ -46,17 +46,17 @@ function Navbar({ activeLink = '' }) {
           return (
             <TLink key={label} href={href} style={{
               fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
-              color: isActive ? NC.crimson : NC.dark,
+              color: isActive ? NC.gold : NC.cream,
               textDecoration: 'none', textTransform: 'uppercase',
               opacity: isActive ? 1 : 0.75,
-              borderBottom: isActive ? `1px solid ${NC.crimson}` : 'none',
+              borderBottom: isActive ? `1px solid ${NC.gold}` : 'none',
               paddingBottom: isActive ? 2 : 0,
               transition: 'opacity 0.2s, color 0.2s',
             }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = NC.crimson }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = NC.gold }}
               onMouseLeave={e => {
                 e.currentTarget.style.opacity = isActive ? '1' : '0.75'
-                e.currentTarget.style.color = isActive ? NC.crimson : NC.dark
+                e.currentTarget.style.color = isActive ? NC.gold : NC.cream
               }}
             >{label}</TLink>
           )
@@ -126,8 +126,19 @@ function About() {
   return (
     <section id="about" style={{ background: C.crimson, position: 'relative', overflow: 'hidden', padding: '5rem 2rem 5rem', minHeight: 520 }}>
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.05) 8px, rgba(0,0,0,0.05) 9px)' }} />
-      <div style={{ position: 'absolute', width: 'clamp(350px, 40vw, 640px)', aspectRatio: '509.1 / 678.8', left: 0, top: '-12%', backgroundImage: "url('/images/CATUR.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', transform: 'rotate(7deg) translateX(-12%)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'absolute', width: 'clamp(300px, 40vw, 500px)', aspectRatio: '509.1 / 678.8', right: 0, bottom: '-10%', backgroundImage: "url('/images/CATUR.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', transform: 'rotate(-5deg) translateX(12%) scaleX(-1)', pointerEvents: 'none', zIndex: 0 }} />
+      {/* Inject keyframes */}
+      <style>{`
+        @keyframes caturSlideLeft {
+          from { transform: rotate(7deg) translateX(-120%); opacity: 0; }
+          to   { transform: rotate(7deg) translateX(-12%);  opacity: 1; }
+        }
+        @keyframes caturSlideRight {
+          from { transform: rotate(-5deg) translateX(120%) scaleX(-1); opacity: 0; }
+          to   { transform: rotate(-5deg) translateX(12%)  scaleX(-1); opacity: 1; }
+        }
+      `}</style>
+      <div style={{ position: 'absolute', width: 'clamp(350px, 40vw, 640px)', aspectRatio: '509.1 / 678.8', left: 0, top: '-12%', backgroundImage: "url('/images/CATUR.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', transform: 'rotate(7deg) translateX(-12%)', pointerEvents: 'none', zIndex: 0, animation: 'caturSlideLeft 1.2s cubic-bezier(0.22, 1, 0.36, 1) both' }} />
+      <div style={{ position: 'absolute', width: 'clamp(300px, 40vw, 500px)', aspectRatio: '509.1 / 678.8', right: 0, bottom: '-10%', backgroundImage: "url('/images/CATUR.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', transform: 'rotate(-5deg) translateX(12%) scaleX(-1)', pointerEvents: 'none', zIndex: 0, animation: 'caturSlideRight 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both' }} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
         <div style={{ width: '100%', maxWidth: 700, margin: '0.25rem auto 0', backgroundImage: "url('/images/VECTOR.png')", backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'contain', aspectRatio: '3240 / 1440' }} />
         <div style={{ marginTop: '2rem' }}>

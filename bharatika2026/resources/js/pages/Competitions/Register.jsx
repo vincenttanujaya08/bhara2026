@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useForm, Link, usePage } from '@inertiajs/react'
+import { useForm, usePage } from '@inertiajs/react'
+import { navigateWithTransition } from '../../hooks/usePageTransition'
 
 const C = {
   gold: '#C8A84B', cream: '#E8D9A0', parchment: '#D4C48A',
   crimson: '#8B1A1A', dark: '#0F0A05', card: '#1A1410',
-  border: 'rgba(200,168,75,0.15)', muted: 'rgba(232,217,160,0.45)',
+  border: 'rgba(200,168,75,0.15)',
 }
 
 function useFonts() {
@@ -19,46 +20,52 @@ function useFonts() {
   }, [])
 }
 
+function TLink({ href, children, style: s, onMouseEnter, onMouseLeave, onClick }) {
+  const handle = (e) => { e.preventDefault(); onClick?.(e); navigateWithTransition(href) }
+  return <a href={href} onClick={handle} style={{ cursor: 'pointer', ...s }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>{children}</a>
+}
+
 function Label({ children, required }) {
   return (
-    <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.gold, opacity: 0.75, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-      {children}{required && <span style={{ color: C.crimson, marginLeft: 3 }}>*</span>}
-    </label>
+    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.cream, opacity: 0.45, textTransform: 'uppercase', margin: '0 0 0.4rem' }}>
+      {children}{required && <span style={{ color: C.crimson, marginLeft: 2 }}>*</span>}
+    </p>
   )
 }
 
-function FileInput({ name, onChange, error, accept = "image/jpeg,image/png,image/jpg" }) {
+function FileInput({ onChange, error, accept = 'image/jpeg,image/png,image/jpg' }) {
   return (
-    <div>
-      <input type="file" accept={accept} onChange={onChange}
-        style={{
-          width: '100%', padding: '8px 12px', boxSizing: 'border-box',
-          background: 'rgba(200,168,75,0.04)',
-          border: `1px solid ${error ? C.crimson : 'rgba(200,168,75,0.2)'}`,
-          color: C.cream, fontFamily: "'EB Garamond', serif", fontSize: 13,
-          outline: 'none', cursor: 'pointer',
-        }}
-      />
-      {error && <p style={{ color: C.crimson, fontSize: 11, margin: '0.3rem 0 0', fontFamily: "'EB Garamond', serif" }}>{error}</p>}
-      <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 12, color: C.cream, opacity: 0.35, margin: '0.3rem 0 0' }}>JPG, JPEG, PNG · Maks 2MB</p>
+    <div style={{ marginBottom: '0.5rem' }}>
+      <input type="file" accept={accept} onChange={onChange} style={{
+        width: '100%', padding: '10px 12px', boxSizing: 'border-box',
+        background: 'rgba(200,168,75,0.04)',
+        border: `1px solid ${error ? C.crimson : 'rgba(200,168,75,0.2)'}`,
+        color: C.cream, fontFamily: "'EB Garamond', serif", fontSize: 14,
+        outline: 'none', cursor: 'pointer',
+      }} />
+      <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 12, color: C.cream, opacity: 0.3, margin: '0.25rem 0 0' }}>
+        JPG, JPEG, PNG · Maks 2MB
+      </p>
+      {error && <p style={{ color: C.crimson, fontSize: 12, margin: '0.25rem 0 0', fontFamily: "'EB Garamond', serif" }}>{error}</p>}
     </div>
   )
 }
 
-function SectionCard({ title, accent = C.gold, children }) {
+function SectionCard({ title, children, accent }) {
   return (
     <div style={{ background: C.card, border: `1px solid ${C.border}`, padding: '1.75rem', marginBottom: '1.25rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: `1px solid rgba(200,168,75,0.08)` }}>
-        <div style={{ width: 3, height: 22, background: accent }} />
-        <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: C.cream, margin: 0, letterSpacing: 1 }}>{title}</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ width: 3, height: 20, background: accent || C.gold }} />
+        <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: C.cream, margin: 0, letterSpacing: 1 }}>{title}</h3>
       </div>
       {children}
     </div>
   )
 }
 
-export default function CompetitionRegister({ competition, auth }) {
+export default function CompetitionRegister({ competition }) {
   useFonts()
+  const { auth } = usePage().props
   const maxMembers = (competition?.max_participants ?? 1) - 1
   const minMembers = Math.max(0, (competition?.min_participants ?? 1) - 1)
   const [memberCount, setMemberCount] = useState(minMembers)
@@ -77,20 +84,28 @@ export default function CompetitionRegister({ competition, auth }) {
 
   const submit = (e) => {
     e.preventDefault()
-    post(`/competitions/${competition.id}`, { forceFormData: true })
+    post(`/competitions/${competition.id}/register`, { forceFormData: true })
   }
 
   return (
     <div style={{ background: C.dark, minHeight: '100vh' }}>
-      {/* Simple top bar */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.75rem', background: 'rgba(15,10,5,0.96)', borderBottom: `1px solid ${C.border}` }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
+      {/* Navbar */}
+      <div style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 1.75rem', background: 'rgba(15,10,5,0.96)',
+        borderBottom: `1px solid ${C.border}`,
+      }}>
+        <TLink href="/" style={{ textDecoration: 'none' }}>
           <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 17, color: C.cream }}>bharatika</span>
-        </Link>
-        <Link href="/competitions" style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2, color: C.gold, textDecoration: 'none', textTransform: 'uppercase', opacity: 0.75 }}>← Kembali</Link>
+        </TLink>
+        <TLink href="/competitions" style={{
+          fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2,
+          color: C.gold, textDecoration: 'none', textTransform: 'uppercase', opacity: 0.75,
+        }}>← Kembali</TLink>
       </div>
 
-      <div style={{ paddingTop: 52, maxWidth: 760, margin: '0 auto', padding: '80px 2rem 6rem' }}>
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '80px 2rem 6rem' }}>
         {/* Page title */}
         <div style={{ marginBottom: '2.5rem' }}>
           <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 4, color: C.gold, opacity: 0.65, textTransform: 'uppercase', margin: '0 0 0.4rem' }}>Formulir Pendaftaran</p>
@@ -107,8 +122,20 @@ export default function CompetitionRegister({ competition, auth }) {
           {/* Leader section */}
           <SectionCard title="Data Ketua Tim">
             <div style={{ background: 'rgba(200,168,75,0.04)', border: `1px solid rgba(200,168,75,0.1)`, padding: '1rem', marginBottom: '1.25rem' }}>
-              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 11, color: C.gold, margin: '0 0 0.25rem', fontWeight: 600 }}>{auth?.user?.name}</p>
-              <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 13, color: C.cream, opacity: 0.5, margin: 0 }}>{auth?.user?.email} · {auth?.user?.instansi}</p>
+              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: C.gold, margin: '0 0 0.75rem', fontWeight: 600 }}>{auth?.user?.name}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                {[
+                  { label: 'Email',    value: auth?.user?.email },
+                  { label: 'WhatsApp', value: auth?.user?.whatsapp },
+                  { label: 'ID Line',  value: auth?.user?.line_id },
+                  { label: 'Instansi', value: auth?.user?.instansi },
+                ].map(({ label, value }) => value ? (
+                  <div key={label} style={{ display: 'flex', gap: '0.5rem' }}>
+                    <span style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 1, color: C.cream, opacity: 0.4, textTransform: 'uppercase', minWidth: 60 }}>{label}</span>
+                    <span style={{ fontFamily: "'EB Garamond', serif", fontSize: 13, color: C.cream, opacity: 0.7 }}>: {value}</span>
+                  </div>
+                ) : null)}
+              </div>
             </div>
             <Label required>KTM Ketua</Label>
             <FileInput onChange={e => setData('leader_ktm', e.target.files[0])} error={errors.leader_ktm} />
@@ -164,7 +191,7 @@ export default function CompetitionRegister({ competition, auth }) {
             <FileInput onChange={e => setData('payment', e.target.files[0])} error={errors.payment} />
           </SectionCard>
 
-          {/* Errors */}
+          {/* Validation errors */}
           {Object.keys(errors).length > 0 && (
             <div style={{ padding: '1rem', border: `1px solid rgba(224,128,128,0.3)`, background: 'rgba(224,128,128,0.05)', marginBottom: '1.5rem' }}>
               <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, color: '#E08080', margin: '0 0 0.5rem', letterSpacing: 2, textTransform: 'uppercase' }}>Perbaiki kesalahan berikut:</p>

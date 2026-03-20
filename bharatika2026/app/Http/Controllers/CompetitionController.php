@@ -88,7 +88,7 @@ class CompetitionController extends Controller
     public function history()
     {
         $registrations = Registration::where('user_id', Auth::id())
-            ->with(['competition.category'])
+            ->with(['competition.category', 'members'])
             ->latest()
             ->get();
         return Inertia::render('Competitions/History', compact('registrations'));
