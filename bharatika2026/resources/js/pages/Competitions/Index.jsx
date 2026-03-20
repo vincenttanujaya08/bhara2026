@@ -101,7 +101,7 @@ export default function CompetitionsIndex({ categories = [] }) {
                 <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 3, color: C.gold, opacity: 0.65, textTransform: 'uppercase', margin: '0 0 0.2rem' }}>Kategori</p>
                 <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 20, color: C.cream, margin: 0, letterSpacing: 1 }}>{category.name}</h2>
               </div>
-            </div>
+            </div>  
 
             {/* Competition cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>

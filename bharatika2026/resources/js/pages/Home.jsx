@@ -187,78 +187,90 @@ function Hero() {
 function About() {
   return (
     <section id="about" style={{
-      background: C.crimson, position: 'relative', overflow: 'hidden',
-      padding: '4rem 2rem',
+      background: C.crimson,
+      position: 'relative',
+      overflow: 'hidden',
+      padding: '5rem 2rem 5rem',
+      minHeight: 520,
     }}>
       {/* Diagonal texture */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.04) 8px, rgba(0,0,0,0.04) 9px)',
+        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.05) 8px, rgba(0,0,0,0.05) 9px)',
       }} />
 
-      <div style={{ maxWidth: 860, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        {/* Top: logo + ornament */}
-        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-          {/* Ornamental arrows + brand */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
-            {/* Left arrow */}
-            <svg width="80" height="12" viewBox="0 0 80 12">
-              <line x1="0" y1="6" x2="72" y2="6" stroke={C.cream} strokeWidth="1" opacity="0.5" />
-              <polygon points="72,2 80,6 72,10" fill={C.cream} opacity="0.5" />
-            </svg>
-            <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 13, color: C.cream, letterSpacing: 2, whiteSpace: 'nowrap' }}>bharatika</span>
-            {/* Right arrow */}
-            <svg width="80" height="12" viewBox="0 0 80 12">
-              <line x1="80" y1="6" x2="8" y2="6" stroke={C.cream} strokeWidth="1" opacity="0.5" />
-              <polygon points="8,2 0,6 8,10" fill={C.cream} opacity="0.5" />
-            </svg>
-          </div>
-        </div>
+      {/* CATUR kiri — atas kiri, terpotong tepi */}
+      <div style={{
+        position: 'absolute',
+        width: 'clamp(350px, 40vw, 640px)',
+        aspectRatio: '509.1 / 678.8',
+        left: 0,
+        top: '-12%',
+        backgroundImage: "url('/images/CATUR.png')",
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        transform: 'rotate(7deg) translateX(-12%)',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }} />
+ 
+      {/* CATUR kanan — bawah kanan, terpotong tepi, mirror */}
+      <div style={{
+        position: 'absolute',
+        width: 'clamp(300px, 40vw, 500px)',
+        aspectRatio: '509.1 / 678.8',
+        right: 0,
+        bottom: '-10%',
+        backgroundImage: "url('/images/CATUR.png')",
+        backgroundSize: 'contain',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        transform: 'rotate(-5deg) translateX(12%) scaleX(-1)',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }} />
 
-        {/* Chess pieces + big title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          {/* Left chess piece */}
-          <div style={{ flexShrink: 0, width: 90 }}>
-            <XBox style={{ width: 90, height: 130, borderRadius: 2 }} />
-          </div>
+      {/* Center content */}
+      <div style={{
+        position: 'relative', zIndex: 1,
+        maxWidth: 800, margin: '0 auto',
+        textAlign: 'center',
+      }}>
 
-          {/* Center content */}
-          <div style={{ flex: 1, textAlign: 'center' }}>
-            <h2 style={{
-              fontFamily: "'UnifrakturMaguntia', serif",
-              fontSize: 'clamp(52px, 10vw, 96px)',
-              color: C.cream, margin: '0 0 0.4rem', lineHeight: 0.9,
-            }}>Merajacipta</h2>
-            {/* Subtitle dots */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <div style={{ width: 20, height: 1, background: C.cream, opacity: 0.4 }} />
-              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 5, color: C.cream, opacity: 0.65, textTransform: 'uppercase', margin: 0 }}>
-                Berani · Bersahaja · Bertata
-              </p>
-              <div style={{ width: 20, height: 1, background: C.cream, opacity: 0.4 }} />
-            </div>
-          </div>
+        {/*Vector — sebagai tulisan Merajacipta */}
+        <div style={{
+          width: '100%',
+          maxWidth: 700,
+          margin: '0.25rem auto 0',
+          backgroundImage: "url('/images/VECTOR.png')",
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: 'contain',
+          aspectRatio: '3240 / 1440',
+        }} />
 
-          {/* Right chess piece */}
-          <div style={{ flexShrink: 0, width: 90 }}>
-            <XBox style={{ width: 90, height: 130, borderRadius: 2 }} />
-          </div>
-        </div>
+        
 
-        {/* Lorem ipsum text block */}
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+        {/* Lorem ipsum section */}
+        <div style={{ marginTop: '2rem' }}>
           <h3 style={{
-            fontFamily: "'Cinzel', serif", fontSize: 'clamp(16px, 3vw, 22px)',
-            color: C.cream, fontWeight: 400, letterSpacing: 3,
+            fontFamily: "'Cinzel', serif",
+            fontSize: 'clamp(14px, 2.5vw, 20px)',
+            color: C.cream, fontWeight: 400, letterSpacing: 4,
             textTransform: 'uppercase', margin: '0 0 1.25rem',
           }}>Lorem Ipsum Dolor Sit</h3>
           <p style={{
             fontFamily: "'EB Garamond', Georgia, serif",
-            fontSize: 15, lineHeight: 1.85,
+            fontSize: 'clamp(14px, 1.5vw, 16px)',
+            lineHeight: 1.9,
             color: C.cream, opacity: 0.88,
-            maxWidth: 580, margin: '0 auto',
+            maxWidth: 600, margin: '0 auto',
           }}>
-            Lorem dolor sit amet, consectetur adipiscing elit. Donec eras, facilisis quis vulputate ut, suscipit nec tellus. Phasellus pretium urna vel dignissim facilisis. Cras risus nunc, vulputate nec lectus quis, posuere condimentum diam. Suspendisse mollis auctor diam sed aliquam. Nullam hendrerit nisl sed mi consequat congue.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dolor eros, facilisis quis
+            vulputate ut, suscipit nec tellus. Phasellus pretium urna vel dignissim facilisis. Cras
+            risus nunc, vulputate nec lectus quis, posuere condimentum diam. Suspendisse mollis auctor
+            diam sed aliquam. Nullam hendrerit nisl sed mi consequat congue.
           </p>
         </div>
       </div>
@@ -269,35 +281,58 @@ function About() {
 /* ─── REGISTER + EVENTS (split section) ─── */
 function RegisterEvents() {
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-
+    <section id="events" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+ 
       {/* LEFT — Register Now (cream/parchment) */}
-      <div style={{ background: C.parchment, position: 'relative', minHeight: 480, display: 'flex', flexDirection: 'column' }}>
-        {/* Image placeholder fills left half */}
-        <XBox style={{ flex: 1, minHeight: 320 }} />
-
-        {/* Overlay text on top of image */}
-        <div style={{
-          position: 'absolute', top: '2rem', left: '2rem', right: '2rem',
-        }}>
+      <div style={{
+        background: C.parchment,
+        minHeight: 560,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        backgroundImage: 'radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)',
+        backgroundSize: '14px 14px',
+      }}>
+        {/* Register + Now! — Now! overlap ke image */}
+        <div style={{ padding: '2rem 2.5rem 0', textAlign: 'center' }}>
           <p style={{
-            fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 4,
-            color: C.crimson, textTransform: 'uppercase', margin: '0 0 0.25rem', fontWeight: 600,
+            fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: 5,
+            color: C.crimson, textTransform: 'uppercase',
+            margin: '0 0 0', fontWeight: 700,
           }}>Register</p>
           <h2 style={{
             fontFamily: "'UnifrakturMaguntia', serif",
-            fontSize: 'clamp(52px, 8vw, 80px)',
-            color: C.crimson, margin: 0, lineHeight: 0.95,
+            fontSize: 'clamp(64px, 9vw, 100px)',
+            color: C.crimson, margin: 0, lineHeight: 0.9,
+            position: 'relative',
+            zIndex: 2,
+            marginBottom: '-5rem', // overlap ke image
           }}>Now!</h2>
         </div>
-
-        {/* Register button at bottom */}
-        <div style={{ padding: '1.5rem 2rem', background: C.parchment }}>
+ 
+        {/* Image placeholder — Now! overlap di atas tepi */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          flex: 1,
+          position: 'relative', 
+          zIndex: 1 
+        }}>
+          <XBox style={{ 
+            width: 'clamp(200px, 80%, 433.8px)', 
+            aspectRatio: '433.8 / 418.16',
+          }} />
+        </div>
+ 
+        {/* Register button bottom — rounded pill */}
+        <div style={{ padding: '2rem 2.5rem', textAlign: 'center' }}>
           <Link href="/register" style={{
-            display: 'inline-block', padding: '9px 24px',
+            display: 'inline-block', padding: '12px 40px',
             background: C.crimson, color: C.cream,
-            fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 3,
+            fontFamily: "'Cinzel', serif", fontSize: 11, letterSpacing: 3,
             textDecoration: 'none', textTransform: 'uppercase',
+            borderRadius: 50,
             transition: 'opacity 0.2s',
           }}
             onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
@@ -305,45 +340,62 @@ function RegisterEvents() {
           >Register</Link>
         </div>
       </div>
-
+ 
       {/* RIGHT — Our Events (dark charcoal) */}
-      <div style={{ background: '#2A2420', display: 'flex', flexDirection: 'column', minHeight: 480 }}>
-
-        {/* Top: "Our Events" + See More */}
-        <div style={{ padding: '2.5rem 2.5rem 1.5rem' }}>
+      <div style={{
+        background: '#1E1A14',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        minHeight: 560,
+        backgroundImage: 'radial-gradient(circle, rgba(80,60,20,0.15) 1px, transparent 1px)',
+        backgroundSize: '14px 14px',
+      }}>
+ 
+        {/* Left col: Our Events + See More button */}
+        <div style={{
+          display: 'flex', flexDirection: 'column',
+          justifyContent: 'center', alignItems: 'flex-start',
+          padding: '3rem 1rem 3rem 2.5rem',
+          gap: '2rem',
+        }}>
           <h2 style={{
             fontFamily: "'UnifrakturMaguntia', serif",
-            fontSize: 'clamp(44px, 7vw, 68px)',
-            color: C.cream, margin: '0 0 1rem', lineHeight: 1,
+            fontSize: 'clamp(52px, 7vw, 88px)',
+            color: C.gold, margin: 0, lineHeight: 0.9,
           }}>Our<br />Events</h2>
-
+ 
+          {/* See More — rounded pill border */}
           <Link href="/competitions" style={{
-            display: 'inline-block', padding: '7px 20px',
-            border: `1px solid ${C.gold}`, color: C.gold,
-            fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 3,
+            display: 'inline-block', padding: '10px 28px',
+            border: `1.5px solid ${C.gold}`, color: C.gold,
+            fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 3,
             textDecoration: 'none', textTransform: 'uppercase',
+            borderRadius: 50,
             transition: 'all 0.2s',
+            background: 'rgba(200,168,75,0.08)',
           }}
-            onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.black }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = C.gold }}
+            onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.dark }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(200,168,75,0.08)'; e.currentTarget.style.color = C.gold }}
           >See More</Link>
         </div>
-
-        {/* Event card: image + description side by side */}
+ 
+        {/* Right col: image + description */}
         <div style={{
-          padding: '0 2.5rem 2.5rem',
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem',
-          marginTop: 'auto',
+          display: 'flex', flexDirection: 'column',
+          justifyContent: 'center',
+          padding: '3rem 2.5rem 3rem 1rem',
+          gap: '1.25rem',
         }}>
-          <XBox style={{ aspectRatio: '1', minHeight: 100 }} />
+          <XBox style={{ width: '100%', aspectRatio: '1' }} />
           <div>
             <p style={{
-              fontFamily: "'Cinzel', serif", fontSize: 13, color: C.cream,
-              fontWeight: 600, margin: '0 0 0.5rem',
+              fontFamily: "'Cinzel', serif", fontSize: 12, color: C.cream,
+              fontWeight: 600, margin: '0 0 0.5rem', letterSpacing: 1,
+              textTransform: 'uppercase',
             }}>Lorem Ips–</p>
             <p style={{
               fontFamily: "'EB Garamond', Georgia, serif",
-              fontSize: 13, color: C.cream, lineHeight: 1.65, opacity: 0.72, margin: 0,
+              fontSize: 14, color: C.cream, lineHeight: 1.7, opacity: 0.7, margin: 0,
             }}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dolor eros.
             </p>
