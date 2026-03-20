@@ -45,24 +45,45 @@ function Navbar() {
   }, [])
   const navLinks = [{ label: 'Home', href: '/' }, { label: 'Events', href: '/#events' }, { label: 'Competition', href: '/competitions' }, { label: 'About', href: '/about' }]
   return (
-    <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.75rem', background: scrolled ? 'rgba(15,10,5,0.96)' : 'rgba(15,10,5,0.55)', backdropFilter: 'blur(6px)', borderBottom: scrolled ? '1px solid rgba(200,168,75,0.18)' : 'none', transition: 'background 0.35s, border 0.35s' }}>
-      <TLink href="/" style={{ textDecoration: 'none' }}>
-        <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 17, color: C.cream, fontWeight: 400, letterSpacing: 0.5 }}>bharatika</span>
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 1.75rem',
+      background: scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)',
+      backdropFilter: 'blur(6px)',
+      borderBottom: scrolled ? '1px solid rgba(139,26,26,0.25)' : 'none',
+      transition: 'background 0.35s, border 0.35s',
+    }}>
+      <TLink href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <img
+          src="/images/BHRTK MERAH 1.png"
+          alt="bharatika"
+          style={{ height: 32, width: 'auto', objectFit: 'contain' }}
+        />
       </TLink>
       <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
         {navLinks.map(({ label, href }) => (
-          <TLink key={label} href={href} style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2, color: C.cream, textDecoration: 'none', textTransform: 'uppercase', opacity: 0.75, transition: 'opacity 0.2s, color 0.2s' }}
-            onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = C.gold }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = '0.75'; e.currentTarget.style.color = C.cream }}
+          <TLink key={label} href={href} style={{
+            fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
+            color: C.dark, textDecoration: 'none', textTransform: 'uppercase',
+            opacity: 0.75, transition: 'opacity 0.2s, color 0.2s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = C.crimson }}
+            onMouseLeave={e => { e.currentTarget.style.opacity = '0.75'; e.currentTarget.style.color = C.dark }}
           >{label}</TLink>
         ))}
-        <TLink href={auth?.user ? '/history' : '/login'} style={{ color: C.cream, textDecoration: 'none', display: 'flex', alignItems: 'center', opacity: 0.75, transition: 'opacity 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-          onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
+        <TLink href={auth?.user ? '/history' : '/login'} style={{
+          textDecoration: 'none', display: 'flex', alignItems: 'center',
+          transition: 'opacity 0.2s',
+        }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.75'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.cream} strokeWidth="1.8">
-            <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-          </svg>
+          <img
+            src="/images/Group 3.png"
+            alt="profile"
+            style={{ height: 22, width: 'auto', objectFit: 'contain' }}
+          />
         </TLink>
       </div>
     </nav>
