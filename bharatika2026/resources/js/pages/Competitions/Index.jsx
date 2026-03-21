@@ -2,16 +2,38 @@ import { useState, useEffect } from 'react'
 import { usePage } from '@inertiajs/react'
 import { navigateWithTransition } from '../../hooks/usePageTransition'
 
-const C = {
-  gold: '#C8A84B', cream: '#E8D9A0', parchment: '#D4C48A',
-  crimson: '#8B1A1A', dark: '#0F0A05', card: '#1A1410',
-  charcoal: '#2A2420', border: 'rgba(200,168,75,0.15)',
+const CATEGORY_CONFIG = {
+  TIRTA: {
+    bg: '#4A6FA5',
+    description: 'Berarti air, mewakili kategori Mahasiswa DKV, DFT, IPDM.',
+    titleSide: 'left',
+  },
+  BUANA: {
+    bg: '#5C6B3A',
+    description: 'Berarti tanah, mewakili kategori SMA.',
+    titleSide: 'right',
+  },
+  BAYU: {
+    bg: '#8B6914',
+    description: 'Berarti angin, mewakili kategori umum.',
+    titleSide: 'left',
+  },
+  AGNI: {
+    bg: '#8B2A1A',
+    description: 'Berarti api, mewakili kategori Mahasiswa Desain Interior.',
+    titleSide: 'right',
+  },
+}
+
+const DEFAULT_CONFIG = {
+  bg: '#2A2420',
+  description: '',
+  titleSide: 'left',
 }
 
 function useFonts() {
   useEffect(() => {
     document.body.style.margin = '0'
-    document.body.style.background = C.dark
     if (document.getElementById('bh-fonts')) return
     const l = document.createElement('link')
     l.id = 'bh-fonts'; l.rel = 'stylesheet'
@@ -86,94 +108,162 @@ function Navbar({ activeLink = '' }) {
   )
 }
 
+function CategoryBanner({ category, index }) {
+  const [open, setOpen] = useState(false)
+  const config = CATEGORY_CONFIG[category.name?.toUpperCase()] || { ...DEFAULT_CONFIG, bg: ['#4A6FA5','#5C6B3A','#8B6914','#8B2A1A'][index % 4] }
+  const isRight = config.titleSide === 'right'
+  const cream = '#E8D9A0'
+
+  return (
+    <div style={{ background: config.bg, overflow: 'hidden', transition: 'all 0.4s ease' }}>
+      {/* Banner row */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: isRight ? '1fr auto auto' : 'auto 1fr auto',
+          alignItems: 'center',
+          padding: '0 2.5rem',
+          minHeight: 180,
+          gap: '2rem',
+          cursor: 'pointer',
+          position: 'relative',
+        }}
+        onClick={() => setOpen(!open)}
+      >
+        {isRight ? (
+          <>
+            {/* Chevron left */}
+            <div style={{
+              width: 44, height: 44, borderRadius: '50%',
+              border: `2px solid ${cream}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, transition: 'transform 0.3s',
+              transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={cream} strokeWidth="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+
+            {/* Description center */}
+            <p style={{
+              fontFamily: "'EB Garamond', Georgia, serif",
+              fontSize: 'clamp(15px, 1.8vw, 20px)',
+              color: cream, opacity: 0.9, margin: 0,
+              lineHeight: 1.6, textAlign: 'center',
+            }}>{config.description}</p>
+
+            {/* Title right */}
+            <h2 style={{
+              fontFamily: "'UnifrakturMaguntia', serif",
+              fontSize: 'clamp(72px, 12vw, 160px)',
+              color: cream, margin: 0, lineHeight: 0.85,
+              letterSpacing: -2, flexShrink: 0,
+            }}>{category.name}</h2>
+          </>
+        ) : (
+          <>
+            {/* Title left */}
+            <h2 style={{
+              fontFamily: "'UnifrakturMaguntia', serif",
+              fontSize: 'clamp(72px, 12vw, 160px)',
+              color: cream, margin: 0, lineHeight: 0.85,
+              letterSpacing: -2, flexShrink: 0,
+            }}>{category.name}</h2>
+
+            {/* Description center */}
+            <p style={{
+              fontFamily: "'EB Garamond', Georgia, serif",
+              fontSize: 'clamp(15px, 1.8vw, 20px)',
+              color: cream, opacity: 0.9, margin: 0,
+              lineHeight: 1.6,
+            }}>{config.description}</p>
+
+            {/* Chevron right */}
+            <div style={{
+              width: 44, height: 44, borderRadius: '50%',
+              border: `2px solid ${cream}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, transition: 'transform 0.3s',
+              transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={cream} strokeWidth="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Competitions dropdown */}
+      <div style={{
+        maxHeight: open ? '2000px' : '0',
+        overflow: 'hidden',
+        transition: 'max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}>
+        <div style={{
+          padding: '0 2.5rem 2.5rem',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gap: '1rem',
+          borderTop: `1px solid rgba(232,217,160,0.15)`,
+          paddingTop: '1.5rem',
+          marginTop: '0',
+        }}>
+          {category.competitions?.length > 0 ? category.competitions.map(comp => (
+            <div key={comp.id} style={{
+              background: 'rgba(0,0,0,0.2)',
+              border: '1px solid rgba(232,217,160,0.15)',
+              padding: '1.25rem 1.5rem',
+              display: 'flex', flexDirection: 'column', gap: '0.75rem',
+              transition: 'background 0.2s, border-color 0.2s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.35)'; e.currentTarget.style.borderColor = 'rgba(232,217,160,0.35)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.2)'; e.currentTarget.style.borderColor = 'rgba(232,217,160,0.15)' }}
+            >
+              <div>
+                <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 14, color: cream, margin: '0 0 0.4rem', fontWeight: 600, letterSpacing: 0.5 }}>{comp.name}</h3>
+                <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 13, color: cream, opacity: 0.55, margin: 0 }}>
+                  {comp.min_participants === comp.max_participants
+                    ? `${comp.min_participants} peserta per tim`
+                    : `${comp.min_participants}–${comp.max_participants} peserta per tim`}
+                </p>
+              </div>
+              <TLink href={`/competitions/${comp.id}/register`} style={{
+                display: 'block', textAlign: 'center', padding: '8px',
+                border: `1px solid ${cream}`, color: cream,
+                fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 3,
+                textDecoration: 'none', textTransform: 'uppercase', transition: 'all 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = cream; e.currentTarget.style.color = config.bg }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = cream }}
+              >Daftar Sekarang</TLink>
+            </div>
+          )) : (
+            <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 14, color: cream, opacity: 0.4, margin: 0 }}>
+              Belum ada kompetisi tersedia
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function CompetitionsIndex({ categories = [] }) {
   useFonts()
   return (
-    <div style={{ background: C.dark, minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', background: '#1A1410' }}>
       <Navbar activeLink="competition" />
-
-      {/* Header */}
-      <div style={{
-        paddingTop: 52, padding: '80px 2rem 4rem', textAlign: 'center',
-        backgroundImage: `radial-gradient(ellipse 70% 50% at 50% 30%, rgba(139,26,26,0.12) 0%, transparent 70%)`,
-      }}>
-        {/* Back link */}
-        <div style={{ textAlign: 'left', maxWidth: 1100, margin: '0 auto 2rem' }}>
-          <TLink href="/" style={{
-            fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
-            color: C.cream, opacity: 0.45, textDecoration: 'none', textTransform: 'uppercase',
-            transition: 'opacity 0.2s',
-          }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '0.45'}
-          >← Kembali ke Beranda</TLink>
-        </div>
-        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 5, color: C.gold, textTransform: 'uppercase', margin: '0 0 0.5rem', opacity: 0.75 }}>Ikut Serta Dalam</p>
-        <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(52px, 10vw, 96px)', color: C.cream, margin: '0 0 1rem', lineHeight: 1 }}>Competitions</h1>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
-          <div style={{ width: 60, height: 1, background: `linear-gradient(to right, transparent, ${C.gold})` }} />
-          <svg width="8" height="8" viewBox="0 0 8 8"><polygon points="4,0 8,4 4,8 0,4" fill={C.gold} /></svg>
-          <div style={{ width: 60, height: 1, background: `linear-gradient(to left, transparent, ${C.gold})` }} />
-        </div>
-      </div>
-
-      {/* Categories */}
-      <div style={{ padding: '0 2rem 6rem', maxWidth: 1100, margin: '0 auto' }}>
-        {categories.map(category => (
-          <div key={category.id} style={{ marginBottom: '4rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: `1px solid ${C.border}` }}>
-              <div style={{ width: 4, height: 36, background: C.crimson }} />
-              <div>
-                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 3, color: C.gold, opacity: 0.65, textTransform: 'uppercase', margin: '0 0 0.2rem' }}>Kategori</p>
-                <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 20, color: C.cream, margin: 0, letterSpacing: 1 }}>{category.name}</h2>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
-              {category.competitions?.map(comp => (
-                <div key={comp.id} style={{
-                  background: C.card, border: `1px solid ${C.border}`,
-                  padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem',
-                  transition: 'border-color 0.25s, transform 0.2s',
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(200,168,75,0.4)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'translateY(0)' }}
-                >
-                  <div style={{ height: 130, background: '#2A1F14', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                    <svg width="36" height="36" viewBox="0 0 36 36" style={{ opacity: 0.1 }}>
-                      <line x1="0" y1="0" x2="36" y2="36" stroke={C.gold} strokeWidth="1" />
-                      <line x1="36" y1="0" x2="0" y2="36" stroke={C.gold} strokeWidth="1" />
-                      <rect x="0" y="0" width="36" height="36" stroke={C.gold} strokeWidth="1" fill="none" />
-                    </svg>
-                  </div>
-
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 15, color: C.cream, margin: '0 0 0.5rem', fontWeight: 600 }}>{comp.name}</h3>
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 13, color: C.cream, opacity: 0.5, margin: 0 }}>
-                      {comp.min_participants === comp.max_participants
-                        ? `${comp.min_participants} peserta per tim`
-                        : `${comp.min_participants}–${comp.max_participants} peserta per tim`}
-                    </p>
-                  </div>
-
-                  <TLink href={`/competitions/${comp.id}/register`} style={{
-                    display: 'block', textAlign: 'center', padding: '10px',
-                    border: `1px solid ${C.gold}`, color: C.gold,
-                    fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 3,
-                    textDecoration: 'none', textTransform: 'uppercase', transition: 'all 0.2s',
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.dark }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = C.gold }}
-                  >Daftar Sekarang</TLink>
-                </div>
-              ))}
-            </div>
-          </div>
+      <div style={{ paddingTop: 52 }}>
+        {categories.map((category, index) => (
+          <CategoryBanner key={category.id} category={category} index={index} />
         ))}
-
         {categories.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '8rem 2rem', border: `1px solid ${C.border}` }}>
-            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: 3, color: C.cream, opacity: 0.25, textTransform: 'uppercase' }}>Belum ada kompetisi tersedia</p>
+          <div style={{ textAlign: 'center', padding: '8rem 2rem' }}>
+            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: 3, color: '#E8D9A0', opacity: 0.25, textTransform: 'uppercase' }}>
+              Belum ada kompetisi tersedia
+            </p>
           </div>
         )}
       </div>

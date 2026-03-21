@@ -20,7 +20,7 @@ function Navbar({ activeLink = '' }) {
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
   }, [])
-  const NC = { gold: '#C8A84B', cream: '#E8D9A0', crimson: '#8B1A1A', dark: '#1A1410', black: '#0F0A05' }
+  const NC = { gold: '#C8A84B', cream: '#E8D9A0', crimson: '#8B1A1A', dark: '#1A1410' }
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Events', href: '/#events' },
@@ -32,13 +32,13 @@ function Navbar({ activeLink = '' }) {
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: '0 1.75rem',
-      background: scrolled ? 'rgba(15,10,5,0.96)' : 'rgba(15,10,5,0.55)',
+      background: scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)',
       backdropFilter: 'blur(6px)',
-      borderBottom: scrolled ? '1px solid rgba(200,168,75,0.18)' : 'none',
+      borderBottom: scrolled ? '1px solid rgba(139,26,26,0.25)' : 'none',
       transition: 'background 0.35s, border 0.35s',
     }}>
-      <TLink href="/" style={{ textDecoration: 'none' }}>
-        <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 17, color: NC.cream, fontWeight: 400, letterSpacing: 0.5 }}>bharatika</span>
+      <TLink href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+        <img src="/images/BHRTK MERAH 1.png" alt="bharatika" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
       </TLink>
       <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
         {navLinks.map(({ label, href }) => {
@@ -46,17 +46,17 @@ function Navbar({ activeLink = '' }) {
           return (
             <TLink key={label} href={href} style={{
               fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
-              color: isActive ? NC.gold : NC.cream,
+              color: isActive ? NC.crimson : NC.dark,
               textDecoration: 'none', textTransform: 'uppercase',
               opacity: isActive ? 1 : 0.75,
-              borderBottom: isActive ? `1px solid ${NC.gold}` : 'none',
+              borderBottom: isActive ? `1px solid ${NC.crimson}` : 'none',
               paddingBottom: isActive ? 2 : 0,
               transition: 'opacity 0.2s, color 0.2s',
             }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = NC.gold }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = NC.crimson }}
               onMouseLeave={e => {
                 e.currentTarget.style.opacity = isActive ? '1' : '0.75'
-                e.currentTarget.style.color = isActive ? NC.gold : NC.cream
+                e.currentTarget.style.color = isActive ? NC.crimson : NC.dark
               }}
             >{label}</TLink>
           )
@@ -73,9 +73,33 @@ function Navbar({ activeLink = '' }) {
   )
 }
 
-
 function useFonts() {
   useEffect(() => {
+    if (!document.getElementById('cssalient-font')) {
+      const style = document.createElement('style')
+      style.id = 'cssalient-font'
+      style.textContent = `
+        @font-face {
+          font-family: 'CSSalient';
+          src: url('/fonts/CSSalient-Regular.ttf') format('truetype');
+          font-weight: normal;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'Nord';
+          src: url('/fonts/NORD-Bold.ttf') format('truetype');
+          font-weight: bold;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'FamiljenGrotesk';
+          src: url('/fonts/FamiljenGrotesk-Variable.ttf') format('truetype');
+          font-weight: 100 900;
+          font-style: normal;
+        }
+      `
+      document.head.appendChild(style)
+    }
     if (document.getElementById('bh-fonts')) return
     const l = document.createElement('link')
     l.id = 'bh-fonts'; l.rel = 'stylesheet'
@@ -97,54 +121,114 @@ function XBox({ style = {} }) {
   )
 }
 
-
-
 function Hero() {
   return (
     <section style={{ position: 'relative', width: '100%', minHeight: '100vh', overflow: 'hidden' }}>
-      <XBox style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(15,10,5,0.35) 0%, rgba(15,10,5,0.1) 40%, rgba(15,10,5,0.6) 100%)' }} />
-      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '80px 2rem 4rem' }}>
-        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 5, color: C.cream, textTransform: 'uppercase', margin: '0 0 1rem', opacity: 0.8 }}>bharatika · 2026</p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-          <div style={{ width: 50, height: 1, background: C.gold, opacity: 0.6 }} />
-          <svg width="8" height="8" viewBox="0 0 8 8"><polygon points="4,0 8,4 4,8 0,4" fill={C.gold} /></svg>
-          <div style={{ width: 50, height: 1, background: C.gold, opacity: 0.6 }} />
-        </div>
-        <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(64px, 16vw, 140px)', color: C.gold, margin: '0 0 0.5rem', lineHeight: 0.85, textShadow: '2px 4px 24px rgba(0,0,0,0.7)', letterSpacing: -2 }}>Merajacipta</h1>
-        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 6, color: C.cream, textTransform: 'uppercase', margin: '1.25rem 0 3rem', opacity: 0.65 }}>Berani · Bersahaja · Bertata</p>
-        <TLink href="/about" style={{ display: 'inline-block', padding: '10px 32px', border: '1px solid rgba(232,217,160,0.7)', color: C.cream, fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 4, textDecoration: 'none', textTransform: 'uppercase', background: 'rgba(15,10,5,0.35)', backdropFilter: 'blur(4px)', transition: 'all 0.25s' }}
-          onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.black; e.currentTarget.style.borderColor = C.gold }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,10,5,0.35)'; e.currentTarget.style.color = C.cream; e.currentTarget.style.borderColor = 'rgba(232,217,160,0.7)' }}
+      <video autoPlay loop muted playsInline
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+      >
+        <source src="/videos/Motion Background bhara26 FIXX.mp4" type="video/mp4" />
+      </video>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(15,10,5,0.2) 0%, rgba(15,10,5,0.05) 50%, rgba(15,10,5,0.5) 100%)', zIndex: 1 }} />
+      <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: '12rem' }}>
+        <TLink href="/about" style={{ display: 'inline-block', padding: '18px 64px', border: '1.5px solid transparent', color: C.crimson, fontFamily: "'Cinzel', serif", fontSize: 13, letterSpacing: 5, textDecoration: 'none', textTransform: 'uppercase', background: C.cream, backdropFilter: 'blur(4px)', transition: 'all 0.3s', borderRadius: 50 }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0)'; e.currentTarget.style.color = C.gold; e.currentTarget.style.borderColor = C.gold; e.currentTarget.style.backdropFilter = 'none' }}
+          onMouseLeave={e => { e.currentTarget.style.background = C.cream; e.currentTarget.style.color = C.crimson; e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.backdropFilter = 'blur(4px)' }}
         >Learn More</TLink>
       </div>
     </section>
   )
 }
 
-function About() {
+function MarqueeTicker() {
+  const words = Array(12).fill('MERAJACIPTA')
   return (
-    <section id="about" style={{ background: C.crimson, position: 'relative', overflow: 'hidden', padding: '5rem 2rem 5rem', minHeight: 520 }}>
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.05) 8px, rgba(0,0,0,0.05) 9px)' }} />
-      {/* Inject keyframes */}
+    <div style={{
+      background: C.black,
+      borderBottom: '3px solid #8B1A1A',
+      overflow: 'hidden',
+      padding: '12px 0',
+      position: 'relative',
+      zIndex: 10,
+      marginTop: 0,
+    }}>
       <style>{`
-        @keyframes caturSlideLeft {
-          from { transform: rotate(7deg) translateX(-120%); opacity: 0; }
-          to   { transform: rotate(7deg) translateX(-12%);  opacity: 1; }
+        @font-face {
+          font-family: 'CSSalient';
+          src: url('/fonts/CSSalient-Regular.ttf') format('truetype');
         }
-        @keyframes caturSlideRight {
-          from { transform: rotate(-5deg) translateX(120%) scaleX(-1); opacity: 0; }
-          to   { transform: rotate(-5deg) translateX(12%)  scaleX(-1); opacity: 1; }
+        @keyframes marqueeBounce {
+          0%   { transform: translateX(0); }
+          50%  { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
         }
       `}</style>
-      <div style={{ position: 'absolute', width: 'clamp(350px, 40vw, 640px)', aspectRatio: '509.1 / 678.8', left: 0, top: '-12%', backgroundImage: "url('/images/CATUR.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', transform: 'rotate(7deg) translateX(-12%)', pointerEvents: 'none', zIndex: 0, animation: 'caturSlideLeft 1.2s cubic-bezier(0.22, 1, 0.36, 1) both' }} />
-      <div style={{ position: 'absolute', width: 'clamp(300px, 40vw, 500px)', aspectRatio: '509.1 / 678.8', right: 0, bottom: '-10%', backgroundImage: "url('/images/CATUR.png')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', transform: 'rotate(-5deg) translateX(12%) scaleX(-1)', pointerEvents: 'none', zIndex: 0, animation: 'caturSlideRight 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both' }} />
+      <div style={{ display: 'flex', whiteSpace: 'nowrap', animation: 'marqueeBounce 10s ease-in-out infinite' }}>
+        {Array(2).fill(null).map((_, gi) => (
+          <div key={gi} style={{ display: 'flex', flexShrink: 0 }}>
+            {words.map((word, i) => (
+              <span key={i} style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 46, color: C.cream, paddingRight: '6rem', lineHeight: 1 }}>{word}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function About() {
+  const [hovered, setHovered] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 50)
+    return () => clearTimeout(t)
+  }, [])
+
+  const kiri  = { rotate: '-7deg', tx: '-12%', w: 'clamp(350px, 45vw, 640px)', left: -120, top: '-22%' }
+  const kanan = { rotate: '-5deg', tx: '12%',  w: 'clamp(300px, 40vw, 640px)', right: -50, bottom: '-10%' }
+
+  const enterTransition = 'transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease'
+  const exitTransition  = 'transform 1.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.6s ease'
+
+  return (
+    <section
+      id="about"
+      style={{ background: C.crimson, position: 'relative', overflow: 'hidden', padding: '5rem 2rem 5rem', minHeight: 520 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', pointerEvents: 'none' }} />
+      <div style={{
+        position: 'absolute', width: kiri.w, aspectRatio: '509.1 / 678.8',
+        left: kiri.left, top: kiri.top,
+        backgroundImage: "url('/images/CATUR KIRI.svg')",
+        backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center',
+        pointerEvents: 'none', zIndex: 0,
+        transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none',
+        transform: hovered ? `rotate(${kiri.rotate}) translateX(${kiri.tx})` : `rotate(${kiri.rotate}) translateX(-120%)`,
+        opacity: hovered ? 1 : 0,
+      }} />
+      <div style={{
+        position: 'absolute', width: kanan.w, aspectRatio: '509.1 / 678.8',
+        right: kanan.right, bottom: kanan.bottom,
+        backgroundImage: "url('/images/CATUR KANAN.svg')",
+        backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center',
+        pointerEvents: 'none', zIndex: 0,
+        transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none',
+        transform: hovered ? `rotate(${kanan.rotate}) translateX(${kanan.tx})` : `rotate(${kanan.rotate}) translateX(120%)`,
+        opacity: hovered ? 1 : 0,
+      }} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
         <div style={{ width: '100%', maxWidth: 700, margin: '0.25rem auto 0', backgroundImage: "url('/images/VECTOR.png')", backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'contain', aspectRatio: '3240 / 1440' }} />
-        <div style={{ marginTop: '2rem' }}>
-          <h3 style={{ fontFamily: "'Nord', 'Cinzel', serif", fontSize: 'clamp(14px, 2.5vw, 20px)', color: C.cream, fontWeight: 400, letterSpacing: 4, textTransform: 'uppercase', margin: '0 0 1.25rem' }}>Lorem Ipsum Dolor Sit</h3>
-          <p style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: 'clamp(14px, 1.5vw, 16px)', lineHeight: 1.9, color: C.cream, opacity: 0.88, maxWidth: 600, margin: '0 auto' }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dolor eros, facilisis quis vulputate ut, suscipit nec tellus. Phasellus pretium urna vel dignissim facilisis. Cras risus nunc, vulputate nec lectus quis, posuere condimentum diam. Suspendisse mollis auctor diam sed aliquam. Nullam hendrerit nisl sed mi consequat congue.
+        <div style={{ marginTop: '0.5rem' }}>
+          <h3 style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(16px, 2.2vw, 24px)', color: C.gold, fontWeight: 700, letterSpacing: 6, textTransform: 'uppercase', margin: '0 0 1.5rem' }}>Merajarela & Menciptakan</h3>
+          <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(14px, 1.4vw, 17px)', lineHeight: 1.85, color: C.cream, opacity: 0.92, maxWidth: 580, margin: '0 auto' }}>
+            Banyak insan muda kreatif punya ketakutan untuk bersaing dengan ribuan desainer
+            di luar sana. Mereka ragu dan merasa insecure dalam berkarya. Dengan tema
+            "MERAJACIPTA" Bharatika Creative Design Festival 2026 diharapkan dapat
+            menjadi dorongan bagi insan muda untuk tetap berkarya "merajalela" dalam
+            ketakutan mereka.
           </p>
         </div>
       </div>
@@ -153,36 +237,75 @@ function About() {
 }
 
 function RegisterEvents() {
+  const events = [
+    { title: 'Creative Talk', desc: 'Talkshow bersama pakar-pakar industri kreatif.' },
+    { title: 'Workshop Design', desc: 'Workshop intensif dengan desainer profesional.' },
+    { title: 'Exhibition', desc: 'Pameran karya terbaik peserta Bharatika 2026.' },
+    { title: 'Competition', desc: 'Lomba untuk para insan kreatif dari berbagai kalangan.' },
+    { title: 'Networking', desc: 'Sesi networking bersama industri kreatif.' },
+  ]
+
   return (
-    <section id="events" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-      <div style={{ background: C.parchment, minHeight: 560, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundImage: 'radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)', backgroundSize: '14px 14px' }}>
-        <div style={{ padding: '2rem 2.5rem 0', textAlign: 'center' }}>
-          <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0 0 0', fontWeight: 700 }}>Register</p>
-          <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(64px, 9vw, 100px)', color: C.crimson, margin: 0, lineHeight: 0.9, position: 'relative', zIndex: 2, marginBottom: '-5rem' }}>Now!</h2>
+    <section id="events" style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+
+      {/* LEFT */}
+      <div style={{ background: C.parchment, minHeight: 560, display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundImage: "radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
+        <div style={{ padding: "2rem 2.5rem 0", textAlign: "center" }}>
+          <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 12, letterSpacing: 5, color: C.crimson, textTransform: "uppercase", margin: "0", fontWeight: 700 }}>Register</p>
+          <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: "clamp(64px, 9vw, 100px)", color: C.crimson, margin: 0, lineHeight: 0.9, position: "relative", zIndex: 2, marginBottom: "-5rem" }}>Now!</h2>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, position: 'relative', zIndex: 1 }}>
-          <XBox style={{ width: 'clamp(200px, 80%, 433.8px)', aspectRatio: '433.8 / 418.16' }} />
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1, position: "relative", zIndex: 1 }}>
+          <XBox style={{ width: "clamp(200px, 80%, 433.8px)", aspectRatio: "433.8 / 418.16" }} />
         </div>
-        <div style={{ padding: '2rem 2.5rem', textAlign: 'center' }}>
-          <TLink href="/register" style={{ display: 'inline-block', padding: '12px 40px', background: C.crimson, color: C.cream, fontFamily: "'Cinzel', serif", fontSize: 11, letterSpacing: 3, textDecoration: 'none', textTransform: 'uppercase', borderRadius: 50, transition: 'opacity 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-          >Register</TLink>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0 2.5rem", marginTop: "0.75rem" }}>
+          <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 12, color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: "nowrap" }}>00 JAN</span>
+          <div style={{ flex: 1, height: 1.5, background: C.crimson, opacity: 0.6 }} />
+          <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 12, color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: "nowrap" }}>00 FEB</span>
         </div>
-      </div>
-      <div style={{ background: '#1E1A14', display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 560, backgroundImage: 'radial-gradient(circle, rgba(80,60,20,0.15) 1px, transparent 1px)', backgroundSize: '14px 14px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', padding: '3rem 1rem 3rem 2.5rem', gap: '2rem' }}>
-          <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(52px, 7vw, 88px)', color: C.gold, margin: 0, lineHeight: 0.9 }}>Our<br />Events</h2>
-          <TLink href="/competitions" style={{ display: 'inline-block', padding: '10px 28px', border: `1.5px solid ${C.gold}`, color: C.gold, fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 3, textDecoration: 'none', textTransform: 'uppercase', borderRadius: 50, transition: 'all 0.2s', background: 'rgba(200,168,75,0.08)' }}
-            onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.dark }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(200,168,75,0.08)'; e.currentTarget.style.color = C.gold }}
+        <div style={{ padding: "1rem 2.5rem 2rem", textAlign: "center" }}>
+          <TLink href="/register" style={{ display: "inline-block", padding: "14px 48px", background: C.crimson, color: C.cream, fontFamily: "'Nord', sans-serif", fontSize: 11, letterSpacing: 4, textDecoration: "none", textTransform: "uppercase", borderRadius: 50, transition: "opacity 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
           >See More</TLink>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '3rem 2.5rem 3rem 1rem', gap: '1.25rem' }}>
-          <XBox style={{ width: '100%', aspectRatio: '1' }} />
+      </div>
+
+      {/* RIGHT */}
+      <div style={{ background: "#1E1A14", display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 560, backgroundImage: "radial-gradient(circle, rgba(80,60,20,0.15) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", padding: "3rem 1rem 3rem 2.5rem", gap: "1rem" }}>
           <div>
-            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: C.cream, fontWeight: 600, margin: '0 0 0.5rem', letterSpacing: 1, textTransform: 'uppercase' }}>Lorem Ips–</p>
-            <p style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: 14, color: C.cream, lineHeight: 1.7, opacity: 0.7, margin: 0 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dolor eros.</p>
+            <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: "clamp(52px, 7vw, 88px)", color: C.gold, margin: 0, lineHeight: 0.9 }}>Our</h2>
+            <p style={{ fontFamily: "'Nord', sans-serif", fontSize: "clamp(14px, 2vw, 20px)", color: C.gold, margin: "0.2rem 0 0", letterSpacing: 4, fontWeight: 700, textTransform: "uppercase" }}>Events</p>
+          </div>
+          <div>
+            <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 14, color: C.cream, opacity: 0.75, margin: "0 0 0.4rem", lineHeight: 1.4 }}>At Petra Christian University, Surabaya</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 13, color: C.cream, fontWeight: 700 }}>03</span>
+              <div style={{ flex: 1, height: 1.5, background: C.cream, opacity: 0.35 }} />
+              <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 13, color: C.cream, fontWeight: 700 }}>06 JUN</span>
+            </div>
+          </div>
+          <TLink href="/competitions" style={{ display: "inline-block", padding: "12px 24px", background: C.parchment, color: C.dark, fontFamily: "'Nord', sans-serif", fontSize: 10, letterSpacing: 3, textDecoration: "none", textTransform: "uppercase", borderRadius: 50, transition: "all 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.background = C.gold}
+            onMouseLeave={e => e.currentTarget.style.background = C.parchment}
+          >See More</TLink>
+        </div>
+        <div style={{ overflow: "hidden", position: "relative", padding: "1.5rem 1rem 1.5rem 0.5rem", height: "560px" }}>
+          <style>{`
+            @keyframes eventsScrollUpDown {
+              0%   { transform: translateY(0); }
+              50%  { transform: translateY(-50%); }
+              100% { transform: translateY(0); }
+            }
+          `}</style>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", animation: "eventsScrollUpDown 12s ease-in-out infinite" }}>
+            {[...events, ...events].map((ev, i) => (
+              <div key={i} style={{ flexShrink: 0 }}>
+                <XBox style={{ width: "100%", aspectRatio: "16/9", marginBottom: "0.25rem" }} />
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, color: C.cream, fontWeight: 600, margin: "0 0 0.1rem", letterSpacing: 1, textTransform: "uppercase" }}>{ev.title}</p>
+                <p style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: 12, color: C.cream, lineHeight: 1.4, opacity: 0.7, margin: 0 }}>{ev.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -192,15 +315,68 @@ function RegisterEvents() {
 
 function RedDivider() { return <div style={{ height: 14, background: C.crimson }} /> }
 
+function MarqueeTicker2() {
+  const words = Array(12).fill('MERAJACIPTA')
+  return (
+    <div style={{
+      background: C.crimson,
+      overflow: 'hidden',
+      padding: '12px 0',
+      position: 'relative',
+      zIndex: 10,
+    }}>
+      <style>{`
+        @keyframes marqueeBounce2 {
+          0%   { transform: translateX(0); }
+          50%  { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
+        }
+      `}</style>
+      <div style={{ display: 'flex', whiteSpace: 'nowrap', animation: 'marqueeBounce2 10s ease-in-out infinite' }}>
+        {Array(2).fill(null).map((_, gi) => (
+          <div key={gi} style={{ display: 'flex', flexShrink: 0 }}>
+            {words.map((word, i) => (
+              <span key={i} style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 46, color: C.cream, paddingRight: '6rem', lineHeight: 1 }}>{word}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function Merch() {
   return (
-    <section id="merch" style={{ background: C.cream, padding: '5rem 2rem', textAlign: 'center' }}>
-      <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0 0 0.15rem' }}>Take a look at our</p>
-      <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(64px, 14vw, 120px)', color: C.crimson, margin: '0 0 2.5rem', lineHeight: 0.9 }}>Merch</h2>
-      <div style={{ maxWidth: 380, margin: '0 auto 2.5rem' }}><XBox style={{ width: '100%', aspectRatio: '4/3' }} /></div>
-      <a href="#" style={{ display: 'inline-block', padding: '10px 32px', background: C.crimson, color: C.cream, fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 4, textDecoration: 'none', textTransform: 'uppercase', borderRadius: 2, transition: 'opacity 0.2s' }}
-        onMouseEnter={e => e.currentTarget.style.opacity = '0.85'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-      >Here</a>
+    <section id="merch" style={{ background: C.parchment, position: "relative", overflow: "hidden", padding: "5rem 0 5rem", backgroundImage: "radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
+      <p style={{ fontFamily: "'Nord', sans-serif", fontSize: "clamp(13px, 1.5vw, 18px)", letterSpacing: 6, color: C.crimson, textTransform: "uppercase", textAlign: "center", margin: "0 0 4rem", fontWeight: 700 }}>Take a look at our Merch</p>
+      <div style={{ position: "relative", textAlign: "center", margin: "0 0 5rem" }}>
+        <h2 style={{
+          fontFamily: "'CSSalient', sans-serif",
+          fontSize: "clamp(140px, 28vw, 340px)",
+          margin: 0,
+          lineHeight: 0.85,
+          color: "transparent",
+          WebkitTextStroke: "2px " + C.dark,
+          userSelect: "none",
+          letterSpacing: 8,
+          whiteSpace: "nowrap",
+        }}>MERCH</h2>
+        <div style={{
+          position: "absolute",
+          top: "50%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "clamp(220px, 28vw, 380px)",
+          zIndex: 2,
+        }}>
+          <img src="/images/BHAJUKITA.svg" alt="Bhajukita" style={{ width: "100%", height: "auto", objectFit: "contain" }} />
+        </div>
+      </div>
+      <div style={{ textAlign: "center" }}>
+        <a href="#" style={{ display: "inline-block", padding: "14px 52px", background: C.crimson, color: C.cream, fontFamily: "'Nord', sans-serif", fontSize: 12, letterSpacing: 4, textDecoration: "none", textTransform: "uppercase", borderRadius: 50, transition: "opacity 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+          onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+        >Here</a>
+      </div>
     </section>
   )
 }
@@ -251,8 +427,11 @@ function Footer() {
 export default function Home({ competitions = [] }) {
   useFonts()
   return (
-    <div style={{ background: C.black, minHeight: '100vh' }}>
-      <Navbar activeLink="home" /><Hero /><About /><RegisterEvents /><RedDivider /><Merch /><Partners /><Footer />
+    <div style={{ background: C.black, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar activeLink="home" />
+      <Hero />
+      <MarqueeTicker />
+      <About /><RegisterEvents /><MarqueeTicker2 /><RedDivider /><Merch /><Partners /><Footer />
     </div>
   )
 }
