@@ -14,62 +14,193 @@ function TLink({ href, children, style: s, onMouseEnter, onMouseLeave, onClick }
 
 function Navbar({ activeLink = '' }) {
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [hoveredLink, setHoveredLink] = useState(null)
   const { auth } = usePage().props
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
   }, [])
-  const NC = { gold: '#C8A84B', cream: '#E8D9A0', crimson: '#8B1A1A', dark: '#1A1410' }
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
   const navLinks = [
     { label: 'Home', href: '/' },
-    { label: 'Events', href: '/#events' },
-    { label: 'Competition', href: '/competitions' },
+    { label: 'Events', href: '/events' },
+    { label: 'Competitions', href: '/competitions' },
     { label: 'About', href: '/about' },
   ]
+
+  const handleNav = (href) => {
+    setMenuOpen(false)
+    setTimeout(() => navigateWithTransition(href), 400)
+  }
+
   return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52,
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '0 1.75rem',
-      background: scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)',
-      backdropFilter: 'blur(6px)',
-      borderBottom: scrolled ? '1px solid rgba(139,26,26,0.25)' : 'none',
-      transition: 'background 0.35s, border 0.35s',
-    }}>
-      <TLink href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-        <img src="/images/BHRTK MERAH 1.png" alt="bharatika" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
-      </TLink>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        {navLinks.map(({ label, href }) => {
-          const isActive = activeLink === label.toLowerCase()
-          return (
-            <TLink key={label} href={href} style={{
-              fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
-              color: isActive ? NC.crimson : NC.dark,
-              textDecoration: 'none', textTransform: 'uppercase',
-              opacity: isActive ? 1 : 0.75,
-              borderBottom: isActive ? `1px solid ${NC.crimson}` : 'none',
-              paddingBottom: isActive ? 2 : 0,
-              transition: 'opacity 0.2s, color 0.2s',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = NC.crimson }}
-              onMouseLeave={e => {
-                e.currentTarget.style.opacity = isActive ? '1' : '0.75'
-                e.currentTarget.style.color = isActive ? NC.crimson : NC.dark
+    <>
+      <style>{`
+        @keyframes overlayIn {
+          from { clip-path: circle(0% at calc(100% - 2.5rem) 26px); }
+          to   { clip-path: circle(170% at calc(100% - 2.5rem) 26px); }
+        }
+        @keyframes overlayOut {
+          from { clip-path: circle(170% at calc(100% - 2.5rem) 26px); }
+          to   { clip-path: circle(0% at calc(100% - 2.5rem) 26px); }
+        }
+        @keyframes navItemIn {
+          from { opacity: 0; transform: translateX(-60px) skewX(-8deg); }
+          to   { opacity: 1; transform: translateX(0) skewX(0deg); }
+        }
+        @keyframes nordOut {
+          0%   { opacity: 1; transform: translateY(0) skewX(0deg) scaleX(1); filter: blur(0px); }
+          100% { opacity: 0; transform: translateY(-20px) skewX(-6deg) scaleX(0.85); filter: blur(4px); }
+        }
+        @keyframes nordIn {
+          0%   { opacity: 0; transform: translateY(20px) skewX(-6deg) scaleX(0.85); filter: blur(4px); }
+          100% { opacity: 1; transform: translateY(0) skewX(0deg) scaleX(1); filter: blur(0px); }
+        }
+        @keyframes cssalientIn {
+          0%   { opacity: 0; transform: translateY(-50%) skewX(6deg) scaleX(1.08); filter: blur(6px); }
+          60%  { filter: blur(0px); }
+          100% { opacity: 1; transform: translateY(-50%) skewX(0deg) scaleX(1); filter: blur(0px); }
+        }
+        @keyframes cssalientOut {
+          0%   { opacity: 1; transform: translateY(-50%) skewX(0deg) scaleX(1); filter: blur(0px); }
+          100% { opacity: 0; transform: translateY(-40%) skewX(6deg) scaleX(1.08); filter: blur(6px); }
+        }
+      `}</style>
+
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, height: menuOpen ? 72 : 52,
+        display: 'flex', alignItems: 'center', justifyContent: menuOpen ? 'flex-end' : 'space-between',
+        padding: '0 1.75rem',
+        background: menuOpen ? 'transparent' : (scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)'),
+        backdropFilter: menuOpen ? 'none' : 'blur(6px)',
+        borderBottom: (!menuOpen && scrolled) ? '1px solid rgba(139,26,26,0.25)' : 'none',
+        transition: 'background 0.35s, border 0.35s',
+      }}>
+        {/* Logo — hidden when menu open */}
+        {!menuOpen && (
+          <a href="/" onClick={e => { e.preventDefault(); handleNav('/') }}
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+            <img src="/images/BHRTK MERAH 1.png" alt="bharatika"
+              style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+          </a>
+        )}
+
+        {/* Right: flat when closed, pill when open */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: menuOpen ? '1rem' : '0.75rem',
+          background: menuOpen ? C.parchment : 'transparent',
+          borderRadius: menuOpen ? 50 : 0,
+          padding: menuOpen ? '10px 20px' : '0',
+          transition: 'all 0.35s cubic-bezier(0.22,1,0.36,1)',
+        }}>
+          {/* Burger / X */}
+          <button onClick={() => setMenuOpen(!menuOpen)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {menuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.crimson} strokeWidth="2.5" strokeLinecap="round">
+                <line x1="4" y1="4" x2="20" y2="20" />
+                <line x1="20" y1="4" x2="4" y2="20" />
+              </svg>
+            ) : (
+              <img src="/images/BURGER.png" alt="menu" style={{ height: 16, width: 'auto', objectFit: 'contain' }} />
+            )}
+          </button>
+
+
+
+          {/* Profile */}
+          <a href={auth?.user ? '/history' : '/login'}
+            onClick={e => { e.preventDefault(); handleNav(auth?.user ? '/history' : '/login') }}
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', cursor: 'pointer', opacity: menuOpen ? 1 : 0.75, transition: 'opacity 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+            onMouseLeave={e => e.currentTarget.style.opacity = menuOpen ? '1' : '0.75'}
+          >
+            <img src="/images/Group 3.png" alt="profile"
+              style={{ height: menuOpen ? 26 : 20, width: 'auto', objectFit: 'contain', transition: 'height 0.35s' }} />
+          </a>
+        </div>
+      </nav>
+
+      {/* Fullscreen overlay */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 250,
+        background: C.crimson,
+        animation: menuOpen ? 'overlayIn 0.65s cubic-bezier(0.22,1,0.36,1) forwards' : 'overlayOut 0.5s cubic-bezier(0.22,1,0.36,1) forwards',
+        pointerEvents: menuOpen ? 'all' : 'none',
+        overflow: 'hidden',
+      }}>
+        <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.5, pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', padding: '0 8vw' }}>
+          {navLinks.map((link, i) => (
+            <div key={link.label}
+              onClick={e => { handleNav(link.href) }}
+              onMouseEnter={() => setHoveredLink(i)}
+              onMouseLeave={() => setHoveredLink(null)}
+              style={{
+                position: 'relative',
+                cursor: 'pointer',
+                lineHeight: 1.1,
+                animation: menuOpen ? 'navItemIn 0.6s cubic-bezier(0.22,1,0.36,1) ' + (0.1 + i * 0.08) + 's both' : 'none',
+                transform: hoveredLink === i ? 'translateX(12px)' : 'translateX(0)',
+                transition: 'transform 0.3s cubic-bezier(0.22,1,0.36,1)',
               }}
-            >{label}</TLink>
-          )
-        })}
-        <TLink href={auth?.user ? '/history' : '/login'}
-          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', opacity: 0.75, transition: 'opacity 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-          onMouseLeave={e => e.currentTarget.style.opacity = '0.75'}
-        >
-          <img src="/images/Group 3.png" alt="profile" style={{ height: 22, width: 'auto', objectFit: 'contain' }} />
-        </TLink>
+            >
+              {/* Nord layer — animates out on hover */}
+              <span style={{
+                fontFamily: "'Nord', sans-serif",
+                fontSize: 'clamp(44px, 7vw, 90px)',
+                fontWeight: 700,
+                color: C.gold,
+                textTransform: 'uppercase',
+                letterSpacing: 2,
+                display: 'block',
+                lineHeight: 1.6,
+                animation: hoveredLink === i ? 'nordOut 0.35s cubic-bezier(0.22,1,0.36,1) forwards' : 'nordIn 0.35s cubic-bezier(0.22,1,0.36,1) forwards',
+                transformOrigin: 'left center',
+                userSelect: 'none',
+                willChange: 'transform, opacity, filter',
+              }}>{link.label}</span>
+              {/* CSSalient layer — animates in on hover */}
+              <span style={{
+                fontFamily: "'CSSalient', sans-serif",
+                fontSize: 'clamp(80px, 14vw, 180px)',
+                fontWeight: 400,
+                color: C.parchment,
+                textTransform: 'uppercase',
+                letterSpacing: 4,
+                display: 'block',
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                animation: hoveredLink === i ? 'cssalientIn 0.4s cubic-bezier(0.22,1,0.36,1) forwards' : 'cssalientOut 0.3s cubic-bezier(0.22,1,0.36,1) forwards',
+                transformOrigin: 'left center',
+                whiteSpace: 'nowrap',
+                userSelect: 'none',
+                willChange: 'transform, opacity, filter',
+              }}>{link.label}</span>
+            </div>
+          ))}
+          <div style={{
+            position: 'absolute', bottom: '2.5rem', left: '8vw', right: '8vw',
+            borderTop: '1px solid rgba(232,217,160,0.2)', paddingTop: '1.25rem',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            animation: menuOpen ? 'navItemIn 0.6s cubic-bezier(0.22,1,0.36,1) 0.5s both' : 'none',
+          }}>
+            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 11, color: C.cream, opacity: 0.45, margin: 0, letterSpacing: 3, textTransform: 'uppercase' }}>Bharatika 2026</p>
+            <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 12, color: C.cream, opacity: 0.45, margin: 0 }}>Petra Christian University, Surabaya</p>
+          </div>
+        </div>
       </div>
-    </nav>
+    </>
   )
 }
 
@@ -143,25 +274,10 @@ function Hero() {
 function MarqueeTicker() {
   const words = Array(12).fill('MERAJACIPTA')
   return (
-    <div style={{
-      background: C.black,
-      borderBottom: '3px solid #8B1A1A',
-      overflow: 'hidden',
-      padding: '12px 0',
-      position: 'relative',
-      zIndex: 10,
-      marginTop: 0,
-    }}>
+    <div style={{ background: C.black, borderBottom: '3px solid #8B1A1A', overflow: 'hidden', padding: '12px 0', position: 'relative', zIndex: 10, marginTop: 0 }}>
       <style>{`
-        @font-face {
-          font-family: 'CSSalient';
-          src: url('/fonts/CSSalient-Regular.ttf') format('truetype');
-        }
-        @keyframes marqueeBounce {
-          0%   { transform: translateX(0); }
-          50%  { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
-        }
+        @font-face { font-family: 'CSSalient'; src: url('/fonts/CSSalient-Regular.ttf') format('truetype'); }
+        @keyframes marqueeBounce { 0% { transform: translateX(0); } 50% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
       `}</style>
       <div style={{ display: 'flex', whiteSpace: 'nowrap', animation: 'marqueeBounce 10s ease-in-out infinite' }}>
         {Array(2).fill(null).map((_, gi) => (
@@ -179,56 +295,23 @@ function MarqueeTicker() {
 function About() {
   const [hovered, setHovered] = useState(false)
   const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 50)
-    return () => clearTimeout(t)
-  }, [])
-
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t) }, [])
   const kiri  = { rotate: '-7deg', tx: '-12%', w: 'clamp(350px, 45vw, 640px)', left: -120, top: '-22%' }
   const kanan = { rotate: '-5deg', tx: '12%',  w: 'clamp(300px, 40vw, 640px)', right: -50, bottom: '-10%' }
-
   const enterTransition = 'transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease'
   const exitTransition  = 'transform 1.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.6s ease'
-
   return (
-    <section
-      id="about"
-      style={{ background: C.crimson, position: 'relative', overflow: 'hidden', padding: '5rem 2rem 5rem', minHeight: 520 }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <section id="about" style={{ background: C.crimson, position: 'relative', overflow: 'hidden', padding: '5rem 2rem 5rem', minHeight: 520 }}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', pointerEvents: 'none' }} />
-      <div style={{
-        position: 'absolute', width: kiri.w, aspectRatio: '509.1 / 678.8',
-        left: kiri.left, top: kiri.top,
-        backgroundImage: "url('/images/CATUR KIRI.svg')",
-        backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center',
-        pointerEvents: 'none', zIndex: 0,
-        transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none',
-        transform: hovered ? `rotate(${kiri.rotate}) translateX(${kiri.tx})` : `rotate(${kiri.rotate}) translateX(-120%)`,
-        opacity: hovered ? 1 : 0,
-      }} />
-      <div style={{
-        position: 'absolute', width: kanan.w, aspectRatio: '509.1 / 678.8',
-        right: kanan.right, bottom: kanan.bottom,
-        backgroundImage: "url('/images/CATUR KANAN.svg')",
-        backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center',
-        pointerEvents: 'none', zIndex: 0,
-        transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none',
-        transform: hovered ? `rotate(${kanan.rotate}) translateX(${kanan.tx})` : `rotate(${kanan.rotate}) translateX(120%)`,
-        opacity: hovered ? 1 : 0,
-      }} />
+      <div style={{ position: 'absolute', width: kiri.w, aspectRatio: '509.1 / 678.8', left: kiri.left, top: kiri.top, backgroundImage: "url('/images/CATUR KIRI.svg')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', pointerEvents: 'none', zIndex: 0, transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none', transform: hovered ? `rotate(${kiri.rotate}) translateX(${kiri.tx})` : `rotate(${kiri.rotate}) translateX(-120%)`, opacity: hovered ? 1 : 0 }} />
+      <div style={{ position: 'absolute', width: kanan.w, aspectRatio: '509.1 / 678.8', right: kanan.right, bottom: kanan.bottom, backgroundImage: "url('/images/CATUR KANAN.svg')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', pointerEvents: 'none', zIndex: 0, transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none', transform: hovered ? `rotate(${kanan.rotate}) translateX(${kanan.tx})` : `rotate(${kanan.rotate}) translateX(120%)`, opacity: hovered ? 1 : 0 }} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
         <div style={{ width: '100%', maxWidth: 700, margin: '0.25rem auto 0', backgroundImage: "url('/images/VECTOR.png')", backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'contain', aspectRatio: '3240 / 1440' }} />
         <div style={{ marginTop: '0.5rem' }}>
           <h3 style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(16px, 2.2vw, 24px)', color: C.gold, fontWeight: 700, letterSpacing: 6, textTransform: 'uppercase', margin: '0 0 1.5rem' }}>Merajarela & Menciptakan</h3>
           <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(14px, 1.4vw, 17px)', lineHeight: 1.85, color: C.cream, opacity: 0.92, maxWidth: 580, margin: '0 auto' }}>
-            Banyak insan muda kreatif punya ketakutan untuk bersaing dengan ribuan desainer
-            di luar sana. Mereka ragu dan merasa insecure dalam berkarya. Dengan tema
-            "MERAJACIPTA" Bharatika Creative Design Festival 2026 diharapkan dapat
-            menjadi dorongan bagi insan muda untuk tetap berkarya "merajalela" dalam
-            ketakutan mereka.
+            Banyak insan muda kreatif punya ketakutan untuk bersaing dengan ribuan desainer di luar sana. Mereka ragu dan merasa insecure dalam berkarya. Dengan tema "MERAJACIPTA" Bharatika Creative Design Festival 2026 diharapkan dapat menjadi dorongan bagi insan muda untuk tetap berkarya "merajalela" dalam ketakutan mereka.
           </p>
         </div>
       </div>
@@ -244,11 +327,8 @@ function RegisterEvents() {
     { title: 'Competition', desc: 'Lomba untuk para insan kreatif dari berbagai kalangan.' },
     { title: 'Networking', desc: 'Sesi networking bersama industri kreatif.' },
   ]
-
   return (
     <section id="events" style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-
-      {/* LEFT */}
       <div style={{ background: C.parchment, minHeight: 560, display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundImage: "radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
         <div style={{ padding: "2rem 2.5rem 0", textAlign: "center" }}>
           <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 12, letterSpacing: 5, color: C.crimson, textTransform: "uppercase", margin: "0", fontWeight: 700 }}>Register</p>
@@ -269,8 +349,6 @@ function RegisterEvents() {
           >See More</TLink>
         </div>
       </div>
-
-      {/* RIGHT */}
       <div style={{ background: "#1E1A14", display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 560, backgroundImage: "radial-gradient(circle, rgba(80,60,20,0.15) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", padding: "3rem 1rem 3rem 2.5rem", gap: "1rem" }}>
           <div>
@@ -292,11 +370,7 @@ function RegisterEvents() {
         </div>
         <div style={{ overflow: "hidden", position: "relative", padding: "1.5rem 1rem 1.5rem 0.5rem", height: "560px" }}>
           <style>{`
-            @keyframes eventsScrollUpDown {
-              0%   { transform: translateY(0); }
-              50%  { transform: translateY(-50%); }
-              100% { transform: translateY(0); }
-            }
+            @keyframes eventsScrollUpDown { 0% { transform: translateY(0); } 50% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
           `}</style>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", animation: "eventsScrollUpDown 12s ease-in-out infinite" }}>
             {[...events, ...events].map((ev, i) => (
@@ -318,20 +392,8 @@ function RedDivider() { return <div style={{ height: 14, background: C.crimson }
 function MarqueeTicker2() {
   const words = Array(12).fill('MERAJACIPTA')
   return (
-    <div style={{
-      background: C.crimson,
-      overflow: 'hidden',
-      padding: '12px 0',
-      position: 'relative',
-      zIndex: 10,
-    }}>
-      <style>{`
-        @keyframes marqueeBounce2 {
-          0%   { transform: translateX(0); }
-          50%  { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
-        }
-      `}</style>
+    <div style={{ background: C.crimson, overflow: 'hidden', padding: '12px 0', position: 'relative', zIndex: 10 }}>
+      <style>{`@keyframes marqueeBounce2 { 0% { transform: translateX(0); } 50% { transform: translateX(-50%); } 100% { transform: translateX(0); } }`}</style>
       <div style={{ display: 'flex', whiteSpace: 'nowrap', animation: 'marqueeBounce2 10s ease-in-out infinite' }}>
         {Array(2).fill(null).map((_, gi) => (
           <div key={gi} style={{ display: 'flex', flexShrink: 0 }}>
@@ -346,35 +408,30 @@ function MarqueeTicker2() {
 }
 
 function Merch() {
+  const [btnHover, setBtnHover] = useState(false)
   return (
     <section id="merch" style={{ background: C.parchment, position: "relative", overflow: "hidden", padding: "5rem 0 5rem", backgroundImage: "radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
       <p style={{ fontFamily: "'Nord', sans-serif", fontSize: "clamp(13px, 1.5vw, 18px)", letterSpacing: 6, color: C.crimson, textTransform: "uppercase", textAlign: "center", margin: "0 0 4rem", fontWeight: 700 }}>Take a look at our Merch</p>
       <div style={{ position: "relative", textAlign: "center", margin: "0 0 5rem" }}>
-        <h2 style={{
-          fontFamily: "'CSSalient', sans-serif",
-          fontSize: "clamp(140px, 28vw, 340px)",
-          margin: 0,
-          lineHeight: 0.85,
-          color: "transparent",
-          WebkitTextStroke: "2px " + C.dark,
-          userSelect: "none",
-          letterSpacing: 8,
-          whiteSpace: "nowrap",
-        }}>MERCH</h2>
-        <div style={{
-          position: "absolute",
-          top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "clamp(220px, 28vw, 380px)",
-          zIndex: 2,
-        }}>
+        <h2 style={{ fontFamily: "'CSSalient', sans-serif", fontSize: "clamp(140px, 28vw, 340px)", margin: 0, lineHeight: 0.85, color: "transparent", WebkitTextStroke: "2px " + C.dark, userSelect: "none", letterSpacing: 8, whiteSpace: "nowrap" }}>MERCH</h2>
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "clamp(220px, 28vw, 380px)", zIndex: 2 }}>
           <img src="/images/BHAJUKITA.svg" alt="Bhajukita" style={{ width: "100%", height: "auto", objectFit: "contain" }} />
         </div>
       </div>
       <div style={{ textAlign: "center" }}>
-        <a href="#" style={{ display: "inline-block", padding: "14px 52px", background: C.crimson, color: C.cream, fontFamily: "'Nord', sans-serif", fontSize: 12, letterSpacing: 4, textDecoration: "none", textTransform: "uppercase", borderRadius: 50, transition: "opacity 0.2s" }}
-          onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-          onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+        <a
+          href="#"
+          onMouseEnter={() => setBtnHover(true)}
+          onMouseLeave={() => setBtnHover(false)}
+          style={{
+            display: "inline-block", padding: "14px 52px",
+            background: btnHover ? 'transparent' : C.crimson,
+            color: btnHover ? C.crimson : C.cream,
+            border: `1.5px solid ${C.crimson}`,
+            fontFamily: "'Nord', sans-serif", fontSize: 12, letterSpacing: 4,
+            textDecoration: "none", textTransform: "uppercase",
+            borderRadius: 50, transition: "all 0.3s", cursor: 'pointer',
+          }}
         >Here</a>
       </div>
     </section>
@@ -431,7 +488,22 @@ export default function Home({ competitions = [] }) {
       <Navbar activeLink="home" />
       <Hero />
       <MarqueeTicker />
-      <About /><RegisterEvents /><MarqueeTicker2 /><RedDivider /><Merch /><Partners /><Footer />
+      <About />
+      <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <RegisterEvents /><MarqueeTicker2 /><RedDivider /><Merch /><Partners /><Footer />
+        </div>
+        <img
+          src="/images/BITMAP.svg"
+          alt=""
+          style={{
+            position: 'absolute', top: 0, left: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'top left',
+            opacity: 0.15, pointerEvents: 'none', zIndex: 2,
+          }}
+        />
+      </div>
     </div>
   )
 }

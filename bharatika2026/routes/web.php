@@ -16,6 +16,7 @@ Route::get('/about', function () {
     return Inertia::render('About');
 });
 
+Route::get('/events', fn() => inertia('Events'))->name('events');
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';
