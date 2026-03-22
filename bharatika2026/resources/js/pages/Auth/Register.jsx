@@ -1,396 +1,272 @@
 import { useState, useEffect } from 'react'
-import { useForm, Link } from '@inertiajs/react'
+import { useForm, usePage } from '@inertiajs/react'
 
 const C = {
   gold: '#C8A84B',
-  cream: '#F0E8CC',
-  parchment: '#E8DDB8',
+  cream: '#E8D9A0',
+  parchment: '#D4C48A',
   crimson: '#8B1A1A',
-  dark: '#1A1410',
   black: '#0F0A05',
-  muted: '#9A8F7A',
-  border: '#D4C9A8',
+  darkBg: '#121212',
 }
 
-function useFonts() {
+/* ─── Shared Components ─── */
+
+function Navbar({ activeLink = '' }) {
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { auth } = usePage().props
+
   useEffect(() => {
-    document.body.style.margin = '0'
-    document.body.style.padding = '0'
-    document.body.style.background = C.cream
-    if (document.getElementById('bh-fonts')) return
-    const l = document.createElement('link')
-    l.id = 'bh-fonts'
-    l.rel = 'stylesheet'
-    l.href = 'https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap'
-    document.head.appendChild(l)
+    const fn = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', fn)
+    return () => window.removeEventListener('scroll', fn)
   }, [])
-}
 
-/* ─── Navbar ─── */
-function Navbar() {
-  const links = ['Home', 'Events', 'Competitions', 'About']
-  return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      background: C.cream, borderBottom: `1px solid ${C.border}`,
-      padding: '0 2.5rem', height: 56,
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    }}>
-      <Link href="/" style={{ textDecoration: 'none' }}>
-        <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 16, color: C.dark }}>bharatika</span>
-      </Link>
-      <div style={{ display: 'flex', gap: '2rem' }}>
-        {links.map(l => (
-          <Link key={l} href={l === 'Home' ? '/' : `/${l.toLowerCase()}`} style={{
-            fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
-            color: C.dark, textDecoration: 'none', textTransform: 'uppercase', opacity: 0.65,
-          }}
-            onMouseEnter={e => e.target.style.opacity = 1}
-            onMouseLeave={e => e.target.style.opacity = 0.65}
-          >{l}</Link>
-        ))}
-      </div>
-    </nav>
-  )
-}
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
 
-/* ─── Step indicator ─── */
-function StepIndicator({ current, total = 3 }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, marginBottom: '2rem' }}>
-      {Array(total).fill(null).map((_, i) => {
-        const step = i + 1
-        const done = step < current
-        const active = step === current
-        return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: '50%',
-              background: active || done ? C.dark : 'transparent',
-              border: `2px solid ${active || done ? C.dark : C.border}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'all 0.3s',
-            }}>
-              {done ? (
-                <svg width="12" height="12" viewBox="0 0 12 12">
-                  <polyline points="2,6 5,9 10,3" stroke={C.cream} strokeWidth="2" fill="none" strokeLinecap="round" />
-                </svg>
-              ) : (
-                <span style={{ fontFamily: "'Cinzel', serif", fontSize: 10, color: active ? C.cream : C.muted, fontWeight: 600 }}>{step}</span>
-              )}
-            </div>
-            {i < total - 1 && (
-              <div style={{ width: 48, height: 2, background: done ? C.dark : C.border, transition: 'background 0.3s' }} />
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
+  const navLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'Events', href: '/events' },
+    { label: 'Competitions', href: '/competitions' },
+    { label: 'About', href: '/about' },
+  ]
 
-/* ─── Regular input field ─── */
-function Field({ label, id, type = 'text', value, onChange, error, placeholder }) {
-  const [focused, setFocused] = useState(false)
-  return (
-    <div style={{ marginBottom: '1rem' }}>
-      {label && (
-        <label htmlFor={id} style={{
-          display: 'block', fontFamily: "'Cinzel', serif",
-          fontSize: 8, letterSpacing: 2, color: C.muted,
-          textTransform: 'uppercase', marginBottom: '0.3rem',
-        }}>{label}</label>
-      )}
-      <input
-        id={id} type={type} value={value}
-        onChange={onChange} placeholder={placeholder}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        style={{
-          width: '100%', padding: '10px 14px', boxSizing: 'border-box',
-          background: focused ? '#FFF8E8' : C.parchment,
-          border: `1px solid ${error ? C.crimson : focused ? C.dark : C.border}`,
-          borderRadius: 4, color: C.dark,
-          fontFamily: "'EB Garamond', Georgia, serif",
-          fontSize: 15, outline: 'none', transition: 'all 0.2s',
-        }}
-      />
-      {error && <p style={{ color: C.crimson, fontSize: 11, margin: '0.3rem 0 0', fontFamily: "'EB Garamond', serif" }}>{error}</p>}
-    </div>
-  )
-}
-
-/* ─── Phone field — hanya angka & + ─── */
-function PhoneField({ label, id, value, onChange, error, placeholder }) {
-  const [focused, setFocused] = useState(false)
-
-  const handleKeyDown = (e) => {
-    // Izinkan: angka, +, navigation keys, backspace, delete
-    const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Home', 'End']
-    if (allowed.includes(e.key)) return
-    if (/^[0-9+]$/.test(e.key)) return
-    // Blokir semua huruf dan karakter lain
-    e.preventDefault()
-  }
-
-  const handleChange = (e) => {
-    // Bersihkan jika ada karakter aneh yang masuk lewat paste
-    const cleaned = e.target.value.replace(/[^0-9+]/g, '')
-    onChange({ target: { value: cleaned } })
-  }
-
-  return (
-    <div style={{ marginBottom: '1rem' }}>
-      <label htmlFor={id} style={{
-        display: 'block', fontFamily: "'Cinzel', serif",
-        fontSize: 8, letterSpacing: 2, color: C.muted,
-        textTransform: 'uppercase', marginBottom: '0.3rem',
-      }}>{label}</label>
-      <input
-        id={id}
-        type="tel"
-        inputMode="numeric"
-        value={value}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        style={{
-          width: '100%', padding: '10px 14px', boxSizing: 'border-box',
-          background: focused ? '#FFF8E8' : C.parchment,
-          border: `1px solid ${error ? C.crimson : focused ? C.dark : C.border}`,
-          borderRadius: 4, color: C.dark,
-          fontFamily: "'EB Garamond', Georgia, serif",
-          fontSize: 15, outline: 'none', transition: 'all 0.2s',
-        }}
-      />
-      {error && <p style={{ color: C.crimson, fontSize: 11, margin: '0.3rem 0 0', fontFamily: "'EB Garamond', serif" }}>{error}</p>}
-    </div>
-  )
-}
-
-/* ─── Validasi per step ─── */
-function validateStep(step, data) {
-  const errs = {}
-
-  if (step === 1) {
-    if (!data.name.trim())
-      errs.name = 'Nama lengkap wajib diisi.'
-    if (!data.email.trim())
-      errs.email = 'Email wajib diisi.'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
-      errs.email = 'Format email tidak valid.'
-    if (!data.instansi.trim())
-      errs.instansi = 'Asal instansi wajib diisi.'
-  }
-
-  if (step === 2) {
-    if (!data.whatsapp.trim())
-      errs.whatsapp = 'Nomor WhatsApp wajib diisi.'
-    else if (data.whatsapp.replace(/[^0-9]/g, '').length < 9)
-      errs.whatsapp = 'Nomor telepon minimal 9 digit.'
-    else if (data.whatsapp.replace(/[^0-9]/g, '').length > 15)
-      errs.whatsapp = 'Nomor telepon maksimal 15 digit.'
-  }
-
-  if (step === 3) {
-    if (!data.password)
-      errs.password = 'Password wajib diisi.'
-    else if (data.password.length < 6)
-      errs.password = 'Password minimal 6 karakter.'
-    if (!data.password_confirmation)
-      errs.password_confirmation = 'Konfirmasi password wajib diisi.'
-    else if (data.password !== data.password_confirmation)
-      errs.password_confirmation = 'Password tidak cocok.'
-  }
-
-  return errs
-}
-
-/* ─── STEP 1 ─── */
-function Step1({ data, setData, localErrors }) {
   return (
     <>
-      <Field label="Nama Lengkap" id="name" value={data.name}
-        onChange={e => setData('name', e.target.value)}
-        error={localErrors.name} placeholder="Alexandra Adi Abigail" />
-      <Field label="Email" id="email" type="email" value={data.email}
-        onChange={e => setData('email', e.target.value)}
-        error={localErrors.email} placeholder="nama@email.com" />
-      <Field label="Asal Instansi" id="instansi" value={data.instansi}
-        onChange={e => setData('instansi', e.target.value)}
-        error={localErrors.instansi} placeholder="Petra Christian University" />
-    </>
-  )
-}
+      <style>{`
+        @keyframes overlayIn { from { clip-path: circle(0% at calc(100% - 2.5rem) 26px); } to { clip-path: circle(170% at calc(100% - 2.5rem) 26px); } }
+        @keyframes overlayOut { from { clip-path: circle(170% at calc(100% - 2.5rem) 26px); } to { clip-path: circle(0% at calc(100% - 2.5rem) 26px); } }
+        @keyframes navItemIn { from { opacity: 0; transform: translateX(-60px) skewX(-8deg); } to { opacity: 1; transform: translateX(0) skewX(0deg); } }
+      `}</style>
 
-/* ─── STEP 2 ─── */
-function Step2({ data, setData, localErrors }) {
-  return (
-    <>
-      <PhoneField label="Nomor WhatsApp" id="whatsapp" value={data.whatsapp}
-        onChange={e => setData('whatsapp', e.target.value)}
-        error={localErrors.whatsapp} placeholder="08xxxxxxxxxx" />
-      <Field label="ID Line (Opsional)" id="line_id" value={data.line_id}
-        onChange={e => setData('line_id', e.target.value)}
-        error={localErrors.line_id} placeholder="line_id_kamu" />
-    </>
-  )
-}
-
-/* ─── STEP 3 ─── */
-function Step3({ data, setData, localErrors, serverErrors }) {
-  return (
-    <>
-      <Field label="Password" id="password" type="password" value={data.password}
-        onChange={e => setData('password', e.target.value)}
-        error={localErrors.password || serverErrors.password}
-        placeholder="Min. 6 karakter" />
-      <Field label="Konfirmasi Password" id="password_confirmation" type="password"
-        value={data.password_confirmation}
-        onChange={e => setData('password_confirmation', e.target.value)}
-        error={localErrors.password_confirmation || serverErrors.password_confirmation}
-        placeholder="Ulangi password" />
-    </>
-  )
-}
-
-/* ─── MAIN ─── */
-export default function Register() {
-  useFonts()
-  const [step, setStep] = useState(1)
-  const [localErrors, setLocalErrors] = useState({})
-
-  const { data, setData, post, processing, errors: serverErrors } = useForm({
-    name: '',
-    email: '',
-    instansi: '',
-    whatsapp: '',
-    line_id: '',
-    password: '',
-    password_confirmation: '',
-  })
-
-  const next = () => {
-    const errs = validateStep(step, data)
-    if (Object.keys(errs).length > 0) {
-      setLocalErrors(errs)
-      return
-    }
-    setLocalErrors({})
-    setStep(s => s + 1)
-  }
-
-  const prev = () => {
-    setLocalErrors({})
-    setStep(s => s - 1)
-  }
-
-  const submit = (e) => {
-    e.preventDefault()
-    if (step < 3) { next(); return }
-    const errs = validateStep(3, data)
-    if (Object.keys(errs).length > 0) {
-      setLocalErrors(errs)
-      return
-    }
-    setLocalErrors({})
-    post('/register')
-  }
-
-  const stepTitles = ['Informasi Pribadi', 'Informasi Kontak', 'Keamanan Akun']
-
-  return (
-    <div style={{ minHeight: '100vh', background: C.cream }}>
-      <Navbar />
-
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '80px 1.5rem 3rem',
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, height: 52,
+        display: 'flex', alignItems: 'center', justifyContent: menuOpen ? 'flex-end' : 'space-between',
+        padding: '0 1.75rem', background: menuOpen ? 'transparent' : (scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)'),
+        backdropFilter: menuOpen ? 'none' : 'blur(6px)', borderBottom: (!menuOpen && scrolled) ? '1px solid rgba(139,26,26,0.25)' : 'none', transition: 'all 0.35s',
       }}>
-        <div style={{ width: '100%', maxWidth: 400 }}>
+        {!menuOpen && (
+          <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img src="/images/BHRTK MERAH 1.png" alt="bharatika" style={{ height: 32, width: 'auto' }} />
+          </a>
+        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: menuOpen ? '1rem' : '0.75rem', background: menuOpen ? C.parchment : 'transparent', borderRadius: 50, padding: menuOpen ? '10px 20px' : '0', transition: 'all 0.35s' }}>
+          <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            {menuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.crimson} strokeWidth="2.5"><line x1="4" y1="4" x2="20" y2="20" /><line x1="20" y1="4" x2="4" y2="20" /></svg>
+            ) : (
+              <img src="/images/BURGER.png" alt="menu" style={{ height: 16 }} />
+            )}
+          </button>
+          <a href={auth?.user ? '/history' : '/login'} style={{ textDecoration: 'none', opacity: menuOpen ? 1 : 0.75 }}>
+            <img src="/images/Group 3.png" alt="profile" style={{ height: 26 }} />
+          </a>
+        </div>
+      </nav>
 
-          {/* Title */}
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 style={{
-              fontFamily: "'Cinzel', serif", fontSize: 26,
-              color: C.dark, fontWeight: 600, margin: '0 0 0.25rem', letterSpacing: 1,
-            }}>Register</h1>
-            <div style={{ width: '100%', height: 1, background: C.border, marginTop: '0.75rem' }} />
-          </div>
-
-          {/* Step indicator */}
-          <StepIndicator current={step} total={3} />
-
-          {/* Step label */}
-          <p style={{
-            fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 3,
-            color: C.muted, textTransform: 'uppercase', textAlign: 'center',
-            margin: '-1rem 0 1.5rem',
-          }}>{stepTitles[step - 1]}</p>
-
-          {/* Server error dari Laravel (misal email sudah dipakai) */}
-          {serverErrors.email && step === 1 && (
-            <div style={{
-              padding: '10px 14px', marginBottom: '1rem',
-              background: 'rgba(139,26,26,0.07)',
-              border: `1px solid rgba(139,26,26,0.2)`,
-              borderRadius: 4,
-            }}>
-              <p style={{ color: C.crimson, fontSize: 13, margin: 0, fontFamily: "'EB Garamond', serif" }}>
-                {serverErrors.email}
-              </p>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 250, background: C.crimson, animation: menuOpen ? 'overlayIn 0.65s forwards' : 'overlayOut 0.5s forwards', pointerEvents: menuOpen ? 'all' : 'none', overflow: 'hidden' }}>
+        <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15 }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.5 }} />
+        <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8vw' }}>
+          {navLinks.map((link, i) => (
+            <div key={link.label} style={{ animation: menuOpen ? `navItemIn 0.6s ${0.1 + i * 0.08}s both` : 'none' }}>
+              <span style={{ fontFamily: "'Nord', sans-serif", fontSize: '44px', fontWeight: 700, color: C.gold, textTransform: 'uppercase' }}>{link.label}</span>
             </div>
-          )}
-
-          <form onSubmit={submit}>
-            {step === 1 && <Step1 data={data} setData={setData} localErrors={localErrors} />}
-            {step === 2 && <Step2 data={data} setData={setData} localErrors={localErrors} />}
-            {step === 3 && <Step3 data={data} setData={setData} localErrors={localErrors} serverErrors={serverErrors} />}
-
-            <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 13, color: C.muted, margin: '0.75rem 0 1rem' }}>
-              Already have an account?{' '}
-              <Link href="/login" style={{ color: C.dark, fontWeight: 600, textDecoration: 'none' }}>Sign In</Link>
-            </p>
-
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: step > 1 ? 'space-between' : 'flex-end' }}>
-              {step > 1 && (
-                <button type="button" onClick={prev} style={{
-                  padding: '10px 28px', background: 'transparent',
-                  border: `1.5px solid ${C.dark}`, color: C.dark,
-                  cursor: 'pointer', fontFamily: "'Cinzel', serif",
-                  fontSize: 11, letterSpacing: 2, borderRadius: 4, transition: 'all 0.2s',
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.background = C.dark; e.currentTarget.style.color = C.cream }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = C.dark }}
-                >Previous</button>
-              )}
-
-              {step < 3 ? (
-                <button type="submit" style={{
-                  padding: '10px 28px', background: C.dark, color: C.cream,
-                  border: 'none', cursor: 'pointer', fontFamily: "'Cinzel', serif",
-                  fontSize: 11, letterSpacing: 2, borderRadius: 4, transition: 'opacity 0.2s',
-                }}
-                  onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-                  onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-                >Next &gt;</button>
-              ) : (
-                <button type="submit" disabled={processing} style={{
-                  flex: 1, padding: '12px', background: C.dark, color: C.cream,
-                  border: 'none', cursor: processing ? 'not-allowed' : 'pointer',
-                  fontFamily: "'Cinzel', serif", fontSize: 11, letterSpacing: 2,
-                  borderRadius: 4, opacity: processing ? 0.6 : 1, transition: 'opacity 0.2s',
-                }}>
-                  {processing ? 'Memproses...' : 'Create an Account'}
-                </button>
-              )}
-            </div>
-          </form>
+          ))}
         </div>
       </div>
+    </>
+  )
+}
+
+function Footer() {
+  return (
+    <footer style={{ background: C.black, padding: '2.5rem 2rem 1.75rem', borderTop: '1px solid rgba(200,168,75,0.1)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem' }}>
+        <div>
+          <p style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 26, color: C.cream, margin: 0 }}>bharatika</p>
+          <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, color: C.cream, opacity: 0.4, textTransform: 'uppercase' }}>Creative Design Festival</p>
+        </div>
+      </div>
+      <div style={{ borderTop: '1px solid rgba(232,217,160,0.08)', paddingTop: '1.25rem', textAlign: 'right' }}>
+        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, color: C.cream, opacity: 0.25, margin: 0 }}>© Bharatika 2026. All Rights Reserved.</p>
+      </div>
+    </footer>
+  )
+}
+
+/* ─── Field and Indicator ─── */
+
+function StepIndicator({ current, total = 3 }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: '2.5rem' }}>
+      {Array(total).fill(null).map((_, i) => (
+        <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: (i + 1) <= current ? C.cream : 'rgba(232, 217, 160, 0.2)', transition: '0.4s ease' }} />
+      ))}
+    </div>
+  )
+}
+
+function Field({ label, value, onChange, error, placeholder, type = "text", inputMode }) {
+  return (
+    <div style={{ marginBottom: '20px' }}>
+      <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: '11px', color: '#fff', opacity: 0.7, textTransform: 'capitalize', marginLeft: '4px' }}>{label}</label>
+      <input 
+        type={type} 
+        value={value} 
+        onChange={onChange} 
+        inputMode={inputMode}
+        placeholder={placeholder}
+        style={{ width: '100%', padding: '12px 18px', background: 'transparent', border: `1.5px solid ${error ? '#E08080' : C.cream}`, borderRadius: '14px', color: '#fff', fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: '14px', outline: 'none', marginTop: '6px' }} 
+      />
+      {error && <p style={{ color: '#E08080', fontSize: '11px', marginTop: '4px', marginLeft: '4px' }}>{error}</p>}
+    </div>
+  )
+}
+
+/* ─── Main Register Page ─── */
+
+export default function Register() {
+  const [step, setStep] = useState(1)
+  const [localErrors, setLocalErrors] = useState({})
+  const { data, setData, post, processing, errors: serverErrors } = useForm({
+    name: '', email: '', instansi: '', whatsapp: '', line_id: '', password: '', password_confirmation: '',
+  })
+
+  useEffect(() => {
+    document.body.style.background = C.black
+    if (document.getElementById('bh-fonts')) return
+    const l = document.createElement('link')
+    l.id = 'bh-fonts'; l.rel = 'stylesheet'
+    l.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative:wght@400;700&family=FamiljenGrotesk:wght@400;700&display=swap'
+    document.head.appendChild(l)
+  }, [])
+
+  const validateStep = (s) => {
+    const errs = {}
+    if (s === 1) {
+      if (!data.name.trim()) errs.name = 'Full Name is required';
+      if (!data.email.trim()) {
+        errs.email = 'Email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+        errs.email = 'Invalid email format';
+      }
+      if (!data.instansi.trim()) errs.instansi = 'Institution is required';
+    }
+    if (s === 2) {
+      const phoneDigits = data.whatsapp.replace(/[^0-9]/g, '');
+      if (!data.whatsapp.trim()) {
+        errs.whatsapp = 'Phone number is required';
+      } else if (phoneDigits.length < 9 || phoneDigits.length > 15) {
+        errs.whatsapp = 'Phone number must be between 9-15 digits';
+      }
+    }
+    if (s === 3) {
+      if (data.password.length < 6) errs.password = 'Password must be at least 6 characters';
+      if (data.password !== data.password_confirmation) errs.password_confirmation = 'Passwords do not match';
+    }
+    return errs
+  }
+
+  const handleNext = (e) => {
+    e.preventDefault(); 
+    const errs = validateStep(step)
+    if (Object.keys(errs).length > 0) { setLocalErrors(errs); return }
+    setLocalErrors({}); 
+    if (step < 3) setStep(s => s + 1); 
+    else post('/register')
+  }
+
+  const handlePhoneChange = (e) => {
+    const val = e.target.value.replace(/[^0-9+]/g, '');
+    setData('whatsapp', val);
+  }
+
+  // Combined error message from server
+  const serverErrorMsg = Object.values(serverErrors)[0];
+
+  return (
+    <div style={{ background: C.black, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar />
+      
+      <style>{`
+        @keyframes headlineIn { 0% { opacity: 0; transform: translateY(30px); filter: blur(10px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0px); } }
+        @keyframes pulseGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
+        @keyframes formAreaIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @keyframes errorFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
+
+      <div style={{ display: 'flex', flex: 1, paddingTop: 52, overflow: 'hidden' }}>
+        <div style={{ flex: '0 0 40%', position: 'relative', background: C.crimson, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 5vw' }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
+          <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(44px, 7vw, 100px)', color: C.cream, lineHeight: 1.1, textTransform: 'uppercase', margin: 0, zIndex: 2, letterSpacing: '8px', animation: 'headlineIn 1.2s ease forwards, pulseGlow 4s ease-in-out infinite' }}>
+            SIGN<br/>UP
+          </h1>
+        </div>
+
+        <div style={{ flex: '0 0 60%', background: C.darkBg, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)", backgroundSize: '24px 24px' }} />
+          <div style={{ width: '100%', maxWidth: '440px', padding: '2rem', zIndex: 1, animation: 'formAreaIn 0.8s ease-out both' }}>
+            
+            <StepIndicator current={step} />
+
+            {/* Error Notification Alert */}
+            {serverErrorMsg && (
+              <div style={{ 
+                background: 'rgba(224, 128, 128, 0.15)', 
+                border: '1px solid #E08080', 
+                padding: '12px', 
+                borderRadius: '10px', 
+                marginBottom: '20px', 
+                animation: 'errorFade 0.4s ease forwards' 
+              }}>
+                <p style={{ color: '#E08080', fontSize: '13px', margin: 0, textAlign: 'center', fontFamily: "'FamiljenGrotesk', sans-serif" }}>
+                  {serverErrorMsg}
+                </p>
+              </div>
+            )}
+
+            <form onSubmit={handleNext}>
+              {step === 1 && (
+                <>
+                  <Field label="Full Name" value={data.name} onChange={e => setData('name', e.target.value)} error={localErrors.name} placeholder="John Doe" />
+                  <Field label="E-Mail" type="email" value={data.email} onChange={e => setData('email', e.target.value)} error={localErrors.email || serverErrors.email} placeholder="name@email.com" />
+                  <Field label="Institution" value={data.instansi} onChange={e => setData('instansi', e.target.value)} error={localErrors.instansi} placeholder="University Name" />
+                </>
+              )}
+              {step === 2 && (
+                <>
+                  <Field label="Line ID (Optional)" value={data.line_id} onChange={e => setData('line_id', e.target.value)} placeholder="@username" />
+                  <Field label="WhatsApp Number" inputMode="tel" value={data.whatsapp} onChange={handlePhoneChange} error={localErrors.whatsapp} placeholder="08xxxxxxxxx" />
+                </>
+              )}
+              {step === 3 && (
+                <>
+                  <Field label="Password" type="password" value={data.password} onChange={e => setData('password', e.target.value)} error={localErrors.password} placeholder="••••••••" />
+                  <Field label="Confirm Password" type="password" value={data.password_confirmation} onChange={e => setData('password_confirmation', e.target.value)} error={localErrors.password_confirmation} placeholder="••••••••" />
+                </>
+              )}
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
+                {step > 1 && (
+                  <button type="button" onClick={() => setStep(s => s - 1)} style={{ flex: 1, padding: '14px', background: 'transparent', border: `1.5px solid ${C.cream}`, borderRadius: '50px', color: C.cream, fontFamily: "'Cinzel', serif", fontSize: '13px', cursor: 'pointer' }}>BACK</button>
+                )}
+                <button type="submit" disabled={processing} style={{ flex: 1, padding: '14px', background: C.cream, color: C.crimson, border: 'none', borderRadius: '50px', fontFamily: "'Cinzel', serif", fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: '0.3s' }}>
+                  {processing ? 'SUBMITTING...' : (step < 3 ? 'NEXT' : 'SIGN UP')}
+                </button>
+              </div>
+              <p style={{ color: '#fff', fontSize: '12px', textAlign: 'center', marginTop: '24px', opacity: 0.6, fontFamily: "'FamiljenGrotesk', sans-serif" }}>
+                Already have an account? <a href="/login" style={{ color: C.cream }}>Sign in here</a>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+      <Footer />
     </div>
   )
 }
