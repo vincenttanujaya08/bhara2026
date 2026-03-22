@@ -1,269 +1,388 @@
-import { useEffect, useState } from 'react'
-import { useForm, usePage } from '@inertiajs/react'
-import { navigateWithTransition } from '../../hooks/usePageTransition'
+import { useState, useEffect } from 'react'
+import { useForm } from '@inertiajs/react'
+import MainLayout from '../../Layouts/MainLayout'
 
 const C = {
-  gold: '#C8A84B',
-  cream: '#E8D9A0',
-  parchment: '#D4C48A',
-  crimson: '#8B1A1A',
-  black: '#0F0A05',
-  darkBg: '#121212',
-}
-
-function Navbar({ activeLink = '' }) {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [hoveredLink, setHoveredLink] = useState(null)
-  const { auth } = usePage().props
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', fn)
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
-
-  const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Events', href: '/events' },
-    { label: 'Competitions', href: '/competitions' },
-    { label: 'About', href: '/about' },
-  ]
-
-  const handleNav = (href) => {
-    setMenuOpen(false)
-    setTimeout(() => navigateWithTransition(href), 400)
-  }
-
-  return (
-    <>
-      <style>{`
-        @keyframes overlayIn { from { clip-path: circle(0% at calc(100% - 2.5rem) 26px); } to { clip-path: circle(170% at calc(100% - 2.5rem) 26px); } }
-        @keyframes overlayOut { from { clip-path: circle(170% at calc(100% - 2.5rem) 26px); } to { clip-path: circle(0% at calc(100% - 2.5rem) 26px); } }
-        @keyframes navItemIn { from { opacity: 0; transform: translateX(-60px) skewX(-8deg); } to { opacity: 1; transform: translateX(0) skewX(0deg); } }
-      `}</style>
-
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, height: 52,
-        display: 'flex', alignItems: 'center', justifyContent: menuOpen ? 'flex-end' : 'space-between',
-        padding: '0 1.75rem', background: menuOpen ? 'transparent' : (scrolled ? 'rgba(235,217,157,0.98)' : 'rgba(235,217,157,0.85)'),
-        backdropFilter: menuOpen ? 'none' : 'blur(6px)', borderBottom: (!menuOpen && scrolled) ? '1px solid rgba(139,26,26,0.25)' : 'none', transition: 'all 0.35s',
-      }}>
-        {!menuOpen && (
-          <a href="/" onClick={e => { e.preventDefault(); handleNav('/') }} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <img src="/images/BHRTK MERAH 1.png" alt="bharatika" style={{ height: 32, width: 'auto' }} />
-          </a>
-        )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: menuOpen ? '1rem' : '0.75rem', background: menuOpen ? C.parchment : 'transparent', borderRadius: menuOpen ? 50 : 0, padding: menuOpen ? '10px 20px' : '0', transition: 'all 0.35s' }}>
-          <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            {menuOpen ? <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.crimson} strokeWidth="2.5"><line x1="4" y1="4" x2="20" y2="20" /><line x1="20" y1="4" x2="4" y2="20" /></svg> : <img src="/images/BURGER.png" style={{ height: 16 }} />}
-          </button>
-          <a href={auth?.user ? '/history' : '/login'} onClick={e => { e.preventDefault(); handleNav(auth?.user ? '/history' : '/login') }} style={{ opacity: menuOpen ? 1 : 0.75 }}>
-            <img src="/images/Group 3.png" style={{ height: menuOpen ? 26 : 20 }} />
-          </a>
-        </div>
-      </nav>
-
-      <div style={{ position: 'fixed', inset: 0, zIndex: 250, background: C.crimson, animation: menuOpen ? 'overlayIn 0.65s forwards' : 'overlayOut 0.5s forwards', pointerEvents: menuOpen ? 'all' : 'none', overflow: 'hidden' }}>
-        <img src="/images/BITMAP.svg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15 }} />
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.5 }} />
-        <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8vw' }}>
-          {navLinks.map((link, i) => (
-            <div key={link.label} onClick={() => handleNav(link.href)} style={{ position: 'relative', cursor: 'pointer', lineHeight: 1.1, animation: menuOpen ? `navItemIn 0.6s ${0.1 + i * 0.08}s both` : 'none' }}>
-              <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(44px, 7vw, 90px)', fontWeight: 700, color: C.gold, textTransform: 'uppercase', letterSpacing: 2, display: 'block', lineHeight: 1.6 }}>{link.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
-  )
-}
-
-function Footer() {
-  return (
-    <footer style={{ background: C.black, padding: '2.5rem 2rem 1.75rem', borderTop: '1px solid rgba(200,168,75,0.1)' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem', marginBottom: '1.5rem' }}>
-        <div>
-          <p style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 26, color: C.cream, margin: '0 0 2px' }}>bharatika</p>
-          <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2, color: C.cream, opacity: 0.4, textTransform: 'uppercase', margin: 0 }}>Creative Design Festival</p>
-        </div>
-        <div style={{ display: 'flex', gap: '0.6rem' }}>
-          {['ig', 'tt', 'yt'].map((key) => (
-            <div key={key} style={{ width: 34, height: 34, border: '1px solid rgba(232,217,160,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 18, height: 18, background: C.cream, opacity: 0.5 }}></div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ borderTop: '1px solid rgba(232,217,160,0.08)', paddingTop: '1.25rem', textAlign: 'right' }}>
-        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, color: C.cream, opacity: 0.25, margin: 0 }}>© Bharatika 2026. All Rights Reserved.</p>
-      </div>
-    </footer>
-  )
+  gold:     '#C8A84B',
+  cream:    '#E8D9A0',
+  crimson:  '#8B1A1A',
+  dark:     '#0F0A05',
+  darkCard: '#1A1410',
+  darkGreen:'#0E1A10',
 }
 
 function useFonts() {
   useEffect(() => {
-    if (document.getElementById('bh-fonts')) return
+    if (document.getElementById('login-fonts')) return
     const style = document.createElement('style')
-    style.id = 'bh-fonts'
+    style.id = 'login-fonts'
     style.textContent = `
-      @font-face { font-family: 'CSSalient'; src: url('/fonts/CSSalient-Regular.ttf') format('truetype'); }
-      @font-face { font-family: 'Nord'; src: url('/fonts/NORD-Bold.ttf') format('truetype'); }
-      
-      @keyframes headlineIn {
-        0% { opacity: 0; transform: translateY(20px); filter: blur(8px); }
-        100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
-      }
-      @keyframes formAreaIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
+      @font-face { font-family: 'CSSalient';      src: url('/fonts/CSSalient-Regular.ttf')    format('truetype'); }
+      @font-face { font-family: 'Nord';            src: url('/fonts/NORD-Bold.ttf')             format('truetype'); font-weight: bold; }
+      @font-face { font-family: 'FamiljenGrotesk'; src: url('/fonts/FamiljenGrotesk-Variable.ttf') format('truetype'); font-weight: 100 900; }
     `
     document.head.appendChild(style)
+    if (document.getElementById('bh-fonts')) return
     const l = document.createElement('link')
-    l.rel = 'stylesheet'
-    l.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative:wght@400;700&family=FamiljenGrotesk:wght@400;700&display=swap'
+    l.id = 'bh-fonts'; l.rel = 'stylesheet'
+    l.href = 'https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap'
     document.head.appendChild(l)
   }, [])
 }
 
-export default function Login({ flash = {} }) {
+export default function Login({ errors = {} }) {
   useFonts()
-  const { data, setData, post, processing, errors } = useForm({ email: '', password: '' })
-  const submit = (e) => { e.preventDefault(); post('/login') }
 
-  const inputStyle = (err) => ({
+  const { data, setData, post, processing } = useForm({
+    email: '',
+    password: '',
+    remember: false,
+  })
+
+  const [showPass, setShowPass] = useState(false)
+  const [focused, setFocused] = useState(null)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    post('/login')
+  }
+
+  const inputStyle = (name) => ({
     width: '100%',
-    padding: '12px 16px',
     background: 'transparent',
-    border: `1.5px solid ${err ? '#E08080' : C.cream}`,
-    borderRadius: '14px',
-    color: '#fff',
-    fontFamily: "'FamiljenGrotesk', sans-serif",
-    fontSize: '15px',
+    border: 'none',
     outline: 'none',
-    marginTop: '6px'
+    color: C.cream,
+    fontFamily: "'FamiljenGrotesk', sans-serif",
+    fontSize: 'clamp(15px, 1.5vw, 18px)',
+    padding: 0,
+    caretColor: C.gold,
+  })
+
+  const fieldWrap = (name) => ({
+    width: '100%',
+    border: `1.5px solid ${focused === name ? C.gold : 'rgba(200,168,75,0.45)'}`,
+    borderRadius: 14,
+    padding: '14px 20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    background: 'rgba(200,168,75,0.04)',
+    transition: 'border-color 0.2s',
+    boxSizing: 'border-box',
+    cursor: 'text',
   })
 
   return (
-    <div style={{ background: C.black, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar />
-      
-      {/* Main Content Area - fills exactly between navbar and footer */}
-      <div style={{ 
-        display: 'flex', 
-        flex: 1, 
-        paddingTop: 52, // Height of Navbar
-        overflow: 'hidden' 
-      }}>
-        
-        {/* Left Section (40%) */}
-        <div style={{ 
-          flex: '0 0 40%', 
-          position: 'relative', 
-          background: C.crimson, 
-          display: 'flex', 
-          flexDirection: 'column', 
-          justifyContent: 'center', 
-          padding: '0 5vw', 
-          overflow: 'hidden' 
-        }}>
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
-          <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.12, zIndex: 1 }} />
-          
-          <h1 style={{ 
-            fontFamily: "'CSSalient', sans-serif", 
-            fontSize: 'clamp(42px, 7vw, 105px)', 
-            color: C.cream, 
-            lineHeight: 0.82, 
-            textTransform: 'uppercase', 
-            margin: 0, 
-            zIndex: 2,
-            letterSpacing: '1px',
-            animation: 'headlineIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards'
+    <MainLayout>
+      <style>{`
+        /* ── Login page ── */
+        .login-wrap {
+          display: flex;
+          min-height: 100vh;
+          padding-top: 52px;
+        }
+
+        /* Left — crimson panel */
+        .login-left {
+          width: 44%;
+          position: relative;
+          overflow: hidden;
+          background: ${C.crimson};
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        /* Right — dark form panel */
+        .login-right {
+          width: 56%;
+          background: ${C.darkGreen};
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4rem 5vw;
+          position: relative;
+        }
+        .login-right::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          backgroundImage: url('/images/BITMAP.svg');
+          background-size: cover;
+          opacity: 0.07;
+          pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+          .login-wrap  { flex-direction: column; }
+          .login-left  { width: 100%; min-height: 40vh; }
+          .login-right { width: 100%; padding: 3rem 2rem 4rem; }
+        }
+        @media (max-width: 540px) {
+          .login-left  { min-height: 35vh; }
+          .login-right { padding: 2.5rem 1.25rem 3rem; }
+        }
+
+        /* Input autofill override */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+          -webkit-text-fill-color: ${C.cream};
+          -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .login-btn {
+          width: 100%;
+          padding: 16px;
+          border-radius: 50px;
+          border: none;
+          background: ${C.cream};
+          color: ${C.crimson};
+          font-family: 'Cinzel', serif;
+          font-size: clamp(14px, 1.5vw, 18px);
+          font-weight: 700;
+          letter-spacing: 4px;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.15s;
+          margin-top: 0.5rem;
+        }
+        .login-btn:hover  { background: #d4c98a; transform: translateY(-1px); }
+        .login-btn:active { transform: translateY(0); }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .login-link {
+          color: ${C.cream};
+          text-decoration: underline;
+          text-underline-offset: 3px;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .login-link:hover { color: ${C.gold}; }
+      `}</style>
+
+      <div className="login-wrap">
+
+        {/* ══════════ LEFT — crimson + tagline + crown ══════════ */}
+        <div className="login-left">
+
+          {/* BG texture */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: "url('/images/BG MERAH.svg')",
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            opacity: 0.85, pointerEvents: 'none',
+          }} />
+          <img src="/images/BITMAP.svg" alt="" style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', opacity: 0.18, pointerEvents: 'none',
+          }} />
+
+          {/* Tagline */}
+          <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(2rem,5vw,4rem) clamp(1.5rem,4vw,3.5rem) 0' }}>
+            <h1 style={{
+              fontFamily: "'UnifrakturMaguntia', cursive",
+              fontSize: 'clamp(44px, 7vw, 96px)',
+              color: C.cream,
+              margin: 0,
+              lineHeight: 1.05,
+              letterSpacing: 1,
+              textTransform: 'none',
+            }}>
+              Get<br />
+              Yourself<br />
+              Ready to<br />
+              Take the<br />
+              Throne!
+            </h1>
+          </div>
+
+          {/* Crown image — pinned to bottom */}
+          <div style={{
+            position: 'relative', zIndex: 2,
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+            width: '100%',
+            marginTop: 'auto',
           }}>
-            Get Yourself Ready To Take The Throne!
-          </h1>
+            <img
+              src="/images/MAHKOTA.svg"
+              alt="Crown"
+              style={{
+                width: '100%',
+                maxHeight: 'clamp(180px, 28vw, 360px)',
+                objectFit: 'contain',
+                objectPosition: 'bottom center',
+                display: 'block',
+              }}
+              onError={e => { e.target.style.opacity = '0' }}
+            />
+          </div>
+
         </div>
 
-        {/* Right Section (60%) */}
-        <div style={{ 
-          flex: '0 0 60%', 
-          background: C.darkBg, 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center',
-          position: 'relative',
-          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: '24px 24px'
-        }}>
-          <div style={{ width: '100%', maxWidth: '380px', padding: '2rem', zIndex: 1, animation: 'formAreaIn 0.8s ease-out both' }}>
-            <h2 style={{ 
-              fontFamily: "'Cinzel', serif", 
-              fontSize: '44px', 
-              color: C.cream, 
-              textAlign: 'center', 
-              letterSpacing: '10px', 
-              marginBottom: '48px',
-              fontWeight: 400
-            }}>SIGN IN</h2>
+        {/* ══════════ RIGHT — form ══════════ */}
+        <div className="login-right">
+          <div style={{
+            position: 'relative', zIndex: 1,
+            width: '100%',
+            maxWidth: 520,
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            gap: '1.75rem',
+          }}>
 
-            <form onSubmit={submit}>
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: '11px', color: '#fff', opacity: 0.7, textTransform: 'capitalize', marginLeft: '4px' }}>E-Mail</label>
-                <input type="email" value={data.email} onChange={e => setData('email', e.target.value)} style={inputStyle(errors.email)} placeholder="h14240000@john.petra.ac.id" />
-                {errors.email && <p style={{ color: '#E08080', fontSize: '11px', marginTop: '6px' }}>{errors.email}</p>}
-              </div>
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: '11px', color: '#fff', opacity: 0.7, textTransform: 'capitalize', marginLeft: '4px' }}>Password</label>
-                <input type="password" value={data.password} onChange={e => setData('password', e.target.value)} style={inputStyle(errors.password)} placeholder="********" />
-                {errors.password && <p style={{ color: '#E08080', fontSize: '11px', marginTop: '6px' }}>{errors.password}</p>}
-              </div>
+            {/* Title */}
+            <h2 style={{
+              fontFamily: "'Nord', sans-serif",
+              fontSize: 'clamp(36px, 6vw, 80px)',
+              color: C.cream,
+              margin: '0 0 0.5rem',
+              letterSpacing: 10,
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              textAlign: 'center',
+            }}>
+              Sign In
+            </h2>
 
-              <div style={{ marginBottom: '40px' }}>
-                <a href="#" style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: '12px', color: C.cream, opacity: 0.8, textDecoration: 'underline' }}>Forgot Password</a>
-              </div>
-
-              <button 
-                type="submit" 
-                disabled={processing} 
-                style={{ 
-                  width: '100%', 
-                  padding: '14px', 
-                  background: C.cream, 
-                  color: C.crimson, 
-                  border: 'none', 
-                  borderRadius: '50px', 
-                  fontFamily: "'Cinzel', serif", 
-                  fontSize: '13px', 
-                  fontWeight: 700, 
-                  letterSpacing: '2px', 
-                  cursor: 'pointer',
-                  opacity: processing ? 0.6 : 1,
-                  transition: 'transform 0.2s'
-                }}
-                onMouseEnter={e => !processing && (e.currentTarget.style.transform = 'translateY(-2px)')}
-                onMouseLeave={e => !processing && (e.currentTarget.style.transform = 'translateY(0)')}
+            {/* ── Email field ── */}
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div
+                style={fieldWrap('email')}
+                onClick={() => document.getElementById('login-email').focus()}
               >
-                SIGN IN
-              </button>
+                <label style={{
+                  fontFamily: "'FamiljenGrotesk', sans-serif",
+                  fontSize: 'clamp(10px, 1vw, 12px)',
+                  color: focused === 'email' ? C.gold : 'rgba(200,168,75,0.65)',
+                  textTransform: 'uppercase',
+                  letterSpacing: 2,
+                  fontWeight: 600,
+                  transition: 'color 0.2s',
+                  cursor: 'text',
+                }}>
+                  E-Mail
+                </label>
+                <input
+                  id="login-email"
+                  type="email"
+                  value={data.email}
+                  onChange={e => setData('email', e.target.value)}
+                  onFocus={() => setFocused('email')}
+                  onBlur={() => setFocused(null)}
+                  placeholder="h14240000@john.petra.ac.id"
+                  style={{
+                    ...inputStyle('email'),
+                  }}
+                  autoComplete="email"
+                />
+              </div>
+              {errors.email && (
+                <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 13, color: '#E08080', margin: 0, paddingLeft: 4 }}>
+                  {errors.email}
+                </p>
+              )}
+            </div>
 
-              <p style={{ color: '#fff', fontSize: '12px', textAlign: 'center', marginTop: '24px', opacity: 0.6, fontFamily: "'FamiljenGrotesk', sans-serif" }}>
-                Don't have any accounts yet? {' '}
-                <span onClick={() => navigateWithTransition('/register')} style={{ color: C.cream, cursor: 'pointer', textDecoration: 'underline' }}>Sign up here</span>
-              </p>
-            </form>
+            {/* ── Password field ── */}
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div
+                style={{ ...fieldWrap('password'), flexDirection: 'row', alignItems: 'center', gap: 0 }}
+                onClick={() => document.getElementById('login-password').focus()}
+              >
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <label style={{
+                    fontFamily: "'FamiljenGrotesk', sans-serif",
+                    fontSize: 'clamp(10px, 1vw, 12px)',
+                    color: focused === 'password' ? C.gold : 'rgba(200,168,75,0.65)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 2,
+                    fontWeight: 600,
+                    transition: 'color 0.2s',
+                    cursor: 'text',
+                  }}>
+                    Password
+                  </label>
+                  <input
+                    id="login-password"
+                    type={showPass ? 'text' : 'password'}
+                    value={data.password}
+                    onChange={e => setData('password', e.target.value)}
+                    onFocus={() => setFocused('password')}
+                    onBlur={() => setFocused(null)}
+                    placeholder="••••••••"
+                    style={inputStyle('password')}
+                    autoComplete="current-password"
+                  />
+                </div>
+                {/* Show/hide toggle */}
+                <button
+                  type="button"
+                  onClick={() => setShowPass(v => !v)}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'rgba(200,168,75,0.5)', padding: '0 0 0 12px',
+                    display: 'flex', alignItems: 'center', flexShrink: 0,
+                  }}
+                >
+                  {showPass ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 13, color: '#E08080', margin: 0, paddingLeft: 4 }}>
+                  {errors.password}
+                </p>
+              )}
+            </div>
+
+            {/* Forgot password */}
+            <div style={{ width: '100%', textAlign: 'left', marginTop: -8 }}>
+              <a
+                href="/forgot-password"
+                className="login-link"
+                style={{
+                  fontFamily: "'FamiljenGrotesk', sans-serif",
+                  fontSize: 'clamp(13px, 1.2vw, 15px)',
+                  color: C.cream,
+                  opacity: 0.8,
+                }}
+              >
+                Forgot Password
+              </a>
+            </div>
+
+            {/* Submit */}
+            <button
+              className="login-btn"
+              onClick={handleSubmit}
+              disabled={processing}
+            >
+              {processing ? 'Signing in...' : 'Sign In'}
+            </button>
+
+            {/* Register link */}
+            <p style={{
+              fontFamily: "'FamiljenGrotesk', sans-serif",
+              fontSize: 'clamp(13px, 1.2vw, 15px)',
+              color: C.cream,
+              opacity: 0.75,
+              margin: 0,
+              textAlign: 'center',
+            }}>
+              Don't have any accounts yet?{' '}
+              <a href="/register" className="login-link">Sign up here</a>
+            </p>
+
           </div>
         </div>
+
       </div>
-      
-      <Footer />
-    </div>
+    </MainLayout>
   )
 }

@@ -1,37 +1,90 @@
+// resources/js/components/Footer.jsx
 import React from 'react'
 
 const C = {
   cream: '#E8D9A0',
-  black: '#0F0A05',
-  border: 'rgba(232, 217, 160, 0.2)',
+  bg: '#161A16',
 }
+
+const socialIcons = [
+  { label: 'LINE',       src: '/images/LINE FOOTER.svg',   size: 40 },
+  { label: 'TikTok',    src: '/images/TIKTOK FOOTER.svg', size: 40 },
+  { label: 'Instagram', src: '/images/IG FOOTER.svg',     size: 45 },
+  { label: 'YouTube',   src: '/images/YT FOOTER.svg',     size: 55 },
+]
 
 export default function Footer() {
   return (
-    <footer style={{ 
-      background: C.black, 
-      padding: '4rem 2rem 3rem', 
-      borderTop: `1px solid ${C.border}`, 
-      position: 'relative', 
-      zIndex: 5, 
-      textAlign: 'center' 
+    <footer style={{
+      background: C.bg,
+      padding: '3.5rem 5vw',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '2rem',
+      flexWrap: 'wrap',
+      position: 'relative',
+      zIndex: 5,
     }}>
-      <img src="/images/BHRTK FOOTER.svg" alt="bharatika" style={{ height: 50, marginBottom: '2rem', opacity: 0.8 }} />
-      <p style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 22, color: C.cream, margin: '0 0 4px', letterSpacing: 2 }}>bharatika</p>
-      <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, color: C.cream, opacity: 0.4, letterSpacing: 2, textTransform: 'uppercase', marginBottom: '2.5rem' }}>Creative Design Festival 2026</p>
-      
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-        {/* Placeholder Social Icons */}
-        {['LINE', 'TT', 'IG', 'YT'].map(icon => (
-          <div key={icon} style={{ width: 32, height: 32, border: '1px solid rgba(232,217,160,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px' }}>
-            <div style={{ width: 14, height: 14, background: C.cream, opacity: 0.4 }}></div>
-          </div>
-        ))}
+      {/* Left — BHRTK FOOTER.svg */}
+      <div>
+        <img
+          src="/images/BHRTK FOOTER.svg"
+          alt="bharatika"
+          style={{
+            height: 'clamp(60px, 8vw, 110px)',
+            width: 'auto',
+            objectFit: 'contain',
+            display: 'block',
+          }}
+        />
       </div>
 
-      <p style={{ fontFamily: "'Cinzel', serif", fontSize: '9px', color: C.cream, opacity: 0.3, letterSpacing: '1.5px' }}>
-        © Bharatika Creative Design Festival 2026. All Rights Reserved.
-      </p>
+      {/* Right — Social icons + copyright */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1.25rem' }}>
+        {/* Social icons — no border, raw SVG files */}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {socialIcons.map(({ label, src, size }) => (
+            <a
+              key={label}
+              href="#"
+              aria-label={label}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textDecoration: 'none',
+                flexShrink: 0,
+                opacity: 0.9,
+                transition: 'opacity 0.2s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '0.9'}
+            >
+              <img
+                src={src}
+                alt={label}
+                style={{ width: size, height: size, objectFit: 'contain' }}
+              />
+            </a>
+          ))}
+        </div>
+
+        {/* Copyright */}
+        <p style={{
+          fontFamily: "'Cinzel', serif",
+          fontSize: 'clamp(10px, 1vw, 13px)',
+          color: C.cream,
+          opacity: 0.55,
+          margin: 0,
+          textAlign: 'right',
+          lineHeight: 1.8,
+          letterSpacing: 0.5,
+        }}>
+          © Bharatika Creative Design Festival 2026.<br />
+          All Rights Reserved.
+        </p>
+      </div>
     </footer>
   )
 }
