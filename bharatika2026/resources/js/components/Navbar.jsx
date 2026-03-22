@@ -31,7 +31,6 @@ export default function Navbar() {
   }, [menuOpen])
 
   const handleNav = (href) => {
-    // Instantly hide EVERYTHING — overlay + navbar pill — before page transition
     if (overlayRef.current) {
       overlayRef.current.style.animation = 'none'
       overlayRef.current.style.visibility = 'hidden'
@@ -43,13 +42,10 @@ export default function Navbar() {
       navRef.current.style.opacity = '0'
     }
     document.body.style.overflow = ''
-
-    // Navigate immediately — page transition overlay takes over
     navigateWithTransition(href)
   }
 
   const openMenu = () => {
-    // Reset visibility before opening
     if (overlayRef.current) {
       overlayRef.current.style.animation = ''
       overlayRef.current.style.visibility = ''
@@ -62,9 +58,7 @@ export default function Navbar() {
     setMenuOpen(true)
   }
 
-  const closeMenu = () => {
-    setMenuOpen(false)
-  }
+  const closeMenu = () => setMenuOpen(false)
 
   const navLinks = [
     { label: 'Home',         href: '/' },
@@ -72,7 +66,6 @@ export default function Navbar() {
     { label: 'Competitions', href: '/competitions' },
     { label: 'About',        href: '/about' },
     { label: 'Dashboard',    href: '/history' },
-    // Hanya tampil jika user sudah login
     ...(auth?.user ? [{ label: 'Profile', href: '/profile' }] : []),
   ]
 
@@ -107,9 +100,49 @@ export default function Navbar() {
           from { opacity: 1; transform: translateY(-50%) scaleX(1); filter: blur(0px); }
           to   { opacity: 0; transform: translateY(-40%) scaleX(1.05); filter: blur(4px); }
         }
+        .nav-nord-label {
+          font-family: 'Nord', sans-serif;
+          font-size: clamp(28px, 6vw, 72px);
+          font-weight: 700;
+          color: #C8A84B;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          display: block;
+          line-height: 1.2;
+        }
+        .nav-cssalient-label {
+          font-family: 'CSSalient', sans-serif;
+          font-size: clamp(55px, 11vw, 130px);
+          font-weight: 400;
+          color: #D4C48A;
+          text-transform: uppercase;
+          letter-spacing: 4px;
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform-origin: left center;
+          white-space: nowrap;
+          pointer-events: none;
+        }
+        .nav-footer-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        .nav-footer-bar span {
+          font-family: 'Cinzel', serif;
+          font-size: clamp(8px, 1.2vw, 10px);
+          color: #C8A84B;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          opacity: 0.9;
+          font-weight: 700;
+        }
       `}</style>
 
-      {/* ── Navbar bar ── */}
       <nav
         ref={navRef}
         style={{
@@ -136,10 +169,8 @@ export default function Navbar() {
           padding: menuOpen ? '10px 20px' : '0',
           transition: 'all 0.35s',
         }}>
-          <button
-            onClick={menuOpen ? closeMenu : openMenu}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-          >
+          <button onClick={menuOpen ? closeMenu : openMenu}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             {menuOpen ? (
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.crimson} strokeWidth="2.5">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -149,18 +180,13 @@ export default function Navbar() {
               <img src="/images/BURGER.png" alt="menu" style={{ height: 16 }} />
             )}
           </button>
-
-          {/* Profile icon — menuju /profile jika login, /login jika belum */}
-          <div
-            onClick={() => handleNav(auth?.user ? '/profile' : '/login')}
-            style={{ cursor: 'pointer', opacity: menuOpen ? 1 : 0.75 }}
-          >
+          <div onClick={() => handleNav(auth?.user ? '/profile' : '/login')}
+            style={{ cursor: 'pointer', opacity: menuOpen ? 1 : 0.75 }}>
             <img src="/images/Group 3.png" alt="profile" style={{ height: menuOpen ? 26 : 20 }} />
           </div>
         </div>
       </nav>
 
-      {/* ── Fullscreen overlay menu ── */}
       <div
         ref={overlayRef}
         style={{
@@ -179,48 +205,20 @@ export default function Navbar() {
           padding: '0 8vw',
         }}>
           {navLinks.map((link, i) => (
-            <div
-              key={link.label}
-              onClick={() => handleNav(link.href)}
+            <div key={link.label} onClick={() => handleNav(link.href)}
               onMouseEnter={() => setHoveredLink(i)}
               onMouseLeave={() => setHoveredLink(null)}
               style={{
-                position: 'relative',
-                cursor: 'pointer',
-                marginBottom: '1rem',
+                position: 'relative', cursor: 'pointer', marginBottom: '0.75rem',
                 animation: menuOpen ? `navItemIn 0.5s ease-out ${0.1 + i * 0.05}s both` : 'none',
               }}
             >
-              <span style={{
-                fontFamily: "'Nord', sans-serif",
-                fontSize: 'clamp(32px, 6vw, 72px)',
-                fontWeight: 700,
-                color: C.gold,
-                textTransform: 'uppercase',
-                letterSpacing: 2,
-                display: 'block',
-                lineHeight: 1.2,
-                animation: hoveredLink === i ? 'nordOut 0.3s forwards' : 'nordIn 0.3s forwards',
-              }}>
+              <span className="nav-nord-label"
+                style={{ animation: hoveredLink === i ? 'nordOut 0.3s forwards' : 'nordIn 0.3s forwards' }}>
                 {link.label}
               </span>
-
-              <span style={{
-                fontFamily: "'CSSalient', sans-serif",
-                fontSize: 'clamp(60px, 12vw, 130px)',
-                fontWeight: 400,
-                color: C.parchment,
-                textTransform: 'uppercase',
-                letterSpacing: 4,
-                display: 'block',
-                position: 'absolute',
-                top: '50%',
-                left: 0,
-                animation: hoveredLink === i ? 'cssalientIn 0.4s forwards' : 'cssalientOut 0.3s forwards',
-                transformOrigin: 'left center',
-                whiteSpace: 'nowrap',
-                pointerEvents: 'none',
-              }}>
+              <span className="nav-cssalient-label"
+                style={{ animation: hoveredLink === i ? 'cssalientIn 0.4s forwards' : 'cssalientOut 0.3s forwards' }}>
                 {link.label}
               </span>
             </div>
@@ -229,17 +227,13 @@ export default function Navbar() {
 
         <div style={{
           position: 'absolute', bottom: '40px', left: '8vw', right: '8vw',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
-          borderTop: `1.5px solid ${C.gold}`,
-          paddingTop: '20px',
+          borderTop: `1.5px solid ${C.gold}`, paddingTop: '20px',
           animation: menuOpen ? 'navItemIn 0.6s ease-out 0.5s both' : 'none',
         }}>
-          <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: C.gold, letterSpacing: '3px', textTransform: 'uppercase', opacity: 0.9, fontWeight: 700 }}>
-            Bharatika 2026
-          </span>
-          <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10px', color: C.gold, letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.9, textAlign: 'right', fontWeight: 700 }}>
-            Petra Christian University, Surabaya
-          </span>
+          <div className="nav-footer-bar">
+            <span>Bharatika 2026</span>
+            <span style={{ textAlign: 'right' }}>Petra Christian University, Surabaya</span>
+          </div>
         </div>
       </div>
     </>

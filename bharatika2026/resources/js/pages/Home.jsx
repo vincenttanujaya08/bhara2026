@@ -1,3 +1,4 @@
+// resources/js/pages/Home.jsx
 import { useState, useEffect } from 'react'
 import { navigateWithTransition } from '../hooks/usePageTransition'
 import MainLayout from '../Layouts/MainLayout'
@@ -12,32 +13,15 @@ function TLink({ href, children, style: s, onMouseEnter, onMouseLeave, onClick }
   return <a href={href} onClick={handle} style={{ cursor: 'pointer', ...s }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>{children}</a>
 }
 
-// ...existing code...
-
 function useFonts() {
   useEffect(() => {
     if (!document.getElementById('cssalient-font')) {
       const style = document.createElement('style')
       style.id = 'cssalient-font'
       style.textContent = `
-        @font-face {
-          font-family: 'CSSalient';
-          src: url('/fonts/CSSalient-Regular.ttf') format('truetype');
-          font-weight: normal;
-          font-style: normal;
-        }
-        @font-face {
-          font-family: 'Nord';
-          src: url('/fonts/NORD-Bold.ttf') format('truetype');
-          font-weight: bold;
-          font-style: normal;
-        }
-        @font-face {
-          font-family: 'FamiljenGrotesk';
-          src: url('/fonts/FamiljenGrotesk-Variable.ttf') format('truetype');
-          font-weight: 100 900;
-          font-style: normal;
-        }
+        @font-face { font-family: 'CSSalient'; src: url('/fonts/CSSalient-Regular.ttf') format('truetype'); }
+        @font-face { font-family: 'Nord'; src: url('/fonts/NORD-Bold.ttf') format('truetype'); font-weight: bold; }
+        @font-face { font-family: 'FamiljenGrotesk'; src: url('/fonts/FamiljenGrotesk-Variable.ttf') format('truetype'); font-weight: 100 900; }
       `
       document.head.appendChild(style)
     }
@@ -65,17 +49,36 @@ function XBox({ style = {} }) {
 function Hero() {
   return (
     <section style={{ position: 'relative', width: '100%', minHeight: '100vh', overflow: 'hidden' }}>
+      <style>{`
+        .hero-btn {
+          display: inline-block;
+          padding: clamp(12px, 2vw, 18px) clamp(32px, 5vw, 64px);
+          border: 1.5px solid transparent;
+          color: ${C.crimson};
+          font-family: 'Cinzel', serif;
+          font-size: clamp(11px, 1.2vw, 13px);
+          letter-spacing: 5px;
+          text-decoration: none;
+          text-transform: uppercase;
+          background: ${C.cream};
+          backdrop-filter: blur(4px);
+          transition: all 0.3s;
+          border-radius: 50px;
+        }
+        .hero-btn:hover {
+          background: rgba(0,0,0,0);
+          color: ${C.gold};
+          border-color: ${C.gold};
+          backdrop-filter: none;
+        }
+      `}</style>
       <video autoPlay loop muted playsInline
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
-      >
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
         <source src="/videos/Motion Background bhara26 FIXX.mp4" type="video/mp4" />
       </video>
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(15,10,5,0.2) 0%, rgba(15,10,5,0.05) 50%, rgba(15,10,5,0.5) 100%)', zIndex: 1 }} />
-      <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: '12rem', marginTop: '4rem' }}>
-        <TLink href="/about" style={{ display: 'inline-block', padding: '18px 64px', border: '1.5px solid transparent', color: C.crimson, fontFamily: "'Cinzel', serif", fontSize: 13, letterSpacing: 5, textDecoration: 'none', textTransform: 'uppercase', background: C.cream, backdropFilter: 'blur(4px)', transition: 'all 0.3s', borderRadius: 50 }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0)'; e.currentTarget.style.color = C.gold; e.currentTarget.style.borderColor = C.gold; e.currentTarget.style.backdropFilter = 'none' }}
-          onMouseLeave={e => { e.currentTarget.style.background = C.cream; e.currentTarget.style.color = C.crimson; e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.backdropFilter = 'blur(4px)' }}
-        >Learn More</TLink>
+      <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 'clamp(6rem, 12vw, 12rem)', marginTop: '4rem' }}>
+        <TLink href="/about" className="hero-btn">Learn More</TLink>
       </div>
     </section>
   )
@@ -84,16 +87,13 @@ function Hero() {
 function MarqueeTicker() {
   const words = Array(12).fill('MERAJACIPTA')
   return (
-    <div style={{ background: C.black, borderBottom: '3px solid #8B1A1A', overflow: 'hidden', padding: '12px 0', position: 'relative', zIndex: 10, marginTop: 0 }}>
-      <style>{`
-        @font-face { font-family: 'CSSalient'; src: url('/fonts/CSSalient-Regular.ttf') format('truetype'); }
-        @keyframes marqueeBounce { 0% { transform: translateX(0); } 50% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-      `}</style>
+    <div style={{ background: C.black, borderBottom: '3px solid #8B1A1A', overflow: 'hidden', padding: '12px 0', position: 'relative', zIndex: 10 }}>
+      <style>{`@keyframes marqueeBounce { 0% { transform: translateX(0); } 50% { transform: translateX(-50%); } 100% { transform: translateX(0); } }`}</style>
       <div style={{ display: 'flex', whiteSpace: 'nowrap', animation: 'marqueeBounce 10s ease-in-out infinite' }}>
         {Array(2).fill(null).map((_, gi) => (
           <div key={gi} style={{ display: 'flex', flexShrink: 0 }}>
             {words.map((word, i) => (
-              <span key={i} style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 46, color: C.cream, paddingRight: '6rem', lineHeight: 1 }}>{word}</span>
+              <span key={i} style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 'clamp(28px, 5vw, 46px)', color: C.cream, paddingRight: 'clamp(3rem, 5vw, 6rem)', lineHeight: 1 }}>{word}</span>
             ))}
           </div>
         ))}
@@ -106,21 +106,41 @@ function About() {
   const [hovered, setHovered] = useState(false)
   const [mounted, setMounted] = useState(false)
   useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t) }, [])
-  const kiri  = { rotate: '-7deg', tx: '-12%', w: 'clamp(350px, 45vw, 640px)', left: -120, top: '-22%' }
-  const kanan = { rotate: '-5deg', tx: '12%',  w: 'clamp(300px, 40vw, 640px)', right: -50, bottom: '-10%' }
+  const kiri  = { rotate: '-7deg', tx: '-12%', w: 'clamp(200px, 35vw, 640px)', left: -80, top: '-22%' }
+  const kanan = { rotate: '-5deg', tx: '12%',  w: 'clamp(180px, 30vw, 640px)', right: -30, bottom: '-10%' }
   const enterTransition = 'transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.9s ease'
   const exitTransition  = 'transform 1.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.6s ease'
   return (
-    <section id="about" style={{ background: C.crimson, position: 'relative', overflow: 'hidden', padding: '5rem 2rem 5rem', minHeight: 520 }}
+    <section id="about" style={{ background: C.crimson, position: 'relative', overflow: 'hidden', padding: 'clamp(3rem, 6vw, 5rem) clamp(1.25rem, 4vw, 2rem)', minHeight: 520 }}
       onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      <style>{`
+        .about-text {
+          fontFamily: 'FamiljenGrotesk', sans-serif;
+          font-size: clamp(13px, 1.3vw, 17px);
+          line-height: 1.85;
+          color: ${C.cream};
+          opacity: 0.92;
+          max-width: 580px;
+          margin: 0 auto;
+        }
+        .about-sub {
+          font-family: 'Nord', sans-serif;
+          font-size: clamp(13px, 1.8vw, 24px);
+          color: ${C.gold};
+          font-weight: 700;
+          letter-spacing: 6px;
+          text-transform: uppercase;
+          margin: 0 0 1.5rem;
+        }
+      `}</style>
       <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', width: kiri.w, aspectRatio: '509.1 / 678.8', left: kiri.left, top: kiri.top, backgroundImage: "url('/images/CATUR KIRI.svg')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', pointerEvents: 'none', zIndex: 0, transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none', transform: hovered ? `rotate(${kiri.rotate}) translateX(${kiri.tx})` : `rotate(${kiri.rotate}) translateX(-120%)`, opacity: hovered ? 1 : 0 }} />
       <div style={{ position: 'absolute', width: kanan.w, aspectRatio: '509.1 / 678.8', right: kanan.right, bottom: kanan.bottom, backgroundImage: "url('/images/CATUR KANAN.svg')", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', pointerEvents: 'none', zIndex: 0, transition: mounted ? (hovered ? enterTransition : exitTransition) : 'none', transform: hovered ? `rotate(${kanan.rotate}) translateX(${kanan.tx})` : `rotate(${kanan.rotate}) translateX(120%)`, opacity: hovered ? 1 : 0 }} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
         <div style={{ width: '100%', maxWidth: 700, margin: '0.25rem auto 0', backgroundImage: "url('/images/VECTOR.png')", backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: 'contain', aspectRatio: '3240 / 1440' }} />
         <div style={{ marginTop: '0.5rem' }}>
-          <h3 style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(16px, 2.2vw, 24px)', color: C.gold, fontWeight: 700, letterSpacing: 6, textTransform: 'uppercase', margin: '0 0 1.5rem' }}>Merajarela & Menciptakan</h3>
-          <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(14px, 1.4vw, 17px)', lineHeight: 1.85, color: C.cream, opacity: 0.92, maxWidth: 580, margin: '0 auto' }}>
+          <h3 className="about-sub">Merajarela & Menciptakan</h3>
+          <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(13px, 1.3vw, 17px)', lineHeight: 1.85, color: C.cream, opacity: 0.92, maxWidth: 580, margin: '0 auto' }}>
             Banyak insan muda kreatif punya ketakutan untuk bersaing dengan ribuan desainer di luar sana. Mereka ragu dan merasa insecure dalam berkarya. Dengan tema "MERAJACIPTA" Bharatika Creative Design Festival 2026 diharapkan dapat menjadi dorongan bagi insan muda untuk tetap berkarya "merajalela" dalam ketakutan mereka.
           </p>
         </div>
@@ -138,58 +158,118 @@ function RegisterEvents() {
     { title: 'Networking', desc: 'Sesi networking bersama industri kreatif.' },
   ]
   return (
-    <section id="events" style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-      <div style={{ background: C.parchment, minHeight: 560, display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundImage: "radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
-        <div style={{ padding: "2rem 2.5rem 0", textAlign: "center" }}>
-          <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 12, letterSpacing: 5, color: C.crimson, textTransform: "uppercase", margin: "0", fontWeight: 700 }}>Register</p>
-          <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: "clamp(64px, 9vw, 100px)", color: C.crimson, margin: 0, lineHeight: 0.9, position: "relative", zIndex: 2, marginBottom: "-5rem" }}>Now!</h2>
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1, position: "relative", zIndex: 1 }}>
-          <XBox style={{ width: "clamp(200px, 80%, 433.8px)", aspectRatio: "433.8 / 418.16" }} />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0 2.5rem", marginTop: "0.75rem" }}>
-          <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 12, color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: "nowrap" }}>00 JAN</span>
-          <div style={{ flex: 1, height: 1.5, background: C.crimson, opacity: 0.6 }} />
-          <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 12, color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: "nowrap" }}>00 FEB</span>
-        </div>
-        <div style={{ padding: "1rem 2.5rem 2rem", textAlign: "center" }}>
-          <TLink href="/register" style={{ display: "inline-block", padding: "14px 48px", background: C.crimson, color: C.cream, fontFamily: "'Nord', sans-serif", fontSize: 11, letterSpacing: 4, textDecoration: "none", textTransform: "uppercase", borderRadius: 50, transition: "opacity 0.2s" }}
-            onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-          >See More</TLink>
-        </div>
-      </div>
-      <div style={{ background: "#1E1A14", display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 560, backgroundImage: "radial-gradient(circle, rgba(80,60,20,0.15) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", padding: "3rem 1rem 3rem 2.5rem", gap: "1rem" }}>
-          <div>
-            <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: "clamp(52px, 7vw, 88px)", color: C.gold, margin: 0, lineHeight: 0.9 }}>Our</h2>
-            <p style={{ fontFamily: "'Nord', sans-serif", fontSize: "clamp(14px, 2vw, 20px)", color: C.gold, margin: "0.2rem 0 0", letterSpacing: 4, fontWeight: 700, textTransform: "uppercase" }}>Events</p>
+    <section id="events">
+      <style>{`
+        .re-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        .re-left {
+          background: ${C.parchment};
+          min-height: 560px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          background-image: radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px);
+          background-size: 14px 14px;
+        }
+        .re-right {
+          background: #1E1A14;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          min-height: 560px;
+          background-image: radial-gradient(circle, rgba(80,60,20,0.15) 1px, transparent 1px);
+          background-size: 14px 14px;
+        }
+        .re-right-events {
+          overflow: hidden;
+          position: relative;
+          padding: 1.5rem 1rem 1.5rem 0.5rem;
+          height: 560px;
+        }
+        @keyframes eventsScrollUpDown { 0% { transform: translateY(0); } 50% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
+        .re-left-title-wrap {
+          padding: clamp(1.5rem, 4vw, 2rem) clamp(1.25rem, 3vw, 2.5rem) 0;
+          text-align: center;
+        }
+        .re-left-btn-wrap {
+          padding: 1rem clamp(1.25rem, 3vw, 2.5rem) clamp(1.25rem, 3vw, 2rem);
+          text-align: center;
+        }
+        .re-right-info {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          padding: clamp(2rem, 4vw, 3rem) 1rem clamp(2rem, 4vw, 3rem) clamp(1.25rem, 3vw, 2.5rem);
+          gap: 1rem;
+        }
+        @media (max-width: 900px) {
+          .re-grid { grid-template-columns: 1fr; }
+          .re-left { min-height: auto; }
+          .re-right { grid-template-columns: 1fr; min-height: auto; }
+          .re-right-events { height: 320px; }
+        }
+        @media (max-width: 480px) {
+          .re-right-events { height: 260px; }
+        }
+      `}</style>
+      <div className="re-grid">
+        {/* Left */}
+        <div className="re-left">
+          <div className="re-left-title-wrap">
+            <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(10px, 1.5vw, 12px)', letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0', fontWeight: 700 }}>Register</p>
+            <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(56px, 10vw, 100px)', color: C.crimson, margin: 0, lineHeight: 0.9, position: 'relative', zIndex: 2, marginBottom: '-3rem' }}>Now!</h2>
           </div>
-          <div>
-            <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 14, color: C.cream, opacity: 0.75, margin: "0 0 0.4rem", lineHeight: 1.4 }}>At Petra Christian University, Surabaya</p>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 13, color: C.cream, fontWeight: 700 }}>03</span>
-              <div style={{ flex: 1, height: 1.5, background: C.cream, opacity: 0.35 }} />
-              <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 13, color: C.cream, fontWeight: 700 }}>06 JUN</span>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, position: 'relative', zIndex: 1, padding: '1rem' }}>
+            <XBox style={{ width: 'clamp(160px, 70%, 433px)', aspectRatio: '433.8 / 418.16' }} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0 clamp(1.25rem, 3vw, 2.5rem)', marginTop: '0.75rem' }}>
+            <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(10px, 1.5vw, 12px)', color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: 'nowrap' }}>00 JAN</span>
+            <div style={{ flex: 1, height: 1.5, background: C.crimson, opacity: 0.6 }} />
+            <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(10px, 1.5vw, 12px)', color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: 'nowrap' }}>00 FEB</span>
+          </div>
+          <div className="re-left-btn-wrap">
+            <TLink href="/register"
+              style={{ display: 'inline-block', padding: 'clamp(10px, 1.5vw, 14px) clamp(28px, 5vw, 48px)', background: C.crimson, color: C.cream, fontFamily: "'Nord', sans-serif", fontSize: 'clamp(10px, 1.2vw, 11px)', letterSpacing: 4, textDecoration: 'none', textTransform: 'uppercase', borderRadius: 50, transition: 'opacity 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >See More</TLink>
+          </div>
+        </div>
+
+        {/* Right */}
+        <div className="re-right">
+          <div className="re-right-info">
+            <div>
+              <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(44px, 7vw, 88px)', color: C.gold, margin: 0, lineHeight: 0.9 }}>Our</h2>
+              <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(12px, 1.8vw, 20px)', color: C.gold, margin: '0.2rem 0 0', letterSpacing: 4, fontWeight: 700, textTransform: 'uppercase' }}>Events</p>
             </div>
-          </div>
-          <TLink href="/competitions" style={{ display: "inline-block", padding: "12px 24px", background: C.parchment, color: C.dark, fontFamily: "'Nord', sans-serif", fontSize: 10, letterSpacing: 3, textDecoration: "none", textTransform: "uppercase", borderRadius: 50, transition: "all 0.2s" }}
-            onMouseEnter={e => e.currentTarget.style.background = C.gold}
-            onMouseLeave={e => e.currentTarget.style.background = C.parchment}
-          >See More</TLink>
-        </div>
-        <div style={{ overflow: "hidden", position: "relative", padding: "1.5rem 1rem 1.5rem 0.5rem", height: "560px" }}>
-          <style>{`
-            @keyframes eventsScrollUpDown { 0% { transform: translateY(0); } 50% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
-          `}</style>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", animation: "eventsScrollUpDown 12s ease-in-out infinite" }}>
-            {[...events, ...events].map((ev, i) => (
-              <div key={i} style={{ flexShrink: 0 }}>
-                <XBox style={{ width: "100%", aspectRatio: "16/9", marginBottom: "0.25rem" }} />
-                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, color: C.cream, fontWeight: 600, margin: "0 0 0.1rem", letterSpacing: 1, textTransform: "uppercase" }}>{ev.title}</p>
-                <p style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: 12, color: C.cream, lineHeight: 1.4, opacity: 0.7, margin: 0 }}>{ev.desc}</p>
+            <div>
+              <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(12px, 1.4vw, 14px)', color: C.cream, opacity: 0.75, margin: '0 0 0.4rem', lineHeight: 1.4 }}>At Petra Christian University, Surabaya</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(11px, 1.3vw, 13px)', color: C.cream, fontWeight: 700 }}>03</span>
+                <div style={{ flex: 1, height: 1.5, background: C.cream, opacity: 0.35 }} />
+                <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(11px, 1.3vw, 13px)', color: C.cream, fontWeight: 700 }}>06 JUN</span>
               </div>
-            ))}
+            </div>
+            <TLink href="/competitions"
+              style={{ display: 'inline-block', padding: 'clamp(9px, 1.2vw, 12px) clamp(16px, 2vw, 24px)', background: C.parchment, color: C.dark, fontFamily: "'Nord', sans-serif", fontSize: 'clamp(8px, 1vw, 10px)', letterSpacing: 3, textDecoration: 'none', textTransform: 'uppercase', borderRadius: 50, transition: 'all 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.background = C.gold}
+              onMouseLeave={e => e.currentTarget.style.background = C.parchment}
+            >See More</TLink>
+          </div>
+
+          <div className="re-right-events">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', animation: 'eventsScrollUpDown 12s ease-in-out infinite' }}>
+              {[...events, ...events].map((ev, i) => (
+                <div key={i} style={{ flexShrink: 0 }}>
+                  <XBox style={{ width: '100%', aspectRatio: '16/9', marginBottom: '0.25rem' }} />
+                  <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', color: C.cream, fontWeight: 600, margin: '0 0 0.1rem', letterSpacing: 1, textTransform: 'uppercase' }}>{ev.title}</p>
+                  <p style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: 'clamp(11px, 1.2vw, 12px)', color: C.cream, lineHeight: 1.4, opacity: 0.7, margin: 0 }}>{ev.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -208,7 +288,7 @@ function MarqueeTicker2() {
         {Array(2).fill(null).map((_, gi) => (
           <div key={gi} style={{ display: 'flex', flexShrink: 0 }}>
             {words.map((word, i) => (
-              <span key={i} style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 46, color: C.cream, paddingRight: '6rem', lineHeight: 1 }}>{word}</span>
+              <span key={i} style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 'clamp(28px, 5vw, 46px)', color: C.cream, paddingRight: 'clamp(3rem, 5vw, 6rem)', lineHeight: 1 }}>{word}</span>
             ))}
           </div>
         ))}
@@ -220,28 +300,19 @@ function MarqueeTicker2() {
 function Merch() {
   const [btnHover, setBtnHover] = useState(false)
   return (
-    <section id="merch" style={{ background: C.parchment, position: "relative", overflow: "hidden", padding: "5rem 0 5rem", backgroundImage: "radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
-      <p style={{ fontFamily: "'Nord', sans-serif", fontSize: "clamp(13px, 1.5vw, 18px)", letterSpacing: 6, color: C.crimson, textTransform: "uppercase", textAlign: "center", margin: "0 0 4rem", fontWeight: 700 }}>Take a look at our Merch</p>
-      <div style={{ position: "relative", textAlign: "center", margin: "0 0 5rem" }}>
-        <h2 style={{ fontFamily: "'CSSalient', sans-serif", fontSize: "clamp(140px, 28vw, 340px)", margin: 0, lineHeight: 0.85, color: "transparent", WebkitTextStroke: "2px " + C.dark, userSelect: "none", letterSpacing: 8, whiteSpace: "nowrap" }}>MERCH</h2>
-        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "clamp(220px, 28vw, 380px)", zIndex: 2 }}>
-          <img src="/images/BHAJUKITA.svg" alt="Bhajukita" style={{ width: "100%", height: "auto", objectFit: "contain" }} />
+    <section id="merch" style={{ background: C.parchment, position: 'relative', overflow: 'hidden', padding: 'clamp(3rem, 5vw, 5rem) 0', backgroundImage: 'radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)', backgroundSize: '14px 14px' }}>
+      <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(11px, 1.3vw, 18px)', letterSpacing: 6, color: C.crimson, textTransform: 'uppercase', textAlign: 'center', margin: '0 0 3rem', fontWeight: 700 }}>Take a look at our Merch</p>
+      <div style={{ position: 'relative', textAlign: 'center', margin: '0 0 4rem' }}>
+        <h2 style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 'clamp(80px, 22vw, 340px)', margin: 0, lineHeight: 0.85, color: 'transparent', WebkitTextStroke: '2px ' + C.dark, userSelect: 'none', letterSpacing: 8, whiteSpace: 'nowrap' }}>MERCH</h2>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 'clamp(150px, 25vw, 380px)', zIndex: 2 }}>
+          <img src="/images/BHAJUKITA.svg" alt="Bhajukita" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} />
         </div>
       </div>
-      <div style={{ textAlign: "center" }}>
-        <a
-          href="#"
+      <div style={{ textAlign: 'center' }}>
+        <a href="#"
           onMouseEnter={() => setBtnHover(true)}
           onMouseLeave={() => setBtnHover(false)}
-          style={{
-            display: "inline-block", padding: "14px 52px",
-            background: btnHover ? 'transparent' : C.crimson,
-            color: btnHover ? C.crimson : C.cream,
-            border: `1.5px solid ${C.crimson}`,
-            fontFamily: "'Nord', sans-serif", fontSize: 12, letterSpacing: 4,
-            textDecoration: "none", textTransform: "uppercase",
-            borderRadius: 50, transition: "all 0.3s", cursor: 'pointer',
-          }}
+          style={{ display: 'inline-block', padding: 'clamp(10px, 1.5vw, 14px) clamp(32px, 5vw, 52px)', background: btnHover ? 'transparent' : C.crimson, color: btnHover ? C.crimson : C.cream, border: `1.5px solid ${C.crimson}`, fontFamily: "'Nord', sans-serif", fontSize: 'clamp(10px, 1.2vw, 12px)', letterSpacing: 4, textDecoration: 'none', textTransform: 'uppercase', borderRadius: 50, transition: 'all 0.3s', cursor: 'pointer' }}
         >Here</a>
       </div>
     </section>
@@ -250,19 +321,17 @@ function Merch() {
 
 function Partners() {
   return (
-    <section id="partners" style={{ background: C.cream, padding: '4rem 2rem 5rem', borderTop: '1px solid rgba(139,26,26,0.12)' }}>
+    <section id="partners" style={{ background: C.cream, padding: 'clamp(3rem, 5vw, 4rem) clamp(1.25rem, 4vw, 2rem) clamp(3.5rem, 6vw, 5rem)', borderTop: '1px solid rgba(139,26,26,0.12)' }}>
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0 0 0.15rem' }}>Our</p>
-        <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(64px, 14vw, 120px)', color: C.crimson, margin: 0, lineHeight: 0.9 }}>Partners</h2>
+        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0 0 0.15rem' }}>Our</p>
+        <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(56px, 12vw, 120px)', color: C.crimson, margin: 0, lineHeight: 0.9 }}>Partners</h2>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', maxWidth: 540, margin: '0 auto' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem', maxWidth: 540, margin: '0 auto' }}>
         {Array(6).fill(null).map((_, i) => <XBox key={i} style={{ aspectRatio: '1' }} />)}
       </div>
     </section>
   )
 }
-
-// ...existing code...
 
 export default function Home({ competitions = [] }) {
   useFonts()
@@ -279,16 +348,7 @@ export default function Home({ competitions = [] }) {
           <Merch />
           <Partners />
         </div>
-        <img
-          src="/images/BITMAP.svg"
-          alt=""
-          style={{
-            position: 'absolute', top: 0, left: 0,
-            width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'top left',
-            opacity: 0.15, pointerEvents: 'none', zIndex: 2,
-          }}
-        />
+        <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left', opacity: 0.15, pointerEvents: 'none', zIndex: 2 }} />
       </div>
     </MainLayout>
   )

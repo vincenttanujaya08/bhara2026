@@ -1,38 +1,29 @@
+// resources/js/pages/Auth/Register.jsx
 import { useState, useEffect } from 'react'
 import { useForm } from '@inertiajs/react'
 import MainLayout from '../../Layouts/MainLayout'
 
 const C = {
-  gold: '#C8A84B',
-  cream: '#E8D9A0',
-  parchment: '#D4C48A',
-  crimson: '#8B1A1A',
-  black: '#0F0A05',
-  darkBg: '#121212',
+  gold: '#C8A84B', cream: '#E8D9A0', parchment: '#D4C48A',
+  crimson: '#8B1A1A', black: '#0F0A05', darkBg: '#121212',
 }
 
 function StepIndicator({ current, total = 3 }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: '2.5rem' }}>
       {Array(total).fill(null).map((_, i) => (
-        <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: (i + 1) <= current ? C.cream : 'rgba(232, 217, 160, 0.2)', transition: '0.4s ease' }} />
+        <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: (i + 1) <= current ? C.cream : 'rgba(232,217,160,0.2)', transition: '0.4s ease' }} />
       ))}
     </div>
   )
 }
 
-function Field({ label, value, onChange, error, placeholder, type = "text", inputMode }) {
+function Field({ label, value, onChange, error, placeholder, type = 'text', inputMode }) {
   return (
     <div style={{ marginBottom: '20px' }}>
-      <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: '11px', color: '#fff', opacity: 0.7, textTransform: 'capitalize', marginLeft: '4px' }}>{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        inputMode={inputMode}
-        placeholder={placeholder}
-        style={{ width: '100%', padding: '12px 18px', background: 'transparent', border: `1.5px solid ${error ? '#E08080' : C.cream}`, borderRadius: '14px', color: '#fff', fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: '14px', outline: 'none', marginTop: '6px', boxSizing: 'border-box' }}
-      />
+      <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(10px,1vw,11px)', color: '#fff', opacity: 0.7, textTransform: 'capitalize', marginLeft: '4px' }}>{label}</label>
+      <input type={type} value={value} onChange={onChange} inputMode={inputMode} placeholder={placeholder}
+        style={{ width: '100%', padding: 'clamp(10px,1.5vw,12px) 18px', background: 'transparent', border: `1.5px solid ${error ? '#E08080' : C.cream}`, borderRadius: '14px', color: '#fff', fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(13px,1.3vw,14px)', outline: 'none', marginTop: '6px', boxSizing: 'border-box' }} />
       {error && <p style={{ color: '#E08080', fontSize: '11px', marginTop: '4px', marginLeft: '4px' }}>{error}</p>}
     </div>
   )
@@ -53,15 +44,15 @@ export default function Register() {
     style.textContent = `
       @font-face { font-family: 'CSSalient'; src: url('/fonts/CSSalient-Regular.ttf') format('truetype'); }
       @font-face { font-family: 'Nord'; src: url('/fonts/NORD-Bold.ttf') format('truetype'); }
-      @keyframes headlineIn { 0% { opacity: 0; transform: translateY(30px); filter: blur(10px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0px); } }
-      @keyframes pulseGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
-      @keyframes formAreaIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-      @keyframes errorFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes headlineIn { 0% { opacity:0; transform:translateY(30px); filter:blur(10px); } 100% { opacity:1; transform:translateY(0); filter:blur(0px); } }
+      @keyframes pulseGlow { 0%, 100% { opacity:1; } 50% { opacity:0.85; } }
+      @keyframes formAreaIn { from { opacity:0; transform:scale(0.98); } to { opacity:1; transform:scale(1); } }
+      @keyframes errorFade { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
     `
     document.head.appendChild(style)
     const l = document.createElement('link')
     l.rel = 'stylesheet'
-    l.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative:wght@400;700&family=FamiljenGrotesk:wght@400;700&display=swap'
+    l.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=FamiljenGrotesk:wght@400;700&display=swap'
     document.head.appendChild(l)
   }, [])
 
@@ -94,35 +85,76 @@ export default function Register() {
     else post('/register')
   }
 
-  const handlePhoneChange = (e) => {
-    setData('whatsapp', e.target.value.replace(/[^0-9+]/g, ''))
-  }
-
   const serverErrorMsg = Object.values(serverErrors)[0]
 
   return (
     <MainLayout>
-      <div style={{ display: 'flex', minHeight: 'calc(100vh - 52px)', paddingTop: 52 }}>
-        {/* Left (40%) */}
-        <div style={{ flex: '0 0 40%', position: 'relative', background: C.crimson, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 5vw', overflow: 'hidden' }}>
+      <style>{`
+        .reg-wrap {
+          display: flex;
+          min-height: calc(100vh - 52px);
+          padding-top: 52px;
+        }
+        .reg-left {
+          flex: 0 0 40%;
+          position: relative;
+          background: ${C.crimson};
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 0 clamp(1.5rem, 5vw, 5vw);
+          overflow: hidden;
+          min-height: 300px;
+        }
+        .reg-right {
+          flex: 0 0 60%;
+          background: ${C.darkBg};
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+          padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 3vw, 2rem);
+        }
+        .reg-right::before {
+          content: '';
+          position: absolute; inset: 0;
+          background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+          background-size: 24px 24px;
+        }
+        .reg-form-inner {
+          width: 100%;
+          max-width: 440px;
+          padding: clamp(1rem, 2vw, 2rem);
+          position: relative;
+          z-index: 1;
+          animation: formAreaIn 0.8s ease-out both;
+        }
+        @media (max-width: 768px) {
+          .reg-wrap { flex-direction: column; }
+          .reg-left { flex: none; min-height: 30vh; padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 5vw, 3rem); }
+          .reg-right { flex: none; }
+        }
+        @media (max-width: 480px) {
+          .reg-left { min-height: 25vh; }
+        }
+      `}</style>
+      <div className="reg-wrap">
+        {/* Left */}
+        <div className="reg-left">
           <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 1 }} />
-          <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(44px, 7vw, 100px)', color: C.cream, lineHeight: 1.1, textTransform: 'uppercase', margin: 0, zIndex: 2, letterSpacing: '8px', animation: 'headlineIn 1.2s ease forwards, pulseGlow 4s ease-in-out infinite' }}>
+          <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(40px, 7vw, 100px)', color: C.cream, lineHeight: 1.1, textTransform: 'uppercase', margin: 0, zIndex: 2, letterSpacing: '8px', animation: 'headlineIn 1.2s ease forwards, pulseGlow 4s ease-in-out infinite' }}>
             SIGN<br />UP
           </h1>
         </div>
-
-        {/* Right (60%) */}
-        <div style={{ flex: '0 0 60%', background: C.darkBg, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)", backgroundSize: '24px 24px' }} />
-          <div style={{ width: '100%', maxWidth: '440px', padding: '2rem', zIndex: 1, animation: 'formAreaIn 0.8s ease-out both' }}>
+        {/* Right */}
+        <div className="reg-right">
+          <div className="reg-form-inner">
             <StepIndicator current={step} />
-
             {serverErrorMsg && (
-              <div style={{ background: 'rgba(224, 128, 128, 0.15)', border: '1px solid #E08080', padding: '12px', borderRadius: '10px', marginBottom: '20px', animation: 'errorFade 0.4s ease forwards' }}>
+              <div style={{ background: 'rgba(224,128,128,0.15)', border: '1px solid #E08080', padding: '12px', borderRadius: '10px', marginBottom: '20px', animation: 'errorFade 0.4s ease forwards' }}>
                 <p style={{ color: '#E08080', fontSize: '13px', margin: 0, textAlign: 'center', fontFamily: "'FamiljenGrotesk', sans-serif" }}>{serverErrorMsg}</p>
               </div>
             )}
-
             <form onSubmit={handleNext}>
               {step === 1 && (
                 <>
@@ -134,7 +166,7 @@ export default function Register() {
               {step === 2 && (
                 <>
                   <Field label="Line ID (Optional)" value={data.line_id} onChange={e => setData('line_id', e.target.value)} placeholder="@username" />
-                  <Field label="WhatsApp Number" inputMode="tel" value={data.whatsapp} onChange={handlePhoneChange} error={localErrors.whatsapp} placeholder="08xxxxxxxxx" />
+                  <Field label="WhatsApp Number" inputMode="tel" value={data.whatsapp} onChange={e => setData('whatsapp', e.target.value.replace(/[^0-9+]/g, ''))} error={localErrors.whatsapp} placeholder="08xxxxxxxxx" />
                 </>
               )}
               {step === 3 && (
@@ -143,16 +175,15 @@ export default function Register() {
                   <Field label="Confirm Password" type="password" value={data.password_confirmation} onChange={e => setData('password_confirmation', e.target.value)} error={localErrors.password_confirmation} placeholder="••••••••" />
                 </>
               )}
-
               <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
                 {step > 1 && (
-                  <button type="button" onClick={() => setStep(s => s - 1)} style={{ flex: 1, padding: '14px', background: 'transparent', border: `1.5px solid ${C.cream}`, borderRadius: '50px', color: C.cream, fontFamily: "'Cinzel', serif", fontSize: '13px', cursor: 'pointer' }}>BACK</button>
+                  <button type="button" onClick={() => setStep(s => s - 1)} style={{ flex: 1, padding: 'clamp(11px,1.5vw,14px)', background: 'transparent', border: `1.5px solid ${C.cream}`, borderRadius: '50px', color: C.cream, fontFamily: "'Cinzel', serif", fontSize: 'clamp(11px,1.2vw,13px)', cursor: 'pointer' }}>BACK</button>
                 )}
-                <button type="submit" disabled={processing} style={{ flex: 1, padding: '14px', background: C.cream, color: C.crimson, border: 'none', borderRadius: '50px', fontFamily: "'Cinzel', serif", fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: '0.3s' }}>
+                <button type="submit" disabled={processing} style={{ flex: 1, padding: 'clamp(11px,1.5vw,14px)', background: C.cream, color: C.crimson, border: 'none', borderRadius: '50px', fontFamily: "'Cinzel', serif", fontSize: 'clamp(11px,1.2vw,13px)', fontWeight: 700, cursor: 'pointer', transition: '0.3s' }}>
                   {processing ? 'SUBMITTING...' : (step < 3 ? 'NEXT' : 'SIGN UP')}
                 </button>
               </div>
-              <p style={{ color: '#fff', fontSize: '12px', textAlign: 'center', marginTop: '24px', opacity: 0.6, fontFamily: "'FamiljenGrotesk', sans-serif" }}>
+              <p style={{ color: '#fff', fontSize: 'clamp(11px,1.2vw,12px)', textAlign: 'center', marginTop: '24px', opacity: 0.6, fontFamily: "'FamiljenGrotesk', sans-serif" }}>
                 Already have an account? <a href="/login" style={{ color: C.cream }}>Sign in here</a>
               </p>
             </form>
