@@ -1,54 +1,40 @@
-import { useState, useEffect } from 'react'
-import { useForm, Link } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
+import { Head, useForm, Link } from '@inertiajs/react'
+import MainLayout from '../../Layouts/MainLayout'
 
 const C = {
-  gold: '#C8A84B', cream: '#E8D9A0', crimson: '#8B1A1A',
-  dark: '#0F0A05', card: '#1A1410', border: 'rgba(200,168,75,0.15)',
+  gold: '#C8A84B',
+  cream: '#E8D9A0',
+  crimson: '#8B1A1A',
+  white: '#FFFFFF',
+  red: '#FF5555',
+  green: '#7ECBA1',
+  border: 'rgba(232, 217, 160, 0.4)',
+  black: '#000000'
 }
 
-const STATUS = {
-  pending:  { label: 'Menunggu Validasi', color: '#C8A84B', bg: 'rgba(200,168,75,0.1)',  border: 'rgba(200,168,75,0.3)' },
-  approved: { label: 'Valid / Lunas',     color: '#7ECBA1', bg: 'rgba(126,203,161,0.1)', border: 'rgba(126,203,161,0.3)' },
-  rejected: { label: 'Ditolak',           color: '#E08080', bg: 'rgba(224,128,128,0.1)', border: 'rgba(224,128,128,0.3)' },
-}
-
-function useFonts() {
-  useEffect(() => {
-    document.body.style.margin = '0'
-    document.body.style.background = C.dark
-    if (document.getElementById('bh-fonts')) return
-    const l = document.createElement('link')
-    l.id = 'bh-fonts'; l.rel = 'stylesheet'
-    l.href = 'https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap'
-    document.head.appendChild(l)
-  }, [])
-}
-
-function StatusBadge({ status }) {
-  const s = STATUS[status] ?? STATUS.pending
-  return <span style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', padding: '6px 16px', border: `1px solid ${s.border}`, color: s.color, background: s.bg }}>{s.label}</span>
-}
-
-function SectionCard({ title, accent = C.gold, children }) {
-  return (
-    <div style={{ background: C.card, border: `1px solid ${C.border}`, padding: '1.75rem', marginBottom: '1.25rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: `1px solid rgba(200,168,75,0.08)` }}>
-        <div style={{ width: 3, height: 22, background: accent }} />
-        <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: C.cream, margin: 0, letterSpacing: 1 }}>{title}</h2>
-      </div>
-      {children}
-    </div>
-  )
+const STATUS_THEME = {
+  pending:  { label: 'MENUNGGU VERIFIKASI', color: C.gold },
+  approved: { label: 'PENDAFTARAN VALID',  color: C.green },
+  rejected: { label: 'PERLU REVISI',    color: C.red },
 }
 
 export default function HistoryDetail({ registration, flash = {} }) {
-  useFonts()
+  const updateForm = useForm({ 
+    payment: null, 
+    members: registration.members?.reduce((acc, m) => ({
+      ...acc, [m.id]: { name: m.name, ktm: null }
+    }), {}) 
+  })
 
-  // Form untuk update dokumen (jika rejected)
-  const updateForm = useForm({ payment: null, members: {} })
+  const workForm = useForm({ 
+    submission_title: registration.submission_title || '', 
+    submission_description: registration.submission_description || '', 
+    submission_file: null 
+  })
 
-  // Form untuk submit karya
-  const workForm = useForm({ submission_title: '', submission_description: '', submission_file: null })
+  const [workFileName, setWorkFileName] = useState('')
+  const [paymentFileName, setPaymentFileName] = useState('')
 
   const submitUpdate = (e) => {
     e.preventDefault()
@@ -65,202 +51,206 @@ export default function HistoryDetail({ registration, flash = {} }) {
 
   const isRejected = registration.payment_status === 'rejected'
   const isApproved = registration.payment_status === 'approved'
+  const currentStatus = STATUS_THEME[registration.payment_status] || STATUS_THEME.pending
 
   return (
-    <div style={{ background: C.dark, minHeight: '100vh', fontFamily: "'Cinzel', serif" }}>
-      {/* Navbar */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.75rem', background: 'rgba(15,10,5,0.96)', borderBottom: `1px solid ${C.border}` }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 17, color: C.cream }}>bharatika</span>
-        </Link>
-        <Link href="/history" style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2, color: C.gold, textDecoration: 'none', textTransform: 'uppercase', opacity: 0.75 }}>← Riwayat</Link>
-      </div>
+    <MainLayout>
+      <Head title="Dashboard Detail" />
 
-      <div style={{ paddingTop: 52, maxWidth: 800, margin: '0 auto', padding: '80px 2rem 6rem' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
-          <div>
-            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 3, color: C.gold, opacity: 0.6, textTransform: 'uppercase', margin: '0 0 0.4rem' }}>{registration.competition?.name}</p>
-            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(36px, 6vw, 56px)', color: C.cream, margin: 0, lineHeight: 1.1 }}>Detail Pendaftaran</h1>
+      <main style={{ minHeight: '100vh', background: C.crimson, position: 'relative' }}>
+        {/* Background Texture & Dark Overlay */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', opacity: 0.9, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0, 0, 0, 0.6)', pointerEvents: 'none', zIndex: 1 }} />
+        <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.15, mixBlendMode: 'overlay', pointerEvents: 'none', zIndex: 2 }} />
+        
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '140px 1.5rem 8rem', position: 'relative', zIndex: 10 }}>
+          
+          {/* HEADER SECTION */}
+          <div style={{ borderBottom: `4px solid ${C.gold}`, paddingBottom: '2.5rem', marginBottom: '4rem' }}>
+            <Link href="/history" style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: C.cream, textDecoration: 'none', letterSpacing: 3, display: 'block', marginBottom: '2.5rem', fontWeight: 900 }}>
+              ← KEMBALI KE RIWAYAT
+            </Link>
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem' }}>
+                <div style={{ flex: 1 }}>
+                    <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(40px, 7vw, 72px)', color: C.white, margin: 0, fontWeight: 900, letterSpacing: '4px', lineHeight: 0.9 }}>
+                        DASHBOARD<br/>DETAIL
+                    </h1>
+                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 28, color: C.gold, margin: '15px 0 0', fontStyle: 'italic', fontWeight: 700 }}>
+                        {registration.competition?.name}
+                    </p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: C.gold, letterSpacing: 4, margin: '0 0 5px', fontWeight: 900 }}>ID PESERTA</p>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 48, color: C.white, margin: 0, fontWeight: 900, textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>{registration.participant_code || '---'}</p>
+                </div>
+            </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
-            <StatusBadge status={registration.payment_status} />
-            {registration.participant_code && (
-              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 15, color: C.gold, margin: 0, fontWeight: 600 }}>{registration.participant_code}</p>
+
+          {/* STATUS SECTION */}
+          <div style={{ marginBottom: '5rem', textAlign: 'center' }}>
+             <p style={{ fontFamily: "'Cinzel', serif", fontSize: 14, color: currentStatus.color, letterSpacing: 5, fontWeight: 900, margin: '0 0 15px' }}>STATUS SAAT INI</p>
+             <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(32px, 5vw, 44px)', color: C.white, margin: 0, fontWeight: 900, textShadow: '0 2px 15px rgba(0,0,0,0.4)' }}>{currentStatus.label}</h2>
+             
+             {isRejected && (
+                <div style={{ marginTop: '3rem', padding: '2.5rem', border: `2px solid ${C.red}`, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)' }}>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: C.red, margin: '0 0 12px', letterSpacing: 3, fontWeight: 900 }}>CATATAN PANITIA</p>
+                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 22, color: C.white, margin: 0, lineHeight: 1.5, fontWeight: 600 }}>
+                        "{registration.logs?.find(l => l.status === 'rejected')?.notes ?? 'Mohon periksa kembali dokumen Anda.'}"
+                    </p>
+                </div>
+             )}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6rem' }}>
+            
+            {/* 1. TEAM SECTION */}
+            <section>
+              <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 22, color: C.gold, letterSpacing: 4, borderBottom: `3px solid ${C.gold}`, paddingBottom: '15px', marginBottom: '3rem', fontWeight: 900 }}>DATA TIM & DOKUMEN</h3>
+              
+              <form onSubmit={submitUpdate}>
+                {registration.members?.map((member, i) => (
+                  <div key={member.id} style={{ marginBottom: '4rem', paddingBottom: '2.5rem', borderBottom: i < registration.members.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '15px' }}>
+                      <p style={{ fontFamily: "'Cinzel', serif", fontSize: 14, color: C.gold, margin: 0, fontWeight: 900, letterSpacing: 2 }}>
+                        {i === 0 ? 'KETUA TIM' : `ANGGOTA ${i}`}
+                      </p>
+                      {!isRejected && member.ktm_file && (
+                        <a href={storageUrl(member.ktm_file)} target="_blank" style={{ color: C.white, fontSize: 12, fontWeight: 900, textDecoration: 'none', background: 'rgba(0,0,0,0.4)', padding: '8px 18px', border: `1px solid ${C.gold}` }}>LIHAT KTM ↗</a>
+                      )}
+                    </div>
+
+                    <div style={{ marginBottom: isRejected ? '2.5rem' : '0' }}>
+                      <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 11, color: C.white, opacity: 0.6, marginBottom: '8px', fontWeight: 900 }}>NAMA LENGKAP</label>
+                      {isRejected ? (
+                        <input 
+                          type="text" 
+                          defaultValue={member.name}
+                          onChange={e => updateForm.setData('members', { 
+                            ...updateForm.data.members, 
+                            [member.id]: { ...updateForm.data.members[member.id], name: e.target.value } 
+                          })}
+                          style={{ width: '100%', padding: '18px', background: 'rgba(0,0,0,0.3)', border: `2px solid ${C.gold}`, color: C.white, outline: 'none', fontSize: 20, fontWeight: 900, fontFamily: "'EB Garamond', serif" }}
+                        />
+                      ) : (
+                        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 28, color: C.white, margin: 0, fontWeight: 900 }}>{member.name.toUpperCase()}</p>
+                      )}
+                    </div>
+
+                    {isRejected && (
+                      <div style={{ marginTop: '2.5rem' }}>
+                        <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 11, color: C.red, marginBottom: '15px', fontWeight: 900, letterSpacing: 1 }}>REVISI FOTO KTM (PNG/JPG)</label>
+                        <div style={{ display: 'flex', gap: '25px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                          {member.ktm_file && (
+                            <div style={{ flex: '0 0 160px' }}>
+                                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 8, color: C.cream, opacity: 0.6, margin: '0 0 8px', fontWeight: 900 }}>FILE LAMA</p>
+                                <img src={storageUrl(member.ktm_file)} alt="Lama" style={{ width: '160px', height: '110px', objectFit: 'cover', border: `2px solid rgba(255,255,255,0.2)` }} />
+                            </div>
+                          )}
+                          <div style={{ flex: 1, paddingTop: '20px' }}>
+                            <label style={{ display: 'inline-block', padding: '15px 30px', background: C.white, color: C.black, fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 900, cursor: 'pointer', letterSpacing: 1 }}>
+                              UNGGAH KTM BARU (OPTIONAL)
+                              <input type="file" onChange={e => updateForm.setData('members', { ...updateForm.data.members, [member.id]: { ...updateForm.data.members[member.id], ktm: e.target.files[0] } })} style={{ display: 'none' }} />
+                            </label>
+                            <p style={{ fontSize: 13, color: C.white, opacity: 0.7, marginTop: '10px', fontFamily: "'EB Garamond', serif", fontWeight: 600 }}>Maks 2MB. Kosongkan jika sudah benar.</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                <div style={{ marginTop: '3rem', padding: '3rem', background: 'rgba(0,0,0,0.4)', border: `2px solid ${C.border}` }}>
+                   <p style={{ fontFamily: "'Cinzel', serif", fontSize: 14, color: C.gold, margin: '0 0 20px', fontWeight: 900, letterSpacing: 2 }}>BUKTI PEMBAYARAN</p>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px' }}>
+                      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                         {registration.payment_proof && <img src={storageUrl(registration.payment_proof)} alt="Payment" style={{ width: '100px', height: '70px', objectFit: 'cover', border: `1px solid rgba(255,255,255,0.2)` }} />}
+                         <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 24, color: C.white, margin: 0, fontWeight: 800 }}>Dokumen Terlampir</p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                        <a href={storageUrl(registration.payment_proof)} target="_blank" style={{ color: C.gold, fontSize: 14, fontWeight: 900, textDecoration: 'none', borderBottom: `2px solid ${C.gold}` }}>LIHAT FULL ↗</a>
+                        {isRejected && (
+                          <label style={{ padding: '12px 25px', background: C.white, color: C.black, fontFamily: "'Cinzel', serif", fontSize: 11, fontWeight: 900, cursor: 'pointer' }}>
+                            UPLOAD BARU
+                            <input type="file" onChange={e => { updateForm.setData('payment', e.target.files[0]); setPaymentFileName(e.target.files[0]?.name); }} style={{ display: 'none' }} />
+                          </label>
+                        )}
+                      </div>
+                   </div>
+                   {paymentFileName && <p style={{ color: C.gold, fontSize: 13, marginTop: '15px', fontWeight: 900 }}>TERPILIH: {paymentFileName.toUpperCase()}</p>}
+                </div>
+
+                {isRejected && (
+                  <button type="submit" disabled={updateForm.processing} style={{ width: '100%', marginTop: '4rem', padding: '24px', background: C.gold, color: C.black, border: 'none', fontFamily: "'Cinzel', serif", fontWeight: 900, fontSize: 18, cursor: 'pointer', letterSpacing: 3, boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
+                    {updateForm.processing ? 'MENYIMPAN...' : 'SIMPAN & AJUKAN REVISI'}
+                  </button>
+                )}
+              </form>
+            </section>
+
+            {/* 2. SUBMISSION SECTION */}
+            {isApproved && (
+              <section>
+                <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 22, color: C.green, letterSpacing: 4, borderBottom: `3px solid ${C.green}`, paddingBottom: '15px', marginBottom: '3rem', fontWeight: 900 }}>PENGUMPULAN KARYA</h3>
+                {registration.submission_file ? (
+                  <div style={{ background: 'rgba(0,0,0,0.4)', padding: '3rem', borderLeft: `8px solid ${C.green}` }}>
+                    <div style={{ marginBottom: '2.5rem' }}>
+                        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: C.gold, margin: '0 0 10px', fontWeight: 900 }}>JUDUL KARYA</p>
+                        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 36, color: C.white, margin: 0, fontWeight: 900 }}>{registration.submission_title}</p>
+                    </div>
+                    <div style={{ marginBottom: '3.5rem' }}>
+                        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: C.gold, margin: '0 0 10px', fontWeight: 900 }}>DESKRIPSI</p>
+                        <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 22, color: C.white, margin: 0, lineHeight: 1.6, fontWeight: 500 }}>{registration.submission_description}</p>
+                    </div>
+                    <a href={storageUrl(registration.submission_file)} target="_blank" style={{ padding: '20px 45px', background: C.gold, color: C.black, textDecoration: 'none', fontFamily: "'Cinzel', serif", fontWeight: 900, fontSize: 14, letterSpacing: 2 }}>DOWNLOAD ZIP ↗</a>
+                  </div>
+                ) : (
+                  <form onSubmit={submitWork} style={{ maxWidth: '750px' }}>
+                    <div style={{ marginBottom: '3rem' }}>
+                      <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 14, color: C.white, marginBottom: '15px', fontWeight: 900 }}>JUDUL KARYA</label>
+                      <input type="text" value={workForm.data.submission_title} onChange={e => workForm.setData('submission_title', e.target.value)}
+                        style={{ width: '100%', padding: '20px', background: 'rgba(0,0,0,0.3)', border: `2px solid ${C.gold}`, color: C.white, outline: 'none', fontSize: 20, fontWeight: 900, fontFamily: "'EB Garamond', serif" }}
+                      />
+                    </div>
+                    <div style={{ marginBottom: '3rem' }}>
+                      <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 14, color: C.white, marginBottom: '15px', fontWeight: 900 }}>DESKRIPSI KARYA</label>
+                      <textarea rows={6} value={workForm.data.submission_description} onChange={e => workForm.setData('submission_description', e.target.value)}
+                        style={{ width: '100%', padding: '20px', background: 'rgba(0,0,0,0.3)', border: `2px solid ${C.gold}`, color: C.white, outline: 'none', fontSize: 20, fontWeight: 900, fontFamily: "'EB Garamond', serif" }}
+                      />
+                    </div>
+                    <div style={{ marginBottom: '4rem' }}>
+                      <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 14, color: C.white, marginBottom: '15px', fontWeight: 900 }}>FILE KARYA (.ZIP/.RAR)</label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <label style={{ padding: '18px 35px', background: C.white, color: C.black, fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 900, cursor: 'pointer' }}>
+                          CHOOSE FILE
+                          <input type="file" onChange={e => { workForm.setData('submission_file', e.target.files[0]); setWorkFileName(e.target.files[0]?.name || ''); }} style={{ display: 'none' }} />
+                        </label>
+                        <span style={{ fontFamily: "'EB Garamond', serif", fontSize: 18, color: C.white, fontWeight: 800 }}>{workFileName || 'Belum ada file terpilih'}</span>
+                      </div>
+                    </div>
+                    <button type="submit" style={{ width: '100%', padding: '24px', background: C.green, color: C.black, border: 'none', fontFamily: "'Cinzel', serif", fontWeight: 900, fontSize: 18, cursor: 'pointer', letterSpacing: 3, boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>UNGGAH KARYA SEKARANG</button>
+                  </form>
+                )}
+              </section>
             )}
+
+            {/* 3. LOG SECTION */}
+            <section>
+                <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 22, color: C.white, letterSpacing: 4, borderBottom: `3px solid ${C.white}`, paddingBottom: '15px', marginBottom: '3rem', fontWeight: 900 }}>HISTORY LOG</h3>
+                {registration.logs?.map((log) => (
+                    <div key={log.id} style={{ marginBottom: '3rem', display: 'flex', gap: '3rem', borderLeft: `5px solid ${C.gold}`, paddingLeft: '2.5rem' }}>
+                        <div style={{ minWidth: '160px', fontFamily: "'Cinzel', serif", fontSize: 14, color: C.gold, fontWeight: 900 }}>{formatDate(log.created_at)}</div>
+                        <div style={{ flex: 1 }}>
+                            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 16, color: C.white, margin: '0 0 10px', fontWeight: 900, letterSpacing: 1 }}>{log.status.toUpperCase()}</p>
+                            <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 20, color: C.white, fontWeight: 600, margin: 0, lineHeight: 1.4 }}>{log.notes || 'Pendaftaran sedang diproses.'}</p>
+                        </div>
+                    </div>
+                ))}
+            </section>
           </div>
         </div>
-
-        {/* Flash messages */}
-        {flash.success && (
-          <div style={{ padding: '12px 16px', border: `1px solid rgba(126,203,161,0.3)`, background: 'rgba(126,203,161,0.06)', marginBottom: '1.5rem' }}>
-            <p style={{ color: '#7ECBA1', fontSize: 14, margin: 0, fontFamily: "'EB Garamond', serif" }}>{flash.success}</p>
-          </div>
-        )}
-
-        {/* Rejection alert */}
-        {isRejected && (
-          <div style={{ padding: '1rem 1.25rem', border: `1px solid rgba(224,128,128,0.3)`, background: 'rgba(224,128,128,0.06)', marginBottom: '1.5rem' }}>
-            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, color: '#E08080', margin: '0 0 0.4rem', letterSpacing: 1, textTransform: 'uppercase' }}>Pendaftaran Ditolak</p>
-            <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 14, color: C.cream, opacity: 0.7, margin: 0 }}>
-              {registration.logs?.find(l => l.status === 'rejected')?.notes ?? 'Terdapat data yang tidak valid. Silakan periksa kembali.'}
-            </p>
-            <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 13, color: C.cream, opacity: 0.45, margin: '0.5rem 0 0' }}>
-              Upload ulang dokumen yang salah pada form di bawah ini.
-            </p>
-          </div>
-        )}
-
-        {/* Team members */}
-        <SectionCard title="Tim & Anggota">
-          <form onSubmit={submitUpdate}>
-            {registration.members?.map((member, i) => (
-              <div key={member.id} style={{ marginBottom: i < registration.members.length - 1 ? '1.5rem' : 0, paddingBottom: i < registration.members.length - 1 ? '1.5rem' : 0, borderBottom: i < registration.members.length - 1 ? `1px solid rgba(200,168,75,0.07)` : 'none' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <div>
-                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.gold, opacity: 0.5, textTransform: 'uppercase', margin: '0 0 0.2rem' }}>{i === 0 ? 'Ketua Tim' : `Anggota ${i}`}</p>
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 15, color: C.cream, margin: 0 }}>{member.name}</p>
-                  </div>
-                  {member.ktm_file && (
-                    <a href={storageUrl(member.ktm_file)} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.gold, textDecoration: 'none', textTransform: 'uppercase', border: `1px solid rgba(200,168,75,0.3)`, padding: '5px 12px' }}>
-                      Lihat KTM ↗
-                    </a>
-                  )}
-                </div>
-                {isRejected && (
-                  <div style={{ marginTop: '0.75rem' }}>
-                    <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: '#E08080', opacity: 0.8, textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                      Upload KTM Baru (opsional)
-                    </label>
-                    <input type="file" accept="image/jpeg,image/png,image/jpg"
-                      onChange={e => updateForm.setData('members', { ...updateForm.data.members, [member.id]: { ktm: e.target.files[0] } })}
-                      style={{ width: '100%', padding: '7px 12px', background: 'rgba(200,168,75,0.04)', border: `1px solid rgba(200,168,75,0.2)`, color: C.cream, fontFamily: "'EB Garamond', serif", fontSize: 13, outline: 'none', cursor: 'pointer' }}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Payment proof */}
-            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: `1px solid rgba(200,168,75,0.07)` }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.cream, opacity: 0.4, textTransform: 'uppercase', margin: 0 }}>Bukti Pembayaran</p>
-                {registration.payment_proof && (
-                  <a href={storageUrl(registration.payment_proof)} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.gold, textDecoration: 'none', textTransform: 'uppercase', border: `1px solid rgba(200,168,75,0.3)`, padding: '5px 12px' }}>
-                    Lihat Bukti ↗
-                  </a>
-                )}
-              </div>
-              {isRejected && (
-                <div style={{ marginTop: '0.75rem' }}>
-                  <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: '#E08080', opacity: 0.8, textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                    Upload Bukti Baru (opsional)
-                  </label>
-                  <input type="file" accept="image/jpeg,image/png,image/jpg"
-                    onChange={e => updateForm.setData('payment', e.target.files[0])}
-                    style={{ width: '100%', padding: '7px 12px', background: 'rgba(200,168,75,0.04)', border: `1px solid rgba(200,168,75,0.2)`, color: C.cream, fontFamily: "'EB Garamond', serif", fontSize: 13, outline: 'none', cursor: 'pointer' }}
-                  />
-                </div>
-              )}
-            </div>
-
-            {isRejected && (
-              <button type="submit" disabled={updateForm.processing} style={{
-                width: '100%', marginTop: '1.5rem', padding: '13px',
-                background: updateForm.processing ? 'rgba(200,168,75,0.4)' : C.gold,
-                color: C.dark, border: 'none', cursor: updateForm.processing ? 'not-allowed' : 'pointer',
-                fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 3, textTransform: 'uppercase', fontWeight: 600,
-              }}>
-                {updateForm.processing ? 'Menyimpan...' : 'Simpan & Ajukan Ulang Validasi'}
-              </button>
-            )}
-          </form>
-        </SectionCard>
-
-        {/* Submit karya (hanya jika approved) */}
-        {isApproved && (
-          <SectionCard title="Pengumpulan Karya" accent="#3B82F6">
-            {registration.submission_file ? (
-              <div>
-                <div style={{ padding: '0.75rem 1rem', background: 'rgba(59,130,246,0.07)', border: `1px solid rgba(59,130,246,0.2)`, marginBottom: '1rem' }}>
-                  <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, color: '#7EB3E0', margin: '0 0 0.2rem', letterSpacing: 1, textTransform: 'uppercase' }}>Karya Berhasil Dikumpulkan</p>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', gap: '1rem' }}>
-                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.cream, opacity: 0.35, textTransform: 'uppercase', margin: 0, minWidth: 100 }}>Judul</p>
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 15, color: C.cream, margin: 0 }}>{registration.submission_title}</p>
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem' }}>
-                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.cream, opacity: 0.35, textTransform: 'uppercase', margin: 0, minWidth: 100 }}>Deskripsi</p>
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 15, color: C.cream, opacity: 0.75, margin: 0, lineHeight: 1.6 }}>{registration.submission_description}</p>
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.cream, opacity: 0.35, textTransform: 'uppercase', margin: 0, minWidth: 100 }}>File</p>
-                    <a href={storageUrl(registration.submission_file)} target="_blank" rel="noopener noreferrer" style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2, color: C.gold, textDecoration: 'none', textTransform: 'uppercase', border: `1px solid rgba(200,168,75,0.3)`, padding: '5px 14px' }}>
-                      Download ZIP ↗
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={submitWork}>
-                <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 14, color: C.cream, opacity: 0.6, margin: '0 0 1.5rem', lineHeight: 1.7 }}>
-                  Upload karya dalam format <strong style={{ color: C.gold }}>ZIP</strong> atau <strong style={{ color: C.gold }}>RAR</strong> (Maks 20MB).
-                </p>
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.gold, opacity: 0.75, textTransform: 'uppercase', marginBottom: '0.4rem' }}>Judul Karya *</label>
-                  <input type="text" value={workForm.data.submission_title}
-                    onChange={e => workForm.setData('submission_title', e.target.value)}
-                    placeholder="Judul karya kamu"
-                    style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', background: 'rgba(200,168,75,0.04)', border: `1px solid ${workForm.errors.submission_title ? C.crimson : 'rgba(200,168,75,0.2)'}`, color: C.cream, fontFamily: "'EB Garamond', serif", fontSize: 15, outline: 'none' }}
-                  />
-                  {workForm.errors.submission_title && <p style={{ color: C.crimson, fontSize: 11, margin: '0.3rem 0 0' }}>{workForm.errors.submission_title}</p>}
-                </div>
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.gold, opacity: 0.75, textTransform: 'uppercase', marginBottom: '0.4rem' }}>Deskripsi (Maks 100 kata) *</label>
-                  <textarea value={workForm.data.submission_description}
-                    onChange={e => workForm.setData('submission_description', e.target.value)}
-                    rows={4} placeholder="Jelaskan karya kamu secara singkat..."
-                    style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', background: 'rgba(200,168,75,0.04)', border: `1px solid ${workForm.errors.submission_description ? C.crimson : 'rgba(200,168,75,0.2)'}`, color: C.cream, fontFamily: "'EB Garamond', serif", fontSize: 15, outline: 'none', resize: 'vertical' }}
-                  />
-                  {workForm.errors.submission_description && <p style={{ color: C.crimson, fontSize: 11, margin: '0.3rem 0 0' }}>{workForm.errors.submission_description}</p>}
-                </div>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2, color: C.gold, opacity: 0.75, textTransform: 'uppercase', marginBottom: '0.4rem' }}>File Karya (ZIP/RAR) *</label>
-                  <input type="file" accept=".zip,.rar"
-                    onChange={e => workForm.setData('submission_file', e.target.files[0])}
-                    style={{ width: '100%', padding: '8px 12px', background: 'rgba(200,168,75,0.04)', border: `1px solid rgba(200,168,75,0.2)`, color: C.cream, fontFamily: "'EB Garamond', serif", fontSize: 13, outline: 'none', cursor: 'pointer' }}
-                  />
-                  {workForm.errors.submission_file && <p style={{ color: C.crimson, fontSize: 11, margin: '0.3rem 0 0' }}>{workForm.errors.submission_file}</p>}
-                </div>
-                <button type="submit" disabled={workForm.processing} style={{
-                  width: '100%', padding: '13px', background: workForm.processing ? 'rgba(59,130,246,0.4)' : '#2563EB',
-                  color: '#fff', border: 'none', cursor: workForm.processing ? 'not-allowed' : 'pointer',
-                  fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 3, textTransform: 'uppercase', fontWeight: 600,
-                }}>
-                  {workForm.processing ? 'Mengunggah...' : 'Unggah Karya Sekarang'}
-                </button>
-              </form>
-            )}
-          </SectionCard>
-        )}
-
-        {/* Log history */}
-        <SectionCard title="Log Status Pendaftaran">
-          {registration.logs?.map(log => {
-            const s = STATUS[log.status] ?? STATUS.pending
-            return (
-              <div key={log.id} style={{ borderLeft: `2px solid ${s.color}`, paddingLeft: '1rem', marginBottom: '1rem' }}>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
-                  <span style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2, color: s.color, textTransform: 'uppercase' }}>{s.label}</span>
-                  <span style={{ fontFamily: "'EB Garamond', serif", fontSize: 12, color: C.cream, opacity: 0.3 }}>{formatDate(log.created_at)}</span>
-                </div>
-                {log.notes && <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 14, color: C.cream, opacity: 0.6, margin: 0, lineHeight: 1.6 }}>{log.notes}</p>}
-              </div>
-            )
-          })}
-        </SectionCard>
-      </div>
-    </div>
+      </main>
+    </MainLayout>
   )
 }

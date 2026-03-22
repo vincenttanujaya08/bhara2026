@@ -6,6 +6,7 @@ use App\Models\Competition;
 use App\Models\Registration;
 use App\Models\TeamMember;
 use App\Models\RegistrationLog;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,56 +14,104 @@ use Inertia\Inertia;
 
 class CompetitionController extends Controller
 {
+    /**
+     * Menampilkan daftar semua kategori dan lomba.
+     */
     public function index()
     {
-        $categories = \App\Models\Category::with('competitions')->get();
+        $userId = Auth::id();
+
+        // Mengambil kategori beserta kompetisinya dan status pendaftaran user yang login
+        $categories = Category::with(['competitions' => function ($query) use ($userId) {
+            $query->with(['registrations' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            }]);
+        }])->get();
+
         return Inertia::render('Competitions/Index', compact('categories'));
     }
 
+    /**
+     * Menampilkan form pendaftaran lomba.
+     */
     public function show($id)
     {
-        $competition = Competition::findOrFail($id);
+        $userId = Auth::id();
+        $competition = Competition::with('category')->findOrFail($id);
+
+        // Cek apakah user sudah memiliki pendaftaran aktif (Pending atau Approved)
+        $existingRegistration = Registration::where('user_id', $userId)
+            ->where('competition_id', $id)
+            ->whereIn('payment_status', ['pending', 'approved'])
+            ->exists();
+
+        // Jika sudah terdaftar, jangan tampilkan form, langsung ke halaman Verifying
+        if ($existingRegistration) {
+            return Inertia::render('Competitions/Success');
+        }
+
         return Inertia::render('Competitions/Register', [
             'competition' => $competition,
         ]);
     }
 
+    /**
+     * Menyimpan data pendaftaran lomba baru.
+     */
     public function store(Request $request, $id)
     {
         $competition = Competition::findOrFail($id);
+        $userId = Auth::id();
 
+        // Validasi ganda di sisi backend
+        $alreadyRegistered = Registration::where('user_id', $userId)
+            ->where('competition_id', $id)
+            ->whereIn('payment_status', ['pending', 'approved'])
+            ->exists();
+
+        if ($alreadyRegistered) {
+            return Inertia::render('Competitions/Success');
+        }
+
+        // Validasi input file dan anggota
         $request->validate([
             'leader_ktm' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'payment'    => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'members.*.ktm' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
+        // Hitung jumlah peserta (Ketua + Anggota yang namanya diisi)
         $filledMembers = collect($request->members)->filter(fn($m) => !empty($m['name']))->count();
         $totalParticipants = 1 + $filledMembers;
 
+        // Validasi jumlah minimal dan maksimal peserta sesuai database
         if ($totalParticipants < $competition->min_participants) {
-            return back()->withErrors('Jumlah peserta kurang dari minimum.');
+            return back()->withErrors(['members' => 'Jumlah peserta kurang dari minimum yang ditentukan.']);
         }
         if ($totalParticipants > $competition->max_participants) {
-            return back()->withErrors('Jumlah peserta melebihi maksimum.');
+            return back()->withErrors(['members' => 'Jumlah peserta melebihi batas maksimum.']);
         }
 
-        return DB::transaction(function () use ($request, $competition) {
+        return DB::transaction(function () use ($request, $competition, $userId) {
+            // 1. Simpan Bukti Pembayaran
             $paymentPath = $request->file('payment')->store('payments', 'public');
 
+            // 2. Buat Data Registrasi Utama
             $registration = Registration::create([
-                'user_id'        => Auth::id(),
+                'user_id'        => $userId,
                 'competition_id' => $competition->id,
                 'payment_proof'  => $paymentPath,
                 'payment_status' => 'pending',
             ]);
 
+            // 3. Catat Log Pendaftaran
             RegistrationLog::create([
                 'registration_id' => $registration->id,
                 'status'          => 'pending',
-                'notes'           => 'Pendaftaran pertama kali disubmit oleh peserta.',
+                'notes'           => 'Pendaftaran baru dikirimkan dan menunggu verifikasi admin.',
             ]);
 
+            // 4. Simpan Data Ketua Tim (TeamMember pertama)
             $leaderKtmPath = $request->file('leader_ktm')->store('ktm', 'public');
             TeamMember::create([
                 'registration_id' => $registration->id,
@@ -70,6 +119,7 @@ class CompetitionController extends Controller
                 'ktm_file'        => $leaderKtmPath,
             ]);
 
+            // 5. Simpan Data Anggota Tambahan (jika ada)
             foreach ($request->members ?? [] as $member) {
                 if (!empty($member['name'])) {
                     $ktmPath = isset($member['ktm']) ? $member['ktm']->store('ktm', 'public') : null;
@@ -81,10 +131,14 @@ class CompetitionController extends Controller
                 }
             }
 
-            return redirect('/history')->with('success', 'Berhasil daftar! Silakan tunggu validasi.');
+            // Arahkan ke halaman Sukses/Verifying
+            return Inertia::render('Competitions/Success');
         });
     }
 
+    /**
+     * Menampilkan riwayat pendaftaran milik user.
+     */
     public function history()
     {
         $registrations = Registration::where('user_id', Auth::id())
@@ -94,15 +148,21 @@ class CompetitionController extends Controller
         return Inertia::render('Competitions/History', compact('registrations'));
     }
 
+    /**
+     * Menampilkan detail dari satu pendaftaran.
+     */
     public function showHistory($id)
     {
         $registration = Registration::where('id', $id)
             ->where('user_id', Auth::id())
-            ->with(['competition', 'members', 'logs'])
+            ->with(['competition.category', 'members', 'logs'])
             ->firstOrFail();
         return Inertia::render('Competitions/HistoryDetail', compact('registration'));
     }
 
+    /**
+     * Mengupdate data pendaftaran jika ditolak oleh admin.
+     */
     public function updateHistory(Request $request, $id)
     {
         $registration = Registration::where('id', $id)
@@ -110,7 +170,7 @@ class CompetitionController extends Controller
             ->firstOrFail();
 
         if ($registration->payment_status !== 'rejected') {
-            return back()->withErrors('Hanya pendaftaran yang ditolak yang bisa diedit.');
+            return back()->withErrors('Hanya pendaftaran yang ditolak yang dapat diperbarui.');
         }
 
         $request->validate([
@@ -143,13 +203,16 @@ class CompetitionController extends Controller
             RegistrationLog::create([
                 'registration_id' => $registration->id,
                 'status'          => 'pending',
-                'notes'           => 'Peserta memperbarui dokumen dan mengajukan ulang validasi.',
+                'notes'           => 'Peserta telah mengunggah ulang dokumen untuk validasi ulang.',
             ]);
         });
 
-        return back()->with('success', 'Data berhasil diperbarui.');
+        return back()->with('success', 'Pendaftaran berhasil diajukan kembali.');
     }
 
+    /**
+     * Mengunggah karya untuk pendaftaran yang sudah approved.
+     */
     public function submitWork(Request $request, $id)
     {
         $registration = Registration::where('id', $id)
@@ -160,12 +223,8 @@ class CompetitionController extends Controller
         $request->validate([
             'submission_title'       => 'required|string|max:255',
             'submission_description' => 'required|string',
-            'submission_file'        => 'required|file|mimes:zip,rar|max:20480',
+            'submission_file'        => 'required|file|mimes:zip,rar|max:20480', // Maks 20MB
         ]);
-
-        if (str_word_count($request->submission_description) > 100) {
-            return back()->withErrors('Deskripsi karya tidak boleh lebih dari 100 kata.');
-        }
 
         $registration->update([
             'submission_title'       => $request->submission_title,
@@ -173,6 +232,6 @@ class CompetitionController extends Controller
             'submission_file'        => $request->file('submission_file')->store('submissions', 'public'),
         ]);
 
-        return back()->with('success', 'Karya berhasil diunggah!');
+        return back()->with('success', 'Karya Anda berhasil dikirim!');
     }
 }
