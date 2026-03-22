@@ -67,11 +67,13 @@ export default function Navbar() {
   }
 
   const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Events', href: '/events' },
+    { label: 'Home',         href: '/' },
+    { label: 'Events',       href: '/events' },
     { label: 'Competitions', href: '/competitions' },
-    { label: 'About', href: '/about' },
-    { label: 'Dashboard', href: '/history' },
+    { label: 'About',        href: '/about' },
+    { label: 'Dashboard',    href: '/history' },
+    // Hanya tampil jika user sudah login
+    ...(auth?.user ? [{ label: 'Profile', href: '/profile' }] : []),
   ]
 
   return (
@@ -148,8 +150,9 @@ export default function Navbar() {
             )}
           </button>
 
+          {/* Profile icon — menuju /profile jika login, /login jika belum */}
           <div
-            onClick={() => handleNav(auth?.user ? '/history' : '/login')}
+            onClick={() => handleNav(auth?.user ? '/profile' : '/login')}
             style={{ cursor: 'pointer', opacity: menuOpen ? 1 : 0.75 }}
           >
             <img src="/images/Group 3.png" alt="profile" style={{ height: menuOpen ? 26 : 20 }} />
