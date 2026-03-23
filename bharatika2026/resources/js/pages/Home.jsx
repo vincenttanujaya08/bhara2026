@@ -8,9 +8,20 @@ const C = {
   crimson: '#8B1A1A', dark: '#1A1410', charcoal: '#2A2420', black: '#0F0A05',
 }
 
-function TLink({ href, children, style: s, onMouseEnter, onMouseLeave, onClick }) {
+function TLink({ href, children, style: s, className, onMouseEnter, onMouseLeave, onClick }) {
   const handle = (e) => { e.preventDefault(); onClick?.(e); navigateWithTransition(href) }
-  return <a href={href} onClick={handle} style={{ cursor: 'pointer', ...s }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>{children}</a>
+  return (
+    <a 
+      href={href} 
+      onClick={handle} 
+      className={className} // Baris ini yang krusial biar CSS terbaca
+      style={{ cursor: 'pointer', ...s }} 
+      onMouseEnter={onMouseEnter} 
+      onMouseLeave={onMouseLeave}
+    >
+      {children}
+    </a>
+  )
 }
 
 function useFonts() {
@@ -52,32 +63,35 @@ function Hero() {
       <style>{`
         .hero-btn {
           display: inline-block;
-          padding: clamp(12px, 2vw, 18px) clamp(32px, 5vw, 64px);
+          padding: 16px 64px; /* Fix padding biar mantap */
           border: 1.5px solid transparent;
-          color: ${C.crimson};
+          color: ${C.crimson} !important; /* Paksa warna merah */
           font-family: 'Cinzel', serif;
-          font-size: clamp(11px, 1.2vw, 13px);
+          font-size: 13px;
           letter-spacing: 5px;
           text-decoration: none;
           text-transform: uppercase;
-          background: ${C.cream};
-          backdrop-filter: blur(4px);
+          background: ${C.cream}; /* Background Cream muncul di sini */
           transition: all 0.3s;
           border-radius: 50px;
+          font-weight: 700;
         }
         .hero-btn:hover {
-          background: rgba(0,0,0,0);
-          color: ${C.gold};
+          background: transparent;
+          color: ${C.gold} !important;
           border-color: ${C.gold};
-          backdrop-filter: none;
         }
       `}</style>
+      
       <video autoPlay loop muted playsInline
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
         <source src="/videos/Motion Background bhara26 FIXX.mp4" type="video/mp4" />
       </video>
+
+      {/* Gradien bawaanmu (zIndex 1) */}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(15,10,5,0.2) 0%, rgba(15,10,5,0.05) 50%, rgba(15,10,5,0.5) 100%)', zIndex: 1 }} />
-      <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 'clamp(6rem, 12vw, 12rem)', marginTop: '4rem' }}>
+      
+      <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 'clamp(6rem, 12vw, 12rem)' }}>
         <TLink href="/about" className="hero-btn">Learn More</TLink>
       </div>
     </section>
