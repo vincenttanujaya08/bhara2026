@@ -41,6 +41,9 @@ class AdminController extends Controller
     public function verify(Request $request, $id)
     {
         $registration = Registration::with(['user', 'competition'])->findOrFail($id);
+        if ($registration->payment_status === 'approved') {
+            return back()->with('error', 'Pendaftaran ini sudah diverifikasi sebelumnya.');
+        }
 
         $request->validate([
             'status' => 'required|in:approved,rejected',
@@ -59,7 +62,7 @@ class AdminController extends Controller
 
                 $registration->participant_code = $competitionCode . str_pad($orderNumber, 3, '0', STR_PAD_LEFT);
 
-                // Mail::to($registration->user->email)->send(new VerificationSuccess($registration));
+                Mail::to($registration->user->email)->send(new VerificationSuccess($registration));
             }
 
             $registration->save();
