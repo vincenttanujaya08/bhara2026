@@ -173,41 +173,53 @@ class CompetitionController extends Controller
             return back()->withErrors('Hanya pendaftaran yang ditolak yang dapat diperbarui.');
         }
 
+        // Validasi diperketat agar sesuai dengan input React
         $request->validate([
             'payment'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'members'        => 'nullable|array',
+            'members.*.name' => 'required|string|max:255',
             'members.*.ktm'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::transaction(function () use ($request, $registration) {
+            // 1. Update Bukti Pembayaran (Jika ada file baru)
             if ($request->hasFile('payment')) {
                 $registration->payment_proof = $request->file('payment')->store('payments', 'public');
             }
 
+            // 2. Update Data Anggota (Nama & KTM)
             if ($request->members) {
                 foreach ($request->members as $memberId => $memberData) {
-                    if (isset($memberData['ktm'])) {
-                        $member = TeamMember::where('id', $memberId)
-                            ->where('registration_id', $registration->id)
-                            ->first();
-                        if ($member) {
-                            $member->ktm_file = $memberData['ktm']->store('ktm', 'public');
-                            $member->save();
+                    $member = TeamMember::where('id', $memberId)
+                        ->where('registration_id', $registration->id)
+                        ->first();
+
+                    if ($member) {
+                        // Selalu update nama karena user mungkin menggantinya di input text
+                        $member->name = $memberData['name'];
+
+                        // Update KTM hanya jika ada file baru yang diunggah
+                        if ($request->hasFile("members.$memberId.ktm")) {
+                            $member->ktm_file = $request->file("members.$memberId.ktm")->store('ktm', 'public');
                         }
+
+                        $member->save();
                     }
                 }
             }
 
+            // 3. Kembalikan status ke Pending & catat Log
             $registration->payment_status = 'pending';
             $registration->save();
 
             RegistrationLog::create([
                 'registration_id' => $registration->id,
                 'status'          => 'pending',
-                'notes'           => 'Peserta telah mengunggah ulang dokumen untuk validasi ulang.',
+                'notes'           => 'Peserta telah memperbaiki data dan mengajukan validasi ulang.',
             ]);
         });
 
-        return back()->with('success', 'Pendaftaran berhasil diajukan kembali.');
+        return back()->with('success', 'Perubahan berhasil disimpan. Silakan tunggu verifikasi ulang.');
     }
 
     /**
@@ -223,15 +235,32 @@ class CompetitionController extends Controller
         $request->validate([
             'submission_title'       => 'required|string|max:255',
             'submission_description' => 'required|string',
-            'submission_file'        => 'required|file|mimes:zip,rar|max:20480', // Maks 20MB
+            'submission_file'        => 'required|file|mimes:zip,rar|max:51200', // Sesuai diskusi 50MB
         ]);
 
-        $registration->update([
-            'submission_title'       => $request->submission_title,
-            'submission_description' => $request->submission_description,
-            'submission_file'        => $request->file('submission_file')->store('submissions', 'public'),
-        ]);
+        if ($request->hasFile('submission_file')) {
+            $file = $request->file('submission_file');
 
-        return back()->with('success', 'Karya Anda berhasil dikirim!');
+            // 1. Ambil ekstensi asli (zip atau rar)
+            $extension = $file->getClientOriginalExtension();
+
+            // 2. Bersihkan nomor peserta dari karakter aneh (misal / jadi -)
+            $safeParticipantCode = str_replace(['/', '\\', ' '], '-', $registration->participant_code);
+
+            // 3. Buat nama file baru: nopeserta.zip
+            $fileName = $safeParticipantCode . '.' . $extension;
+
+            // 4. Simpan ke folder submissions dengan nama kustom
+            $path = $file->storeAs('submissions', $fileName, 'public');
+
+            // 5. Update database
+            $registration->update([
+                'submission_title'       => $request->submission_title,
+                'submission_description' => $request->submission_description,
+                'submission_file'        => $path,
+            ]);
+        }
+
+        return back()->with('success', 'Karya Anda berhasil dikirim dengan nama file: ' . $fileName);
     }
 }

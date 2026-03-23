@@ -21,18 +21,21 @@ class CompetitionSeeder extends Seeder
         }
 
         $data = [
-            ['category_id' => $tirta->id, 'code' => '101', 'name' => 'Digital Campaign', 'min_participants' => 2, 'max_participants' => 2],
+            // TIRTA
+            ['category_id' => $tirta->id, 'code' => '101', 'name' => 'Digital Campaign', 'min_participants' => 3, 'max_participants' => 3],
             ['category_id' => $tirta->id, 'code' => '102', 'name' => 'Character Design', 'min_participants' => 1, 'max_participants' => 2],
             ['category_id' => $tirta->id, 'code' => '103', 'name' => 'Nail Art Design', 'min_participants' => 1, 'max_participants' => 1],
 
+            // AGNI
             ['category_id' => $agni->id, 'code' => '201', 'name' => 'Public Seating Design', 'min_participants' => 1, 'max_participants' => 1],
             ['category_id' => $agni->id, 'code' => '202', 'name' => 'Children Room Design', 'min_participants' => 1, 'max_participants' => 2],
             ['category_id' => $agni->id, 'code' => '203', 'name' => 'Pop Up Installation Design', 'min_participants' => 1, 'max_participants' => 2],
 
-
+            // BAYU
             ['category_id' => $bayu->id, 'code' => '301', 'name' => 'Film Making', 'min_participants' => 3, 'max_participants' => 3],
             ['category_id' => $bayu->id, 'code' => '302', 'name' => 'Sneakers Design', 'min_participants' => 1, 'max_participants' => 1],
 
+            // BUANA
             ['category_id' => $buana->id, 'code' => '401', 'name' => 'Comic Strip', 'min_participants' => 1, 'max_participants' => 2],
             ['category_id' => $buana->id, 'code' => '402', 'name' => 'Game Character Design', 'min_participants' => 1, 'max_participants' => 1],
             ['category_id' => $buana->id, 'code' => '403', 'name' => 'Fashion Illustration', 'min_participants' => 1, 'max_participants' => 1],
@@ -44,7 +47,7 @@ class CompetitionSeeder extends Seeder
 
         foreach ($data as $item) {
             Competition::updateOrCreate(
-                ['name' => $item['name']],
+                ['code' => $item['code']],
                 $item
             );
         }

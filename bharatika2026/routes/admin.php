@@ -9,4 +9,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/registrations', [AdminController::class, 'registrations'])->name('admin.registrations.index');
     Route::get('/registrations/{id}', [AdminController::class, 'showRegistration'])->name('admin.registrations.show');
     Route::post('/registrations/{id}/verify', [AdminController::class, 'verify'])->name('admin.registrations.verify');
+    Route::get('/submissions', [AdminController::class, 'submissions'])->name('admin.submissions.index');
+    Route::get('/submissions/{id}', [AdminController::class, 'showSubmission'])->name('admin.submissions.show');
 });

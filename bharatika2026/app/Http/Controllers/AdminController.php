@@ -26,7 +26,9 @@ class AdminController extends Controller
 
     public function registrations()
     {
-        $registrations = Registration::with(['competition', 'user'])->latest()->get();
+        $registrations = Registration::with(['competition.category', 'user'])
+            ->latest()
+            ->get();
 
         return Inertia::render('Admin/Registrations/Index', compact('registrations'));
     }
@@ -79,5 +81,26 @@ class AdminController extends Controller
         return redirect()
             ->route('admin.registrations.index')
             ->with('success', 'Status diperbarui. Kode Peserta: ' . $registration->participant_code);
+    }
+
+    public function submissions()
+    {
+        $submissions = Registration::where('payment_status', 'approved') // Ambil semua yang sudah bayar & valid
+            ->with(['user', 'competition.category']) // Load relasi lengkap
+            ->latest()
+            ->get();
+
+        return Inertia::render('Admin/Submissions/Index', [
+            'submissions' => $submissions
+        ]);
+    }
+
+    public function showSubmission($id)
+    {
+        $submission = Registration::with(['competition.category', 'user', 'members'])
+            ->whereNotNull('submission_title')
+            ->findOrFail($id);
+
+        return Inertia::render('Admin/Submissions/Show', compact('submission'));
     }
 }

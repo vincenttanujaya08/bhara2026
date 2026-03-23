@@ -1,20 +1,23 @@
-import { useState, useEffect } from 'react'
-import { Link } from '@inertiajs/react'
+// resources/js/pages/Admin/RegistrationsIndex.jsx
+import { useState, useEffect, useMemo } from 'react'
+import { Link, Head } from '@inertiajs/react'
 
 const C = {
   gold: '#C8A84B',
-  cream: '#E8D9A0',
-  crimson: '#8B1A1A',
+  goldLight: '#E8C96A',
   dark: '#0F0A05',
-  card: '#1A1410',
-  surface: '#161210',
-  border: 'rgba(200,168,75,0.15)',
+  card: 'rgba(255,255,255,0.03)',
+  border: 'rgba(200,168,75,0.2)',
+  white: '#FFFFFF',
+  green: '#7ECBA1',
+  red: '#E08080',
+  crimson: '#8B1A1A',
 }
 
-const STATUS = {
-  pending:  { label: 'Menunggu', color: '#C8A84B', bg: 'rgba(200,168,75,0.1)',  border: 'rgba(200,168,75,0.3)' },
-  approved: { label: 'Diterima', color: '#7ECBA1', bg: 'rgba(126,203,161,0.1)', border: 'rgba(126,203,161,0.3)' },
-  rejected: { label: 'Ditolak',  color: '#E08080', bg: 'rgba(224,128,128,0.1)', border: 'rgba(224,128,128,0.3)' },
+const STATUS_MAP = {
+  pending:  { label: 'MENUNGGU', color: C.gold },
+  approved: { label: 'VALID',    color: C.green },
+  rejected: { label: 'REVISI',   color: C.red },
 }
 
 function useFonts() {
@@ -24,185 +27,198 @@ function useFonts() {
     if (document.getElementById('bh-fonts')) return
     const l = document.createElement('link')
     l.id = 'bh-fonts'; l.rel = 'stylesheet'
-    l.href = 'https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap'
+    l.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=EB+Garamond:wght@400;700;800&display=swap'
     document.head.appendChild(l)
   }, [])
 }
 
-function AdminNav({ active }) {
+function AdminNav({ active = 'registrations' }) {
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      background: 'rgba(10,7,3,0.97)', height: 58,
+      background: '#000', height: 75,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '0 2.5rem', borderBottom: `1px solid ${C.border}`,
+      padding: '0 clamp(1.5rem, 5vw, 4rem)', borderBottom: `2px solid ${C.gold}`,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(1rem, 3vw, 4rem)' }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 17, color: C.gold }}>bharatika</span>
+          <span style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(18px, 2.5vw, 24px)', color: C.gold, fontWeight: 900, letterSpacing: 3 }}>BHARATIKA</span>
         </Link>
-        <div style={{ width: 1, height: 20, background: C.border }} />
-        <span style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 3, color: C.cream, opacity: 0.35, textTransform: 'uppercase' }}>Admin Panel</span>
-        <nav style={{ display: 'flex', gap: '1.5rem' }}>
-          {[{ label: 'Dashboard', href: '/admin/dashboard', key: 'dashboard' }, { label: 'Pendaftaran', href: '/admin/registrations', key: 'registrations' }].map(({ label, href, key }) => (
+        <nav style={{ display: 'flex', gap: 'clamp(1rem, 2vw, 2.5rem)' }}>
+          {[
+            { label: 'DASHBOARD', href: '/admin/dashboard', key: 'dashboard' },
+            { label: 'PENDAFTARAN', href: '/admin/registrations', key: 'registrations' },
+            { label: 'KARYA', href: '/admin/submissions', key: 'submissions' },
+          ].map(({ label, href, key }) => (
             <Link key={key} href={href} style={{
-              fontFamily: "'Cinzel', serif", fontSize: 10, letterSpacing: 2,
-              color: active === key ? C.gold : C.cream, textDecoration: 'none',
-              textTransform: 'uppercase', opacity: active === key ? 1 : 0.55,
-              borderBottom: active === key ? `1px solid ${C.gold}` : 'none', paddingBottom: 2,
-            }}>{label}</Link>
+              fontFamily: "'Cinzel', serif", fontSize: 'clamp(10px, 1.2vw, 13px)', letterSpacing: 2,
+              color: active === key ? C.white : C.gold, textDecoration: 'none', fontWeight: 900,
+              borderBottom: active === key ? `3px solid ${C.gold}` : '3px solid transparent',
+              paddingBottom: 6, transition: 'all 0.3s ease',
+            }}
+              onMouseEnter={e => { if(active !== key) e.currentTarget.style.color = C.white }}
+              onMouseLeave={e => { if(active !== key) e.currentTarget.style.color = C.gold }}
+            >{label}</Link>
           ))}
         </nav>
       </div>
       <Link href="/logout" method="post" as="button" style={{
-        background: 'transparent', border: `1px solid rgba(200,168,75,0.2)`,
-        color: C.cream, fontFamily: "'Cinzel', serif", fontSize: 9,
-        letterSpacing: 2, padding: '5px 16px', cursor: 'pointer',
-        textTransform: 'uppercase', opacity: 0.5,
-      }}>Logout</Link>
+        background: C.crimson, border: 'none', color: C.white, fontFamily: "'Cinzel', serif", 
+        fontSize: 'clamp(9px, 1vw, 12px)', padding: 'clamp(8px, 1.5vw, 12px) clamp(16px, 2vw, 28px)', cursor: 'pointer', fontWeight: 900, textTransform: 'uppercase',
+        transition: 'all 0.2s ease',
+      }}
+        onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.2)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+        onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)'; e.currentTarget.style.transform = 'translateY(0)' }}
+      >LOGOUT</Link>
     </div>
   )
 }
 
-function StatusBadge({ status }) {
-  const s = STATUS[status] ?? STATUS.pending
-  return (
-    <span style={{
-      fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 2,
-      textTransform: 'uppercase', padding: '4px 12px',
-      border: `1px solid ${s.border}`, color: s.color,
-      background: s.bg, whiteSpace: 'nowrap',
-    }}>{s.label}</span>
-  )
-}
-
-const FILTERS = [
-  { key: 'all', label: 'Semua' },
-  { key: 'pending', label: 'Menunggu' },
-  { key: 'approved', label: 'Diterima' },
-  { key: 'rejected', label: 'Ditolak' },
-]
-
-export default function AdminRegistrationsIndex({ registrations = [], flash = {} }) {
+export default function AdminRegistrationsIndex({ registrations = [] }) {
   useFonts()
-  const [filter, setFilter] = useState('all')
+  
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [catFilters, setCatFilters] = useState([])
+  const [compFilters, setCompFilters] = useState([])
   const [search, setSearch] = useState('')
+  
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
-  const filtered = registrations.filter(r => {
-    const matchStatus = filter === 'all' || r.payment_status === filter
+  useEffect(() => { setCurrentPage(1) }, [statusFilter, catFilters, compFilters, search])
+
+  const categories = useMemo(() => [...new Set(registrations.map(r => r.competition?.category?.name?.toUpperCase()))].filter(Boolean).sort(), [registrations])
+  
+  const availableCompetitions = useMemo(() => [...new Set(registrations
+    .filter(r => catFilters.length === 0 || catFilters.includes(r.competition?.category?.name?.toUpperCase()))
+    .map(r => r.competition?.name?.toUpperCase()))].filter(Boolean).sort(), [registrations, catFilters])
+
+  const filtered = useMemo(() => registrations.filter(r => {
+    const matchStatus = statusFilter === 'all' || r.payment_status === statusFilter
+    const matchCat = catFilters.length === 0 || catFilters.includes(r.competition?.category?.name?.toUpperCase())
+    const matchComp = compFilters.length === 0 || compFilters.includes(r.competition?.name?.toUpperCase())
     const q = search.toLowerCase()
-    const matchSearch = !q ||
-      r.user?.name?.toLowerCase().includes(q) ||
-      r.competition?.name?.toLowerCase().includes(q) ||
-      (r.participant_code ?? '').toLowerCase().includes(q) ||
-      r.user?.instansi?.toLowerCase().includes(q)
-    return matchStatus && matchSearch
-  })
+    const matchSearch = !q || r.user?.name?.toLowerCase().includes(q) || r.competition?.name?.toLowerCase().includes(q) || (r.participant_code ?? '').toLowerCase().includes(q)
+    return matchStatus && matchCat && matchComp && matchSearch
+  }), [registrations, statusFilter, catFilters, compFilters, search])
+
+  const paginatedData = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+
+  const toggleCategory = (cat) => {
+    setCatFilters(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])
+    setCompFilters([]) 
+  }
+
+  const FilterButton = ({ active, onClick, children, showCheck = true }) => (
+    <button onClick={onClick} style={{
+      padding: 'clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 20px)', 
+      fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', fontWeight: 900, cursor: 'pointer',
+      border: `2px solid ${active ? C.gold : 'rgba(255,255,255,0.1)'}`,
+      background: active ? `${C.gold}20` : 'rgba(255,255,255,0.05)',
+      color: active ? C.gold : C.white,
+      display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s'
+    }}>
+      {showCheck && <div style={{ width: 10, height: 10, border: `1px solid ${C.gold}`, background: active ? C.gold : 'transparent' }} />}
+      {children}
+    </button>
+  )
 
   return (
-    <div style={{ background: C.dark, minHeight: '100vh', fontFamily: "'Cinzel', serif" }}>
+    <div style={{ background: C.dark, minHeight: '100vh' }}>
+      <Head title="Manajemen Pendaftaran | Admin" />
       <AdminNav active="registrations" />
 
-      <div style={{ paddingTop: 58 }}>
-        {/* Header */}
-        <div style={{
-          padding: '3rem 3rem 2rem', background: C.surface,
-          borderBottom: `1px solid ${C.border}`,
-        }}>
-          <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 4, color: C.gold, opacity: 0.65, textTransform: 'uppercase', margin: '0 0 0.4rem' }}>Admin</p>
-          <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(36px, 5vw, 56px)', color: C.cream, margin: '0 0 1.5rem', lineHeight: 1 }}>Kelola Pendaftaran</h1>
+      <div style={{ paddingTop: 75 }}>
+        {/* Header Section Responsif */}
+        <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)', background: 'linear-gradient(to bottom, #150F0A, #0F0A05)', borderBottom: `1px solid ${C.border}` }}>
+          <h1 style={{ fontFamily: "'EB Garamond', serif", fontSize: 'clamp(36px, 6vw, 72px)', color: C.white, margin: '0 0 clamp(1.5rem, 4vw, 3rem)', fontWeight: 800, lineHeight: 1 }}>
+            Kelola Pendaftar
+          </h1>
 
-          {/* Filter + Search */}
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              {FILTERS.map(f => (
-                <button key={f.key} onClick={() => setFilter(f.key)} style={{
-                  padding: '7px 18px', fontFamily: "'Cinzel', serif", fontSize: 9,
-                  letterSpacing: 2, textTransform: 'uppercase', cursor: 'pointer',
-                  border: `1px solid ${filter === f.key ? C.gold : 'rgba(200,168,75,0.2)'}`,
-                  background: filter === f.key ? C.gold : 'transparent',
-                  color: filter === f.key ? C.dark : C.cream,
-                  transition: 'all 0.2s',
-                }}>{f.label}</button>
-              ))}
-            </div>
-            <input
-              type="text" placeholder="Cari nama, kompetisi, kode peserta..."
-              value={search} onChange={e => setSearch(e.target.value)}
-              style={{
-                flex: 1, minWidth: 220, padding: '8px 14px',
-                background: 'rgba(200,168,75,0.04)',
-                border: `1px solid rgba(200,168,75,0.2)`,
-                color: C.cream, fontFamily: "'EB Garamond', serif",
-                fontSize: 14, outline: 'none',
-              }}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <input type="text" placeholder="CARI NAMA ATAU KODE..." value={search} onChange={e => setSearch(e.target.value)}
+              style={{ width: '100%', padding: 'clamp(15px, 3vw, 24px)', background: 'rgba(255,255,255,0.05)', border: `2px solid ${C.gold}40`, color: C.white, fontFamily: "'EB Garamond', serif", fontSize: 'clamp(16px, 2.5vw, 20px)', fontWeight: 700, outline: 'none' }}
             />
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+              <div>
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', color: C.gold, fontWeight: 900, marginBottom: '0.8rem', letterSpacing: 2 }}>STATUS</p>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {['all', 'pending', 'approved', 'rejected'].map(s => (
+                    <FilterButton key={s} active={statusFilter === s} onClick={() => setStatusFilter(s)} showCheck={false}>{s.toUpperCase()}</FilterButton>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', color: C.gold, fontWeight: 900, marginBottom: '0.8rem', letterSpacing: 2 }}>KATEGORI</p>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {categories.map(cat => <FilterButton key={cat} active={catFilters.includes(cat)} onClick={() => toggleCategory(cat)}>{cat}</FilterButton>)}
+                </div>
+              </div>
+            </div>
+            
+            {availableCompetitions.length > 0 && (
+              <div>
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', color: C.gold, fontWeight: 900, marginBottom: '0.8rem', letterSpacing: 2 }}>LOMBA SPESIFIK</p>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {availableCompetitions.map(comp => (
+                    <FilterButton key={comp} active={compFilters.includes(comp)} onClick={() => setCompFilters(prev => prev.includes(comp) ? prev.filter(c => c !== comp) : [...prev, comp])}>{comp}</FilterButton>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div style={{ padding: '2rem 3rem 6rem' }}>
+        {/* List Peserta Responsif */}
+        <div style={{ padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 5vw, 4rem)', maxWidth: '1400px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
+             <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(10px, 1.2vw, 12px)', color: C.gold, fontWeight: 900, letterSpacing: 1 }}>
+               DITEMUKAN {filtered.length} DATA — HALAMAN {currentPage} DARI {totalPages || 1}
+             </p>
+             <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)} style={{ background: 'none', border: `1px solid ${C.gold}`, color: C.gold, padding: '8px 15px', cursor: 'pointer', opacity: currentPage === 1 ? 0.3 : 1 }}>PREV</button>
+                <button disabled={currentPage === totalPages || totalPages === 0} onClick={() => setCurrentPage(prev => prev + 1)} style={{ background: 'none', border: `1px solid ${C.gold}`, color: C.gold, padding: '8px 15px', cursor: 'pointer', opacity: currentPage === totalPages || totalPages === 0 ? 0.3 : 1 }}>NEXT</button>
+             </div>
+          </div>
 
-          {/* Flash */}
-          {flash.success && (
-            <div style={{ padding: '12px 16px', marginBottom: '1.5rem', border: `1px solid rgba(126,203,161,0.3)`, background: 'rgba(126,203,161,0.06)' }}>
-              <p style={{ color: '#7ECBA1', fontSize: 14, margin: 0, fontFamily: "'EB Garamond', serif" }}>{flash.success}</p>
-            </div>
-          )}
-
-          <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2, color: C.cream, opacity: 0.3, textTransform: 'uppercase', margin: '0 0 1rem' }}>
-            Menampilkan {filtered.length} dari {registrations.length} pendaftaran
-          </p>
-
-          {filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '5rem', border: `1px solid ${C.border}` }}>
-              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 11, letterSpacing: 3, color: C.cream, opacity: 0.25, textTransform: 'uppercase' }}>Tidak ada data</p>
-            </div>
-          ) : (
-            <div style={{ border: `1px solid ${C.border}` }}>
-              {/* Table header */}
-              <div style={{
-                display: 'grid', gridTemplateColumns: '1.2fr 1.4fr 0.9fr 0.8fr 0.5fr',
-                padding: '12px 1.5rem',
-                background: 'rgba(200,168,75,0.05)',
-                borderBottom: `1px solid ${C.border}`,
-              }}>
-                {['Peserta', 'Kompetisi', 'Kode Peserta', 'Status', 'Aksi'].map(h => (
-                  <p key={h} style={{ fontFamily: "'Cinzel', serif", fontSize: 8, letterSpacing: 3, color: C.gold, opacity: 0.65, textTransform: 'uppercase', margin: 0 }}>{h}</p>
-                ))}
-              </div>
-
-              {filtered.map((reg, i) => (
-                <div key={reg.id} style={{
-                  display: 'grid', gridTemplateColumns: '1.2fr 1.4fr 0.9fr 0.8fr 0.5fr',
-                  padding: '1.1rem 1.5rem', alignItems: 'center',
-                  borderBottom: i < filtered.length - 1 ? `1px solid rgba(200,168,75,0.07)` : 'none',
-                  transition: 'background 0.2s',
-                }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(200,168,75,0.03)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  <div>
-                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: C.cream, margin: '0 0 0.2rem', fontWeight: 500 }}>{reg.user?.name}</p>
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 12, color: C.cream, opacity: 0.4, margin: 0 }}>{reg.user?.instansi}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {paginatedData.map((reg) => {
+              const s = STATUS_MAP[reg.payment_status] || STATUS_MAP.pending;
+              return (
+                <div key={reg.id} style={{ 
+                    background: C.card, border: `1px solid ${C.border}`, padding: 'clamp(1rem, 2vw, 1.5rem) clamp(1.5rem, 3vw, 2.5rem)', 
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' 
+                }}>
+                  <div style={{ flex: '2 1 300px' }}>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(8px, 1vw, 10px)', color: C.gold, fontWeight: 900, margin: '0 0 4px', letterSpacing: 1 }}>{reg.competition?.category?.name} — {reg.competition?.name}</p>
+                    <h2 style={{ fontFamily: "'EB Garamond', serif", fontSize: 'clamp(20px, 3vw, 26px)', color: C.white, margin: 0, fontWeight: 800 }}>{reg.user?.name}</h2>
                   </div>
-                  <div>
-                    <p style={{ fontFamily: "'EB Garamond', serif", fontSize: 14, color: C.cream, opacity: 0.75, margin: '0 0 0.15rem' }}>{reg.competition?.name}</p>
-                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 9, color: C.cream, opacity: 0.3, margin: 0, letterSpacing: 1 }}>{reg.competition?.category?.name}</p>
+                  
+                  <div style={{ flex: '1 1 100px', textAlign: 'center' }}>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(8px, 1vw, 9px)', color: C.gold, fontWeight: 900, margin: '0 0 2px' }}>KODE</p>
+                    <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(14px, 2vw, 18px)', color: C.white, fontWeight: 900, margin: 0 }}>{reg.participant_code || '---'}</p>
                   </div>
-                  <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, color: C.gold, margin: 0, opacity: reg.participant_code ? 1 : 0.3 }}>
-                    {reg.participant_code ?? '—'}
-                  </p>
-                  <StatusBadge status={reg.payment_status} />
-                  <Link href={`/admin/registrations/${reg.id}`} style={{
-                    fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 2,
-                    color: C.gold, textDecoration: 'none', textTransform: 'uppercase',
-                    opacity: 0.7, transition: 'opacity 0.2s',
-                  }}
-                    onMouseEnter={e => e.target.style.opacity = 1}
-                    onMouseLeave={e => e.target.style.opacity = 0.7}
-                  >Detail →</Link>
+
+                  <div style={{ flex: '1 1 200px', display: 'flex', alignItems: 'center', gap: '1.5rem', justifyContent: 'flex-end' }}>
+                    <span style={{ color: s.color, fontFamily: "'Cinzel', serif", fontSize: 'clamp(8px, 1vw, 10px)', fontWeight: 900, letterSpacing: 1 }}>{s.label}</span>
+                    <Link href={`/admin/registrations/${reg.id}`} style={{ background: C.white, color: C.dark, padding: '10px 20px', textDecoration: 'none', fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', fontWeight: 900, textAlign: 'center' }}>DETAIL</Link>
+                  </div>
                 </div>
-              ))}
+              );
+            })}
+          </div>
+
+          {totalPages > 1 && (
+            <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+               {[...Array(totalPages)].map((_, i) => (
+                 <button key={i} onClick={() => setCurrentPage(i + 1)} style={{
+                   width: '40px', height: '40px', background: currentPage === i + 1 ? C.gold : 'transparent',
+                   color: currentPage === i + 1 ? C.dark : C.gold, border: `1px solid ${C.gold}`,
+                   fontWeight: 900, cursor: 'pointer', marginBottom: '5px'
+                 }}>{i + 1}</button>
+               ))}
             </div>
           )}
         </div>
