@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use App\Services\GoogleDriveService;
+use Illuminate\Support\Facades\Log;
 
 class CompetitionController extends Controller
 {
@@ -230,37 +232,58 @@ class CompetitionController extends Controller
         $registration = Registration::where('id', $id)
             ->where('user_id', Auth::id())
             ->where('payment_status', 'approved')
+            ->with(['competition.category', 'user']) // Load relasi untuk info upload Drive
             ->firstOrFail();
 
         $request->validate([
             'submission_title'       => 'required|string|max:255',
             'submission_description' => 'required|string',
-            'submission_file'        => 'required|file|mimes:zip,rar|max:51200', // Sesuai diskusi 50MB
+            'submission_file'        => 'required|file|mimes:zip,rar|max:102400', // 100MB
         ]);
+
+        // Tambahan validasi 100 kata sesuai permintaanmu
+        if (str_word_count($request->submission_description) > 100) {
+            return back()->withErrors(['submission_description' => 'Deskripsi karya tidak boleh lebih dari 100 kata.']);
+        }
 
         if ($request->hasFile('submission_file')) {
             $file = $request->file('submission_file');
 
-            // 1. Ambil ekstensi asli (zip atau rar)
+            // 1. Logika Penamaan File: nopeserta.extension
             $extension = $file->getClientOriginalExtension();
-
-            // 2. Bersihkan nomor peserta dari karakter aneh (misal / jadi -)
             $safeParticipantCode = str_replace(['/', '\\', ' '], '-', $registration->participant_code);
-
-            // 3. Buat nama file baru: nopeserta.zip
             $fileName = $safeParticipantCode . '.' . $extension;
 
-            // 4. Simpan ke folder submissions dengan nama kustom
+            // 2. Simpan ke folder lokal (submissions) dengan nama kustom
             $path = $file->storeAs('submissions', $fileName, 'public');
 
-            // 5. Update database
+            // 3. Update database dengan path lokal
             $registration->update([
                 'submission_title'       => $request->submission_title,
                 'submission_description' => $request->submission_description,
                 'submission_file'        => $path,
             ]);
+
+            // // 4. Upload ke Google Drive via Service
+            // try {
+            //     $driveService = new GoogleDriveService();
+
+            //     // Mengirim file yang baru saja disimpan ke Drive
+            //     // Parameter: (path_fisik, nama_file_di_drive, folder_kategori, folder_lomba)
+            //     $driveService->uploadFile(
+            //         storage_path('app/public/' . $path),
+            //         $fileName, // Nama di drive tetap menggunakan nopeserta.zip agar rapi
+            //         $registration->competition->category->name,
+            //         $registration->competition->name
+            //     );
+            // } catch (\Exception $e) {
+            //     // Jika upload drive gagal, file lokal tetap aman dan user tidak terhambat
+            //     Log::error('Google Drive upload failed for ' . $fileName . ': ' . $e->getMessage());
+            // }
+
+            return back()->with('success', 'Karya Anda berhasil dikirim dengan nama: ' . $fileName);
         }
 
-        return back()->with('success', 'Karya Anda berhasil dikirim dengan nama file: ' . $fileName);
+        return back()->withErrors('Gagal mengunggah file.');
     }
 }
