@@ -1,8 +1,11 @@
 // resources/js/pages/Competitions/Register.jsx
+// ─── Changes: Added ConfirmModal before submitting registration ──────
+
 import { useState, useEffect, useRef } from 'react'
 import { useForm, usePage } from '@inertiajs/react'
 import { navigateWithTransition } from '../../hooks/usePageTransition'
 import MainLayout from '../../Layouts/MainLayout'
+import ConfirmModal from '../../components/ConfirmModal'
 
 const C = {
   gold: '#C8A84B', cream: '#E8D9A0', parchment: '#D4C48A',
@@ -57,6 +60,9 @@ export default function CompetitionRegister({ competition }) {
   const minMembers = Math.max(0, (competition?.min_participants ?? 1) - 1)
   const [memberCount, setMemberCount] = useState(minMembers)
 
+  // ── Modal state ─────────────────────────────────────────────────
+  const [showConfirm, setShowConfirm] = useState(false)
+
   const { data, setData, post, processing, errors } = useForm({
     leader_ktm: null,
     payment: null,
@@ -87,10 +93,31 @@ export default function CompetitionRegister({ competition }) {
     setData('members', updated)
   }
 
-  const submit = (e) => {
+  // ── Validate before showing modal ──────────────────────────────
+  const handleSubmitClick = (e) => {
     e.preventDefault()
-    post(`/competitions/${competition.id}/register`, { forceFormData: true })
+    // Basic client-side check — server will validate fully
+    if (!data.leader_ktm) {
+      alert('Harap unggah KTM Ketua terlebih dahulu.')
+      return
+    }
+    if (!data.payment) {
+      alert('Harap unggah bukti pembayaran terlebih dahulu.')
+      return
+    }
+    setShowConfirm(true)
   }
+
+  // ── Actual submit after confirm ─────────────────────────────────
+  const handleConfirmedSubmit = () => {
+    post(`/competitions/${competition.id}/register`, { forceFormData: true })
+    // modal will close naturally when page navigates
+  }
+
+  // Count filled members for modal detail
+  const filledMembers = data.members.slice(0, memberCount).filter(m => m.name?.trim()).length
+  const totalParticipants = 1 + filledMembers
+  const categoryName = competition?.category?.name || 'Kompetisi'
 
   return (
     <MainLayout>
@@ -100,10 +127,23 @@ export default function CompetitionRegister({ competition }) {
         @keyframes gridFade { from { opacity:0; } to { opacity:0.4; } }
         .cr-wrap { max-width: 720px; margin: 0 auto; padding: clamp(40px,8vw,60px) clamp(1rem,4vw,1.5rem) clamp(3rem,6vw,6rem); position: relative; z-index: 10; }
         .cr-member-box { margin-bottom: 2.5rem; padding: clamp(1rem,2vw,1.5rem); border: 1px solid #333; background: rgba(0,0,0,0.3); }
-        @media (max-width: 480px) {
-          .cr-wrap { padding-top: 36px; }
-        }
+        @media (max-width: 480px) { .cr-wrap { padding-top: 36px; } }
       `}</style>
+
+      {/* ── Confirmation Modal ── */}
+      <ConfirmModal
+        isOpen={showConfirm}
+        loading={processing}
+        onConfirm={handleConfirmedSubmit}
+        onCancel={() => setShowConfirm(false)}
+        title="Konfirmasi Pendaftaran"
+        description={`Anda akan mendaftarkan tim ke lomba "${competition?.name}" — Kategori ${categoryName}.`}
+        detail={`${totalParticipants} peserta · Pembayaran sudah disiapkan · Data akan diverifikasi panitia`}
+        confirmLabel="Kirim Pendaftaran"
+        variant="primary"
+        icon="crown"
+      />
+
       <div style={{ background: '#0F0A05', minHeight: 'calc(100vh - 52px)', paddingTop: 52, position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', animation: 'gridFade 1.5s ease-out forwards', opacity: 0 }} />
         <div className="cr-wrap">
@@ -119,15 +159,24 @@ export default function CompetitionRegister({ competition }) {
             </p>
           </header>
 
-          <form onSubmit={submit}>
+          {/* Server-side errors */}
+          {Object.keys(errors).length > 0 && (
+            <div style={{ background: 'rgba(224,128,128,0.08)', border: '1px solid rgba(224,128,128,0.3)', borderLeft: '3px solid #E08080', padding: '1rem 1.25rem', marginBottom: '2rem' }}>
+              {Object.values(errors).map((err, i) => (
+                <p key={i} style={{ fontFamily: "'EB Garamond', serif", fontSize: 15, color: '#E08080', margin: i === 0 ? 0 : '0.4rem 0 0', fontWeight: 600 }}>• {err}</p>
+              ))}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmitClick}>
             <SectionCard title="Data Ketua Tim" delay="0.2s">
               <div style={{ background: '#0F0A05', padding: 'clamp(1rem,2vw,1.5rem)', marginBottom: '1.5rem', border: '1px solid #333' }}>
                 <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(14px,1.6vw,16px)', color: C.gold, margin: '0 0 1rem', fontWeight: 700 }}>{auth?.user?.name}</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                   {[
-                    { label: 'Email', value: auth?.user?.email },
+                    { label: 'Email',    value: auth?.user?.email    },
                     { label: 'WhatsApp', value: auth?.user?.whatsapp },
-                    { label: 'ID Line', value: auth?.user?.line_id },
+                    { label: 'ID Line',  value: auth?.user?.line_id  },
                     { label: 'Instansi', value: auth?.user?.instansi },
                   ].map(({ label, value }) => value ? (
                     <div key={label} style={{ display: 'flex', borderBottom: '1px solid #222', paddingBottom: '4px', flexWrap: 'wrap', gap: '0.25rem' }}>
@@ -180,8 +229,10 @@ export default function CompetitionRegister({ competition }) {
               <CustomFileInput label="Foto Bukti Transfer" required fileName={data.payment?.name} onChange={e => setData('payment', e.target.files[0])} error={errors.payment} />
             </SectionCard>
 
-            <button type="submit" disabled={processing} style={{ width: '100%', padding: 'clamp(14px,2vw,20px)', border: 'none', background: processing ? '#333' : C.gold, color: '#000', fontFamily: "'Cinzel', serif", fontSize: 'clamp(11px,1.2vw,13px)', fontWeight: 800, letterSpacing: '4px', cursor: 'pointer', textTransform: 'uppercase', transition: 'all 0.2s ease' }}>
-              {processing ? 'Mendaftarkan...' : 'Kirim Pendaftaran'}
+            {/* ── Submit button — opens modal ── */}
+            <button type="submit" disabled={processing}
+              style={{ width: '100%', padding: 'clamp(14px,2vw,20px)', border: 'none', background: processing ? '#333' : C.gold, color: '#000', fontFamily: "'Cinzel', serif", fontSize: 'clamp(11px,1.2vw,13px)', fontWeight: 800, letterSpacing: '4px', cursor: processing ? 'not-allowed' : 'pointer', textTransform: 'uppercase', transition: 'all 0.2s ease' }}>
+              {processing ? 'Mendaftarkan...' : 'Tinjau & Kirim Pendaftaran'}
             </button>
           </form>
         </div>
