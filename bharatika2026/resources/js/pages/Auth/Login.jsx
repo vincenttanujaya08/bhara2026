@@ -29,7 +29,9 @@ function useFonts() {
 
 export default function Login({ errors = {} }) {
   useFonts()
+
   const { data, setData, post, processing } = useForm({ email: '', password: '', remember: false })
+
   const [showPass, setShowPass] = useState(false)
   const [focused, setFocused] = useState(null)
 
@@ -63,7 +65,6 @@ export default function Login({ errors = {} }) {
           background: ${C.crimson};
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           min-height: 500px;
         }
         .login-right {
@@ -84,12 +85,13 @@ export default function Login({ errors = {} }) {
           pointer-events: none;
         }
         .login-tagline {
-          font-family: 'UnifrakturMaguntia', cursive;
-          font-size: clamp(36px, 7vw, 96px);
+          font-family: 'CSSalient', 'UnifrakturMaguntia', cursive;
+          font-size: clamp(48px, 8.5vw, 115px);
           color: ${C.cream};
           margin: 0;
-          line-height: 1.05;
-          letter-spacing: 1px;
+          line-height: 0.95;
+          letter-spacing: 2px;
+          text-transform: uppercase;
         }
         .login-title {
           font-family: 'Nord', sans-serif;
@@ -128,11 +130,11 @@ export default function Login({ errors = {} }) {
         }
         @media (max-width: 900px) {
           .login-wrap { flex-direction: column; }
-          .login-left { width: 100%; min-height: 42vh; }
+          .login-left { width: 100%; min-height: 45vh; }
           .login-right { width: 100%; }
         }
         @media (max-width: 540px) {
-          .login-left { min-height: 35vh; }
+          .login-left { min-height: 38vh; }
           .login-right { padding: 2.5rem 1.25rem 3rem; }
         }
       `}</style>
@@ -142,11 +144,35 @@ export default function Login({ errors = {} }) {
         <div className="login-left">
           <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.85, pointerEvents: 'none' }} />
           <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, pointerEvents: 'none' }} />
-          <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(2rem,5vw,4rem) clamp(1.5rem,4vw,3.5rem) 0' }}>
-            <h1 className="login-tagline">Get<br />Yourself<br />Ready to<br />Take the<br />Throne!</h1>
+          
+          <div style={{ position: 'relative', zIndex: 3, padding: 'clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3.5rem) 0' }}>
+            <h1 className="login-tagline">GET<br />YOURSELF<br />READY TO<br />TAKE THE<br />THRONE!</h1>
           </div>
-          <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', width: '100%', marginTop: 'auto' }}>
-            <img src="/images/MAHKOTA.svg" alt="Crown" style={{ width: '100%', maxHeight: 'clamp(150px, 28vw, 360px)', objectFit: 'contain', objectPosition: 'bottom center', display: 'block' }} onError={e => { e.target.style.opacity = '0' }} />
+          
+          <div style={{ 
+            position: 'absolute', 
+            bottom: 0,
+            left: 0,
+            zIndex: 2, 
+            display: 'flex', 
+            alignItems: 'flex-end', 
+            justifyContent: 'center', 
+            width: '100%',
+            pointerEvents: 'none' 
+          }}>
+            <img 
+              src="/images/MAHKOTA.svg" 
+              alt="Crown" 
+              style={{ 
+                width: '300%',
+                height: 'auto', 
+                objectFit: 'contain', 
+                objectPosition: 'bottom center', 
+                display: 'block', 
+                transform: 'translateY(34%) translateX(12%)' 
+              }} 
+              onError={e => { e.target.style.opacity = '0' }} 
+            />
           </div>
         </div>
 

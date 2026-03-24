@@ -316,7 +316,7 @@ function Merch() {
   return (
     <section id="merch" style={{ background: C.parchment, position: 'relative', overflow: 'hidden', padding: 'clamp(3rem, 5vw, 5rem) 0', backgroundImage: 'radial-gradient(circle, rgba(160,140,60,0.18) 1px, transparent 1px)', backgroundSize: '14px 14px' }}>
       <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(11px, 1.3vw, 18px)', letterSpacing: 6, color: C.crimson, textTransform: 'uppercase', textAlign: 'center', margin: '0 0 3rem', fontWeight: 700 }}>Take a look at our Merch</p>
-      <div style={{ position: 'relative', textAlign: 'center', margin: '0 0 4rem' }}>
+      <div style={{ position: 'relative', textAlign: 'center', margin: '5rem 0 8rem' }}>
         <h2 style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 'clamp(80px, 22vw, 340px)', margin: 0, lineHeight: 0.85, color: 'transparent', WebkitTextStroke: '2px ' + C.dark, userSelect: 'none', letterSpacing: 8, whiteSpace: 'nowrap' }}>MERCH</h2>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 'clamp(150px, 25vw, 380px)', zIndex: 2 }}>
           <img src="/images/BHAJUKITA.svg" alt="Bhajukita" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} />
