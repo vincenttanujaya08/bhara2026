@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationSuccess;
 use Inertia\Inertia;
+use App\Exports\RegistrationsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -102,5 +104,10 @@ class AdminController extends Controller
             ->findOrFail($id);
 
         return Inertia::render('Admin/Submissions/Show', compact('submission'));
+    }
+
+    public function exportRegistrations()
+    {
+        return Excel::download(new RegistrationsExport, 'Data_Pendaftar_Lomba.xlsx');
     }
 }
