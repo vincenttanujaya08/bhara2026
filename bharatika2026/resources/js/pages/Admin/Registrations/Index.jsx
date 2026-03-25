@@ -1,6 +1,8 @@
 // resources/js/pages/Admin/RegistrationsIndex.jsx
 import { useState, useEffect, useMemo } from 'react'
 import { Link, Head } from '@inertiajs/react'
+import ConfirmModal from '@/components/ConfirmModal'
+import { route } from 'ziggy-js'
 
 const C = {
   gold: '#C8A84B',
@@ -81,6 +83,7 @@ export default function AdminRegistrationsIndex({ registrations = [] }) {
   const [catFilters, setCatFilters] = useState([])
   const [compFilters, setCompFilters] = useState([])
   const [search, setSearch] = useState('')
+  const [showExportModal, setShowExportModal] = useState(false)
   
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
@@ -108,6 +111,11 @@ export default function AdminRegistrationsIndex({ registrations = [] }) {
   const toggleCategory = (cat) => {
     setCatFilters(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])
     setCompFilters([]) 
+  }
+
+  const handleExport = () => {
+    window.open('/admin/registrations/export', '_blank');
+    setShowExportModal(false);
   }
 
   const FilterButton = ({ active, onClick, children, showCheck = true }) => (
@@ -174,9 +182,32 @@ export default function AdminRegistrationsIndex({ registrations = [] }) {
         {/* List Peserta Responsif */}
         <div style={{ padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1rem, 5vw, 4rem)', maxWidth: '1400px', margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
-             <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(10px, 1.2vw, 12px)', color: C.gold, fontWeight: 900, letterSpacing: 1 }}>
-               DITEMUKAN {filtered.length} DATA — HALAMAN {currentPage} DARI {totalPages || 1}
-             </p>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(10px, 1.2vw, 12px)', color: C.gold, fontWeight: 900, letterSpacing: 1, margin: 0 }}>
+                    DITEMUKAN {filtered.length} DATA — HALAMAN {currentPage} DARI {totalPages || 1}
+                </p>
+                
+                <button 
+                    onClick={() => setShowExportModal(true)}
+                    style={{
+                        background: 'transparent',
+                        border: `1px solid ${C.green}`,
+                        color: C.green,
+                        padding: '8px 16px',
+                        fontFamily: "'Cinzel', serif",
+                        fontSize: '10px',
+                        fontWeight: 900,
+                        letterSpacing: 1,
+                        cursor: 'pointer',
+                        transition: 'all 0.3s'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = C.green; e.currentTarget.style.color = C.dark }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = C.green }}
+                >
+                    EXPORT EXCEL (VALID)
+                </button>
+             </div>
+
              <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)} style={{ background: 'none', border: `1px solid ${C.gold}`, color: C.gold, padding: '8px 15px', cursor: 'pointer', opacity: currentPage === 1 ? 0.3 : 1 }}>PREV</button>
                 <button disabled={currentPage === totalPages || totalPages === 0} onClick={() => setCurrentPage(prev => prev + 1)} style={{ background: 'none', border: `1px solid ${C.gold}`, color: C.gold, padding: '8px 15px', cursor: 'pointer', opacity: currentPage === totalPages || totalPages === 0 ? 0.3 : 1 }}>NEXT</button>
@@ -223,6 +254,16 @@ export default function AdminRegistrationsIndex({ registrations = [] }) {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onConfirm={handleExport}
+        title="Export Data Pendaftaran"
+        message="Sistem akan menyiapkan file Excel berisi seluruh data pendaftar yang sudah divalidasi (VALID), lengkap dengan bukti pembayaran. Lanjutkan?"
+        confirmText="YA, DOWNLOAD"
+        cancelText="BATAL"
+      />
     </div>
   )
 }
