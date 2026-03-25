@@ -64,28 +64,32 @@ function Dots() {
   )
 }
 
-const ICON_SVG = {
-  'digital campaign': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><polygon fill="url(#gg)" points="60,8 74,36 105,40 83,62 88,93 60,78 32,93 37,62 15,40 46,36"/><circle fill="#5A3A08" cx="60" cy="54" r="18"/><polygon fill="#F5DF8A" points="52,45 52,63 72,54"/></svg>`,
-  'character design': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><circle fill="url(#gg)" cx="60" cy="36" r="26"/><circle fill="#5A3A08" cx="60" cy="36" r="19"/><path fill="url(#gg)" d="M33 54 Q28 78 26 100 L94 100 Q92 78 87 54 Q74 66 60 66 Q46 66 33 54Z"/><circle fill="#F5DF8A" cx="50" cy="33" r="4.5"/><circle fill="#F5DF8A" cx="70" cy="33" r="4.5"/></svg>`,
-  'nail art': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><ellipse fill="url(#gg)" cx="30" cy="74" rx="11" ry="26" transform="rotate(-12 30 74)"/><ellipse fill="url(#gg)" cx="50" cy="70" rx="11" ry="30"/><ellipse fill="url(#gg)" cx="70" cy="70" rx="11" ry="30"/><ellipse fill="url(#gg)" cx="90" cy="74" rx="11" ry="26" transform="rotate(12 90 74)"/></svg>`,
-  'public seating': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><rect fill="url(#gg)" x="14" y="50" width="92" height="14" rx="6"/><rect fill="url(#gg)" x="18" y="64" width="14" height="40" rx="5"/><rect fill="url(#gg)" x="88" y="64" width="14" height="40" rx="5"/><rect fill="url(#gg)" x="12" y="20" width="96" height="32" rx="6"/></svg>`,
-  'children room': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><path fill="url(#gg)" d="M18 58 Q18 28 60 28 Q102 28 102 58 Q102 90 60 102 Q18 90 18 58Z"/><path fill="#5A3A08" d="M26 58 Q26 36 60 36 Q94 36 94 58 Q94 80 60 92 Q26 80 26 58Z"/><rect fill="#F5DF8A" x="54" y="60" width="12" height="22" rx="3"/><circle fill="#F5DF8A" cx="40" cy="66" r="8"/><circle fill="#F5DF8A" cx="80" cy="66" r="8"/></svg>`,
-  'pop up': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><polygon fill="url(#gg)" points="60,8 102,34 102,86 60,110 18,86 18,34"/><polygon fill="#5A3A08" points="60,18 94,40 94,82 60,98 26,82 26,40"/><rect fill="url(#gg)" x="50" y="70" width="20" height="28" rx="3"/></svg>`,
-  'film': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><rect fill="url(#gg)" x="8" y="28" width="82" height="62" rx="6"/><rect fill="#5A3A08" x="14" y="34" width="70" height="50" rx="4"/><polygon fill="#F5DF8A" points="42,46 42,72 70,59"/><polygon fill="url(#gg)" points="90,34 110,24 110,90 90,80"/></svg>`,
-  'sneakers': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><path fill="url(#gg)" d="M8 80 Q14 46 35 44 Q50 40 66 50 Q80 44 97 48 L108 62 L106 80 Z"/><path fill="#5A3A08" d="M14 78 Q20 50 36 48 Q50 46 64 55 Q78 48 94 52 L100 64 L98 76 Z"/><path fill="url(#gg)" d="M8 78 L108 73 L108 82 L8 84 Z"/></svg>`,
-  'game character': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><circle fill="url(#gg)" cx="60" cy="40" r="28"/><circle fill="#5A3A08" cx="60" cy="40" r="20"/><polygon fill="url(#gg)" points="34,22 42,10 48,24"/><polygon fill="url(#gg)" points="86,22 78,10 72,24"/><path fill="url(#gg)" d="M33 58 Q28 82 26 104 L94 104 Q92 82 87 58 Q74 70 60 70 Q46 70 33 58Z"/></svg>`,
-  'fashion illustration': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><path fill="url(#gg)" d="M38 10 L60 22 L82 10 L96 30 L82 38 L82 108 L38 108 L38 38 L24 30 Z"/><rect fill="#5A3A08" x="42" y="40" width="36" height="66"/><path fill="#F5DF8A" d="M48 22 L60 30 L72 22 L74 36 L60 44 L46 36 Z"/></svg>`,
-  'content creating': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><circle fill="url(#gg)" cx="60" cy="60" r="52"/><circle fill="#5A3A08" cx="60" cy="60" r="42"/><polygon fill="#F5DF8A" points="46,42 46,78 82,60"/></svg>`,
-  'private space': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><path fill="url(#gg)" d="M20 56 L60 14 L100 56 L100 106 L20 106 Z"/><path fill="#5A3A08" d="M26 59 L60 20 L94 59 L94 102 L26 102 Z"/><rect fill="url(#gg)" x="48" y="74" width="24" height="28" rx="3"/></svg>`,
-  'english': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><circle fill="url(#gg)" cx="60" cy="60" r="52"/><circle fill="#5A3A08" cx="60" cy="60" r="44"/><ellipse fill="none" stroke="#F5DF8A" stroke-width="2.5" cx="60" cy="60" rx="28" ry="44"/><line x1="16" y1="60" x2="104" y2="60" stroke="#F5DF8A" stroke-width="2.5"/></svg>`,
-  'chinese': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><rect fill="url(#gg)" x="16" y="10" width="88" height="100" rx="6"/><rect fill="#5A3A08" x="22" y="16" width="76" height="88" rx="4"/><line x1="34" y1="36" x2="86" y2="36" stroke="#F5DF8A" stroke-width="2.5"/><line x1="34" y1="64" x2="86" y2="64" stroke="#F5DF8A" stroke-width="2.5"/></svg>`,
-  'comic strip': `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><radialGradient id="gg" cx="38%" cy="28%"><stop offset="0%" stop-color="#F5DF8A"/><stop offset="55%" stop-color="#C8A84B"/><stop offset="100%" stop-color="#7A5510"/></radialGradient></defs><rect fill="url(#gg)" x="6" y="22" width="48" height="38" rx="4" transform="rotate(-8 30 41)"/><rect fill="#5A3A08" x="12" y="28" width="38" height="28" rx="3" transform="rotate(-8 31 42)"/><rect fill="url(#gg)" x="66" y="16" width="48" height="38" rx="4" transform="rotate(6 90 35)"/><rect fill="#5A3A08" x="72" y="22" width="36" height="28" rx="3" transform="rotate(6 90 36)"/></svg>`,
+// Mapping nama kompetisi → file SVG di public/images/competitions/
+const COMP_ICONS = {
+  'digital campaign':     '/images/competitions/digital campaign 1.svg',
+'character design':     '/images/competitions/character design 1.svg',
+'nail art':             '/images/competitions/nail art design 1.svg',
+'public seating':       '/images/competitions/public seating design 1.svg',
+'children room':        '/images/competitions/children room design 1.svg',
+'pop up':               '/images/competitions/pop up installations 1.svg',
+'film':                 '/images/competitions/film making 1.svg',
+'sneakers':             '/images/competitions/sneakers painting 1.svg',
+'game character':       '/images/competitions/game character design 1.svg',
+'fashion illustration': '/images/competitions/fashion illustration 1.svg',
+'content creating':     '/images/competitions/content creating 1.svg',
+'content creation':     '/images/competitions/content creating 1.svg',
+'private space':        '/images/competitions/private space design 1.svg',
+'english':              '/images/competitions/english public speakig 1.svg',
+'public speaking':      '/images/competitions/english public speakig 1.svg',
+'chinese':              '/images/competitions/chinese tourism pamphlet design 1.svg',
+'pamphlet':             '/images/competitions/chinese tourism pamphlet design 1.svg',
+'comic':                '/images/competitions/comic strip 1.svg',
 }
 
-function getIconSVG(name) {
+function getIconSrc(name) {
   const n = (name || '').toLowerCase()
-  const key = Object.keys(ICON_SVG).find(k => n.includes(k))
-  return ICON_SVG[key] || ICON_SVG['content creating']
+  const key = Object.keys(COMP_ICONS).find(k => n.includes(k))
+  return COMP_ICONS[key] || '/images/competitions/content_creating_1.svg'
 }
 
 function ChevronCircle({ color, up = false }) {
@@ -220,8 +224,6 @@ function OpenPanel({ category, cfg, flipLayout, onToggle }) {
     <div style={{
       position:'absolute',
       bottom:0,
-      // flipLayout (BUANA/AGNI): karakter kolom kiri, geser ujungnya ke arah konten (kanan)
-      // normal (TIRTA/BAYU): karakter kolom kanan, geser ujungnya ke arah konten (kiri)
       ...(flipLayout
         ? { left:0, width:'clamp(280px,45%,580px)' }
         : { right:0, width:'clamp(280px,45%,580px)' }
@@ -241,7 +243,6 @@ function OpenPanel({ category, cfg, flipLayout, onToggle }) {
         src={cfg.photo} alt={category.name}
         style={{
           position:'absolute', bottom:0,
-          // Geser karakter ke sisi tengah (menuju konten) sebesar 30%
           ...(flipLayout
             ? { right:'-30%', left:'auto' }
             : { left:'-30%', right:'auto' }
@@ -343,14 +344,18 @@ function OpenPanel({ category, cfg, flipLayout, onToggle }) {
                 textAlign:'center', padding:'0 8px', boxSizing:'border-box',
               }}
             >
-              <div
+              <img
+                src={getIconSrc(comp.name)}
+                alt={comp.name}
                 style={{
                   width:'clamp(76px,10vw,130px)', height:'clamp(76px,10vw,130px)',
                   marginBottom:'0.9rem',
                   filter:'drop-shadow(0 4px 18px rgba(200,168,75,0.6))',
                   pointerEvents:'none',
+                  objectFit:'contain',
+                  userSelect:'none',
                 }}
-                dangerouslySetInnerHTML={{ __html: getIconSVG(comp.name) }}
+                onError={e => { e.target.style.opacity = '0.3' }}
               />
               <h3 style={{
                 fontFamily:"'Cinzel',serif",
@@ -512,4 +517,4 @@ export default function CompetitionsIndex({ categories = [] }) {
       </div>
     </MainLayout>
   )
-}
+} 
