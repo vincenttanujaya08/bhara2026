@@ -69,19 +69,6 @@
     }, [])
   }
 
-  function XBox({ style = {} }) {
-    return (
-      <div style={{ background: '#C8C0B0', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', ...style }}>
-        <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }} preserveAspectRatio="none">
-          <line x1="0" y1="0" x2="100%" y2="100%" stroke="#A09080" strokeWidth="1.5" />
-          <line x1="100%" y1="0" x2="0" y2="100%" stroke="#A09080" strokeWidth="1.5" />
-          <rect x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" stroke="#A09080" strokeWidth="1.5" fill="none" />
-        </svg>
-      </div>
-    )
-  }
-
-  // ─── Hero ─────────────────────────────────────────────────────────────────────
   // ─── Hero ─────────────────────────────────────────────────────────────────────
 function Hero() {
   return (
@@ -234,6 +221,71 @@ function Hero() {
     },
   ]
 
+  // ─── Trophy Group Component ───────────────────────────────────────────────────
+  function TrophyGroup() {
+    return (
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        paddingBottom: '1.5rem',
+        paddingTop: '1rem',
+      }}>
+        <style>{`
+          @keyframes trophyFloat1 {
+            0%, 100% { transform: rotate(-14deg) translateY(0px); }
+            50%       { transform: rotate(-14deg) translateY(-8px); }
+          }
+          @keyframes trophyFloat2 {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-12px); }
+          }
+          @keyframes trophyFloat3 {
+            0%, 100% { transform: rotate(11deg) translateY(0px); }
+            50%       { transform: rotate(11deg) translateY(-6px); }
+          }
+          @keyframes trophyGlint {
+            0%, 85%, 100% { filter: drop-shadow(0 8px 24px rgba(139,26,26,0.4)); }
+            90%            { filter: drop-shadow(0 8px 40px rgba(200,168,75,0.6)) brightness(1.1); }
+          }
+          .trophy-left   { animation: trophyFloat1 4.2s ease-in-out infinite,      trophyGlint 6s ease-in-out infinite; }
+          .trophy-center { animation: trophyFloat2 3.8s ease-in-out infinite 0.4s, trophyGlint 6s ease-in-out 1.5s infinite; }
+          .trophy-right  { animation: trophyFloat3 4.5s ease-in-out infinite 0.8s, trophyGlint 6s ease-in-out 3s infinite; }
+        `}</style>
+
+        {/* Piala Kiri — Piala_Bharatika_4.svg (rotate -14°) */}
+        <div className="trophy-left" style={{ position: 'relative', zIndex: 1, marginRight: '-8%', flexShrink: 0 }}>
+          <img
+            src="/images/Piala Bharatika 4.svg"
+            alt="Piala Bharatika"
+            style={{ width: 'clamp(80px, 14vw, 185px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(-14deg)' }}
+          />
+        </div>
+
+        {/* Piala Tengah — Piala_Bharatika_2.svg (tegak, terdepan) */}
+        <div className="trophy-center" style={{ position: 'relative', zIndex: 3, flexShrink: 0, marginBottom: '0.5rem' }}>
+          <img
+            src="/images/Piala Bharatika 2.svg"
+            alt="Piala Bharatika"
+            style={{ width: 'clamp(110px, 19vw, 250px)', height: 'auto', display: 'block', objectFit: 'contain', filter: 'drop-shadow(0 12px 32px rgba(139,26,26,0.5))' }}
+          />
+        </div>
+
+        {/* Piala Kanan — Piala_Bharatika_3.svg (rotate +11°) */}
+        <div className="trophy-right" style={{ position: 'relative', zIndex: 2, marginLeft: '-8%', flexShrink: 0 }}>
+          <img
+            src="/images/Piala Bharatika 3.svg"
+            alt="Piala Bharatika"
+            style={{ width: 'clamp(75px, 13vw, 175px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(11deg)' }}
+          />
+        </div>
+      </div>
+    )
+  }
+
   // ─── Register & Events ────────────────────────────────────────────────────────
   function RegisterEvents() {
     const bp = useBreakpoint()
@@ -327,6 +379,26 @@ function Hero() {
             padding: clamp(0.75rem,2vw,1rem) clamp(1.25rem, 3vw, 2.5rem) clamp(1.25rem, 3vw, 2rem);
             text-align: center;
           }
+
+          /* ── Trophy area ── */
+          .re-left-trophy {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0.5rem 0.5rem 0;
+            min-height: clamp(180px, 28vw, 340px);
+            overflow: hidden;
+          }
+
+          /* ── Register date row ── */
+          .re-left-date {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0 clamp(1.25rem, 3vw, 2.5rem);
+            margin-top: 0.5rem;
+          }
         `}</style>
 
         <div className="re-grid">
@@ -338,11 +410,12 @@ function Hero() {
               <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(48px, 9vw, 100px)', color: C.crimson, margin: 0, lineHeight: 0.9, position: 'relative', zIndex: 2, marginBottom: isMobile ? '-1.5rem' : '-3rem' }}>Now!</h2>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, position: 'relative', zIndex: 1, padding: '1rem' }}>
-              <XBox style={{ width: isMobile ? '70%' : 'clamp(140px, 65%, 433px)', aspectRatio: '433.8 / 418.16' }} />
+            {/* Trophy Group */}
+            <div className="re-left-trophy">
+              <TrophyGroup />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: `0 clamp(1.25rem, 3vw, 2.5rem)`, marginTop: '0.75rem' }}>
+            <div className="re-left-date">
               <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(9px, 1.3vw, 12px)', color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: 'nowrap' }}>00 JAN</span>
               <div style={{ flex: 1, height: 1.5, background: C.crimson, opacity: 0.6 }} />
               <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(9px, 1.3vw, 12px)', color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: 'nowrap' }}>00 FEB</span>
@@ -468,31 +541,31 @@ function Hero() {
           </div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <a 
-  href="https://www.instagram.com/bhajukita/"
-  target="_blank"
-  rel="noopener noreferrer"
-  onMouseEnter={() => setBtnHover(true)}
-  onMouseLeave={() => setBtnHover(false)}
-  style={{
-    display: 'inline-block',
-    padding: 'clamp(10px, 1.3vw, 14px) clamp(28px, 5vw, 52px)',
-    background: btnHover ? 'transparent' : C.crimson,
-    color: btnHover ? C.crimson : C.cream,
-    border: `1.5px solid ${C.crimson}`,
-    fontFamily: "'Nord', sans-serif",
-    fontSize: 'clamp(9px, 1.1vw, 12px)',
-    letterSpacing: 4,
-    textDecoration: 'none',
-    textTransform: 'uppercase',
-    borderRadius: 50,
-    transition: 'all 0.3s',
-    cursor: 'pointer',
-    whiteSpace: 'nowrap'
-  }}
->
-  Here
-</a>
+          <a
+            href="https://www.instagram.com/bhajukita/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => setBtnHover(true)}
+            onMouseLeave={() => setBtnHover(false)}
+            style={{
+              display: 'inline-block',
+              padding: 'clamp(10px, 1.3vw, 14px) clamp(28px, 5vw, 52px)',
+              background: btnHover ? 'transparent' : C.crimson,
+              color: btnHover ? C.crimson : C.cream,
+              border: `1.5px solid ${C.crimson}`,
+              fontFamily: "'Nord', sans-serif",
+              fontSize: 'clamp(9px, 1.1vw, 12px)',
+              letterSpacing: 4,
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+              borderRadius: 50,
+              transition: 'all 0.3s',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Here
+          </a>
         </div>
       </section>
     )
@@ -506,8 +579,37 @@ function Hero() {
           <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(9px, 1vw, 10px)', letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0 0 0.15rem' }}>Our</p>
           <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(48px, 11vw, 120px)', color: C.crimson, margin: 0, lineHeight: 0.9 }}>Partners</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(100px, 20vw, 140px), 1fr))', gap: 'clamp(0.5rem, 1.5vw, 1rem)', maxWidth: 540, margin: '0 auto' }}>
-          {Array(6).fill(null).map((_, i) => <XBox key={i} style={{ aspectRatio: '1' }} />)}
+
+        {/* Partner logos — akan diganti dengan logo asli setelah dikonfirmasi */}
+        {/*
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(100px, 20vw, 140px), 1fr))', gap: 'clamp(0.5rem, 1.5vw, 1rem)', maxWidth: 540, margin: '0 auto' }}>
+            {Array(6).fill(null).map((_, i) => (
+              <div key={i} style={{ background: '#C8C0B0', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', aspectRatio: '1' }}>
+                <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }} preserveAspectRatio="none">
+                  <line x1="0" y1="0" x2="100%" y2="100%" stroke="#A09080" strokeWidth="1.5" />
+                  <line x1="100%" y1="0" x2="0" y2="100%" stroke="#A09080" strokeWidth="1.5" />
+                  <rect x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" stroke="#A09080" strokeWidth="1.5" fill="none" />
+                </svg>
+              </div>
+            ))}
+          </div>
+        */}
+
+        {/* TBA — placeholder sementara menunggu konfirmasi partner */}
+        <div style={{ textAlign: 'center', padding: 'clamp(1rem, 3vw, 2rem) 0' }}>
+          <p style={{
+            fontFamily: "'CSSalient', sans-serif",
+            fontSize: 'clamp(28px, 7vw, 110px)',
+            color: C.crimson,
+            opacity: 0.22,
+            margin: 0,
+            lineHeight: 1,
+            letterSpacing: 3,
+            userSelect: 'none',
+            textTransform: 'uppercase',
+          }}>
+            to be announced
+          </p>
         </div>
       </section>
     )
