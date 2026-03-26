@@ -382,7 +382,7 @@ const descFontSize = isMobile ? '13px' : isTablet ? '14px' : 'clamp(14px,1.7vw,2
   const chevronSize   = isMobile ? 34 : isTablet ? 38 : 44
   const showChar      = !isMobile
   const charWidthPx   = isTablet ? 220 : 'clamp(280px,45%,580px)'
-  const panelMinH     = isMobile ? 'auto' : isTablet ? '380px' : 'clamp(420px,56vw,680px)'
+  const panelMinH = isMobile ? 'unset' : isTablet ? '380px' : 'clamp(420px,56vw,680px)'
   
   const charPadStyle  = showChar
     ? (flipLayout ? { paddingLeft: isTablet ? 220 : charWidthPx } : { paddingRight: isTablet ? 220 : charWidthPx })
@@ -537,28 +537,47 @@ const descFontSize = isMobile ? '13px' : isTablet ? '14px' : 'clamp(14px,1.7vw,2
   )
 }
 
-function CategoryItem({ category, index, total }) {
+function CategoryItem({ category, index, total, onOpenChange }) {
   const [open, setOpen] = useState(false)
+  const [openHeight, setOpenHeight] = useState(0)
+  const openPanelRef = useRef(null)
+  
   const key        = category.name?.toUpperCase()
   const cfg        = CAT[key] || DEFAULT_CAT
   const flipLayout = index % 2 !== 0
-  const toggle     = useCallback(() => setOpen(o => !o), [])
+  const toggle = useCallback(() => {
+    setOpen(o => {
+      const next = !o
+      onOpenChange?.(next)
+      return next
+    })
+  }, [onOpenChange])
 
   const bp = useBreakpoint()
-  
-  // Height Logic
   const closedHeight = bp === 'mobile' ? '90px' : bp === 'tablet' ? '120px' : '150px'
-  // Gunakan min-height atau clamp yang cukup besar saat open agar menutup layar
-  const openedHeight = bp === 'mobile' ? '550px' : '650px'
+
+  
+
+  // Ukur tinggi konten OpenPanel secara dinamis
+  useEffect(() => {
+    const el = openPanelRef.current
+    if (!el) return
+
+    const ro = new ResizeObserver(() => {
+      setOpenHeight(el.scrollHeight)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const currentHeight = open ? `${openHeight}px` : closedHeight
 
   return (
     <div style={{
       position: 'relative',
       overflow: 'hidden',
-      // Transisi height harus smooth
-      height: open ? openedHeight : closedHeight,
+      height: currentHeight,
       transition: 'height 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-      // Hilangkan border bawah pada item terakhir supaya tidak ada gap 1px
       borderBottom: index === total - 1 ? 'none' : `1px solid ${cfg.text}15`,
       background: cfg.bg,
       margin: 0,
@@ -568,7 +587,7 @@ function CategoryItem({ category, index, total }) {
       <div style={{
         position: 'absolute',
         top: 0, left: 0, width: '100%',
-        height: closedHeight, // Pastikan tinggi container closed sama dengan parent saat closed
+        height: closedHeight,
         opacity: open ? 0 : 1,
         transform: open ? 'scale(0.98) translateY(-10px)' : 'scale(1) translateY(0)',
         transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -578,22 +597,25 @@ function CategoryItem({ category, index, total }) {
         <ClosedRow category={category} cfg={cfg} flipLayout={flipLayout} onToggle={toggle} />
       </div>
 
-      {/* SEKSI OPEN */}
-      <div style={{
-        position: 'absolute',
-        top: 0, left: 0, width: '100%', height: '100%',
-        opacity: open ? 1 : 0,
-        transform: open ? 'translateY(0)' : 'translateY(40px)',
-        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        pointerEvents: open ? 'auto' : 'none',
-        zIndex: open ? 2 : 1,
-      }}>
-        <OpenPanel 
-          category={category} 
-          cfg={cfg} 
-          flipLayout={flipLayout} 
-          onToggle={toggle} 
-          isOpen={open} 
+      {/* SEKSI OPEN — dibungkus ref untuk diukur */}
+      <div
+        ref={openPanelRef}
+        style={{
+          position: 'absolute',
+          top: 0, left: 0, width: '100%',
+          opacity: open ? 1 : 0,
+          transform: open ? 'translateY(0)' : 'translateY(40px)',
+          transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          pointerEvents: open ? 'auto' : 'none',
+          zIndex: open ? 2 : 1,
+        }}
+      >
+        <OpenPanel
+          category={category}
+          cfg={cfg}
+          flipLayout={flipLayout}
+          onToggle={toggle}
+          isOpen={open}
         />
       </div>
     </div>
@@ -603,6 +625,7 @@ function CategoryItem({ category, index, total }) {
 // ─── Page export ──────────────────────────────────────────────────────────────
 export default function CompetitionsIndex({ categories = [] }) {
   useFonts()
+  const [anyOpen, setAnyOpen] = useState(false)
 
   const sorted = [...categories].sort((a, b) => {
     const oA = CAT[a.name?.toUpperCase()]?.order ?? 99
@@ -612,25 +635,70 @@ export default function CompetitionsIndex({ categories = [] }) {
 
   return (
     <MainLayout>
-      {/* 1. paddingTop 52 diganti ke div pembungkus.
-          2. Ditambahkan background AGNI pada container jika sorted.length > 0 
-             supaya kalau ada sisa pixel di paling bawah, warnanya tetap merah.
-      */}
       <div style={{ 
-        paddingTop: 52, 
-        background: sorted.length > 0 ? CAT[sorted[sorted.length - 1].name.toUpperCase()]?.bg : 'transparent' 
-      }}>
+  paddingTop: 52,
+  flex: 1,
+  position: 'relative',
+  background: '#0F0A05'  // ← selalu hitam
+}}>
         {sorted.map((cat, i) => (
           <CategoryItem 
             key={cat.id} 
             category={cat} 
             index={i} 
-            total={sorted.length} 
+            total={sorted.length}
+            onOpenChange={(isOpen) => {
+              if (isOpen) setAnyOpen(true)
+              else {
+                // cek apakah masih ada yang open (defer sedikit agar state lain update dulu)
+                setTimeout(() => setAnyOpen(false), 50)
+              }
+            }}
           />
         ))}
-        
+
+        {/* Teks dekoratif di area bawah */}
+<div style={{
+  pointerEvents: 'none',
+  padding: 'clamp(2rem,5vw,4rem) clamp(1.5rem,4vw,3.5rem)',
+  overflow: 'hidden',
+}}>
+  <style>{`
+    @keyframes textFloat {
+      0%, 100% {
+        transform: translateY(0);
+        text-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        color: ${CREAM};
+      }
+      50% {
+        transform: translateY(-15px);
+        text-shadow: 0 20px 40px rgba(200,168,75,0.6);
+        color: #FFF;
+      }
+    }
+    .comp-ambient-text {
+      animation: textFloat 4s ease-in-out infinite;
+      display: inline-block;
+    }
+  `}</style>
+  <h2 className="comp-ambient-text" style={{
+  fontFamily: "'CSSalient', sans-serif",
+  fontSize: 'clamp(48px, 14vw, 115px)',
+  color: CREAM,
+  opacity: 0.2,
+  margin: 0,
+  lineHeight: 0.9,
+  textTransform: 'uppercase',
+  letterSpacing: 2,
+  justifyContent: 'center',
+  textAlign: 'center'
+}}>
+  GET YOURSELF READY TO TAKE THE THRONE!
+</h2>
+</div>
+
         {sorted.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '8rem 2rem', background: '#0F0A05' }}>
+          <div style={{ textAlign: 'center', padding: '8rem 2rem' }}>
             <p style={{
               fontFamily: "'Cinzel',serif", fontSize: 12,
               letterSpacing: 3, color: CREAM, opacity: 0.2, textTransform: 'uppercase',
