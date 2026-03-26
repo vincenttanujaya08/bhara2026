@@ -546,12 +546,11 @@ function CategoryItem({ category, index, total, onOpenChange }) {
   const cfg        = CAT[key] || DEFAULT_CAT
   const flipLayout = index % 2 !== 0
   const toggle = useCallback(() => {
-    setOpen(o => {
-      const next = !o
-      onOpenChange?.(next)
-      return next
-    })
-  }, [onOpenChange])
+  setOpen(prev => !prev)
+}, [])
+useEffect(() => {
+  onOpenChange?.(open)
+}, [open, onOpenChange])
 
   const bp = useBreakpoint()
   const closedHeight = bp === 'mobile' ? '90px' : bp === 'tablet' ? '120px' : '150px'

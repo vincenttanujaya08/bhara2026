@@ -255,13 +255,11 @@ export function navigateWithTransition(href, options = {}) {
 
 export function setupTransitions() {
     injectTransitionStyles();
-    getOverlay();
+    const overlay = getOverlay();
 
     if (!window.__transitioning) {
-        // Kita beri delay kecil agar browser sempat merender layout pertama
         setTimeout(() => {
             overlay.style.pointerEvents = "all";
-            // Kamu bisa ganti 'openCurtain' dengan animasi favoritmu untuk start-up
             openCurtain(overlay);
         }, 50);
     }
