@@ -53,6 +53,37 @@ export default function Login({ errors = {} }) {
   return (
     <MainLayout>
       <style>{`
+        /* --- Continuous Ambient Animations --- */
+        @keyframes textFloat {
+          0%, 100% { 
+            transform: translateY(0);
+            text-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            color: ${C.cream};
+          }
+          50% { 
+            transform: translateY(-15px);
+            text-shadow: 0 20px 40px rgba(200, 168, 75, 0.6);
+            color: #FFF; /* Berkilau saat di posisi atas */
+          }
+        }
+
+        @keyframes crownGlow {
+          0%, 100% { 
+            filter: drop-shadow(0 0 15px rgba(200, 168, 75, 0.3));
+            transform: translateY(34%) translateX(12%) scale(1);
+          }
+          50% { 
+            filter: drop-shadow(0 0 40px rgba(200, 168, 75, 0.7));
+            transform: translateY(33%) translateX(12%) scale(1.03);
+          }
+        }
+
+        .ambient-text {
+          animation: textFloat 4s ease-in-out infinite;
+          display: inline-block;
+        }
+
+        /* --- Base Styles --- */
         .login-wrap {
           display: flex;
           min-height: 100vh;
@@ -87,7 +118,6 @@ export default function Login({ errors = {} }) {
         .login-tagline {
           font-family: 'CSSalient', 'UnifrakturMaguntia', cursive;
           font-size: clamp(48px, 8.5vw, 115px);
-          color: ${C.cream};
           margin: 0;
           line-height: 0.95;
           letter-spacing: 2px;
@@ -116,102 +146,97 @@ export default function Login({ errors = {} }) {
           letter-spacing: 4px;
           text-transform: uppercase;
           cursor: pointer;
-          transition: background 0.2s, transform 0.15s;
+          transition: all 0.2s;
           margin-top: 0.5rem;
         }
-        .login-btn:hover { background: #d4c98a; transform: translateY(-1px); }
-        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .login-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .login-link { color: ${C.cream}; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; transition: color 0.2s; }
         .login-link:hover { color: ${C.gold}; }
-        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+        
+        .mahkota-ambient {
+          animation: crownGlow 5s ease-in-out infinite;
+        }
+
+        input:-webkit-autofill {
           -webkit-text-fill-color: ${C.cream};
           -webkit-box-shadow: 0 0 0px 1000px transparent inset;
           transition: background-color 5000s ease-in-out 0s;
         }
+
         @media (max-width: 900px) {
           .login-wrap { flex-direction: column; }
           .login-left { width: 100%; min-height: 45vh; }
           .login-right { width: 100%; }
         }
-        @media (max-width: 540px) {
-          .login-left { min-height: 38vh; }
-          .login-right { padding: 2.5rem 1.25rem 3rem; }
-        }
       `}</style>
 
       <div className="login-wrap">
-        {/* Left */}
+        {/* Left Section */}
         <div className="login-left">
           <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.85, pointerEvents: 'none' }} />
           <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, pointerEvents: 'none' }} />
           
           <div style={{ position: 'relative', zIndex: 3, padding: 'clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3.5rem) 0' }}>
-            <h1 className="login-tagline">GET<br />YOURSELF<br />READY TO<br />TAKE THE<br />THRONE!</h1>
+            <h1 className="login-tagline ambient-text">
+              GET<br />YOURSELF<br />READY TO<br />TAKE THE<br />THRONE!
+            </h1>
           </div>
           
           <div style={{ 
             position: 'absolute', 
-            bottom: 0,
-            left: 0,
-            zIndex: 2, 
-            display: 'flex', 
-            alignItems: 'flex-end', 
-            justifyContent: 'center', 
-            width: '100%',
-            pointerEvents: 'none' 
+            bottom: 0, left: 0, zIndex: 2, 
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'center', 
+            width: '100%', pointerEvents: 'none' 
           }}>
             <img 
               src="/images/MAHKOTA.svg" 
               alt="Crown" 
+              className="mahkota-ambient"
               style={{ 
-                width: '300%',
-                height: 'auto', 
-                objectFit: 'contain', 
-                objectPosition: 'bottom center', 
-                display: 'block', 
-                transform: 'translateY(34%) translateX(12%)' 
+                width: '300%', height: 'auto', 
+                objectFit: 'contain', objectPosition: 'bottom center', 
+                display: 'block'
               }} 
-              onError={e => { e.target.style.opacity = '0' }} 
             />
           </div>
         </div>
 
-        {/* Right */}
+        {/* Right Section */}
         <div className="login-right">
           <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 520, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(1.25rem, 2vw, 1.75rem)' }}>
             <h2 className="login-title">Sign In</h2>
 
-            {/* Email */}
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div style={fieldWrap('email')} onClick={() => document.getElementById('login-email').focus()}>
-                <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(9px,1vw,12px)', color: focused === 'email' ? C.gold : 'rgba(200,168,75,0.65)', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 600, transition: 'color 0.2s', cursor: 'text' }}>E-Mail</label>
-                <input id="login-email" type="email" value={data.email} onChange={e => setData('email', e.target.value)} onFocus={() => setFocused('email')} onBlur={() => setFocused(null)} placeholder="h14240000@john.petra.ac.id" style={inputStyle} autoComplete="email" />
-              </div>
-              {errors.email && <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 13, color: '#E08080', margin: 0, paddingLeft: 4 }}>{errors.email}</p>}
-            </div>
-
-            {/* Password */}
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div style={{ ...fieldWrap('password'), flexDirection: 'row', alignItems: 'center', gap: 0 }} onClick={() => document.getElementById('login-password').focus()}>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(9px,1vw,12px)', color: focused === 'password' ? C.gold : 'rgba(200,168,75,0.65)', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 600, transition: 'color 0.2s', cursor: 'text' }}>Password</label>
-                  <input id="login-password" type={showPass ? 'text' : 'password'} value={data.password} onChange={e => setData('password', e.target.value)} onFocus={() => setFocused('password')} onBlur={() => setFocused(null)} placeholder="••••••••" style={inputStyle} autoComplete="current-password" />
+            <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'clamp(1.25rem, 2vw, 1.75rem)' }}>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={fieldWrap('email')} onClick={() => document.getElementById('login-email').focus()}>
+                  <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(9px,1vw,12px)', color: focused === 'email' ? C.gold : 'rgba(200,168,75,0.65)', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 600, transition: 'color 0.2s', cursor: 'text' }}>E-Mail</label>
+                  <input id="login-email" type="email" value={data.email} onChange={e => setData('email', e.target.value)} onFocus={() => setFocused('email')} onBlur={() => setFocused(null)} placeholder="h14240000@john.petra.ac.id" style={inputStyle} autoComplete="email" />
                 </div>
-                <button type="button" onClick={() => setShowPass(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,168,75,0.5)', padding: '0 0 0 12px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                  {showPass ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                  : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
-                </button>
+                {errors.email && <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 13, color: '#E08080', margin: 0, paddingLeft: 4 }}>{errors.email}</p>}
               </div>
-              {errors.password && <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 13, color: '#E08080', margin: 0, paddingLeft: 4 }}>{errors.password}</p>}
-            </div>
 
-            <div style={{ width: '100%', textAlign: 'left', marginTop: -8 }}>
-              <a href="/forgot-password" className="login-link" style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(12px,1.2vw,15px)', color: C.cream, opacity: 0.8 }}>Forgot Password</a>
-            </div>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ ...fieldWrap('password'), flexDirection: 'row', alignItems: 'center', gap: 0 }} onClick={() => document.getElementById('login-password').focus()}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <label style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(9px,1vw,12px)', color: focused === 'password' ? C.gold : 'rgba(200,168,75,0.65)', textTransform: 'uppercase', letterSpacing: 2, fontWeight: 600, transition: 'color 0.2s', cursor: 'text' }}>Password</label>
+                    <input id="login-password" type={showPass ? 'text' : 'password'} value={data.password} onChange={e => setData('password', e.target.value)} onFocus={() => setFocused('password')} onBlur={() => setFocused(null)} placeholder="••••••••" style={inputStyle} autoComplete="current-password" />
+                  </div>
+                  <button type="button" onClick={() => setShowPass(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(200,168,75,0.5)', padding: '0 0 0 12px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                    {showPass ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>}
+                  </button>
+                </div>
+                {errors.password && <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 13, color: '#E08080', margin: 0, paddingLeft: 4 }}>{errors.password}</p>}
+              </div>
 
-            <button className="login-btn" onClick={handleSubmit} disabled={processing}>
-              {processing ? 'Signing in...' : 'Sign In'}
-            </button>
+              <div style={{ width: '100%', textAlign: 'left', marginTop: -8 }}>
+                <a href="/forgot-password" className="login-link" style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(12px,1.2vw,15px)', color: C.cream, opacity: 0.8 }}>Forgot Password</a>
+              </div>
+
+              <button type="submit" className="login-btn" disabled={processing}>
+                {processing ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
 
             <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(12px,1.2vw,15px)', color: C.cream, opacity: 0.75, margin: 0, textAlign: 'center' }}>
               Don't have any accounts yet?{' '}
