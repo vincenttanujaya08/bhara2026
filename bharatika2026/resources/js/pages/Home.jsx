@@ -82,46 +82,81 @@
   }
 
   // ─── Hero ─────────────────────────────────────────────────────────────────────
-  function Hero() {
-    return (
-      <section style={{ position: 'relative', width: '100%', minHeight: '100vh', overflow: 'hidden' }}>
-        <style>{`
-          .hero-btn {
-            display: inline-block;
-            padding: clamp(12px, 1.5vw, 16px) clamp(36px, 6vw, 64px);
-            border: 1.5px solid transparent;
-            color: ${C.crimson} !important;
-            font-family: 'Cinzel', serif;
-            font-size: clamp(10px, 1.2vw, 13px);
-            letter-spacing: 5px;
-            text-decoration: none;
-            text-transform: uppercase;
-            background: ${C.cream};
-            transition: all 0.3s;
-            border-radius: 50px;
-            font-weight: 700;
-            white-space: nowrap;
+  // ─── Hero ─────────────────────────────────────────────────────────────────────
+function Hero() {
+  return (
+    <section style={{ 
+      position: 'relative', 
+      width: '100%', 
+      // Gunakan lvh (Large Viewport) untuk desktop agar tetap megah
+      minHeight: 'clamp(300px, 100lvh, 900px)', 
+      overflow: 'hidden' 
+    }}>
+      <style>{`
+        .hero-btn {
+          display: inline-block;
+          padding: clamp(10px, 1.5vw, 14px) clamp(24px, 4.5vw, 40px);
+          border: 1.5px solid transparent;
+          color: ${C.crimson} !important;
+          font-family: 'Cinzel', serif;
+          font-size: clamp(9px, 1.1vw, 11px);
+          letter-spacing: 3px;
+          text-decoration: none;
+          text-transform: uppercase;
+          background: ${C.cream};
+          transition: all 0.3s;
+          border-radius: 50px;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+
+        .hero-content {
+          position: relative; 
+          z-index: 2; 
+          /* Gunakan lvh untuk desktop */
+          min-height: 100lvh; 
+          display: flex; 
+          align-items: flex-end; 
+          justify-content: center; 
+          padding-bottom: clamp(3rem, 8vw, 10rem);
+        }
+
+        @media (max-width: 640px) {
+          .hero-content {
+            /* svh (Small Viewport Height) membantu mengatasi address bar Android */
+            min-height: 280px; 
+            /* Beri sedikit ruang lebih di bawah agar tombol tidak mepet navigasi HP */
+            padding-bottom: 2.2rem;
           }
-          .hero-btn:hover {
-            background: transparent;
-            color: ${C.gold} !important;
-            border-color: ${C.gold};
+          
+          /* Target khusus section agar tidak tertahan oleh parent 100vh */
+          section:has(> .hero-content) {
+            min-height: 280px !important;
+            height: 280px !important;
           }
-        `}</style>
+        }
 
-        <video autoPlay loop muted playsInline
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', zIndex: 0 }}>
-          <source src="/videos/Motion Background bhara26 FIXX.mp4" type="video/mp4" />
-        </video>
+        /* Perbaikan khusus untuk browser yang tidak support 'has' atau bug height */
+        @media screen and (max-device-width: 480px) and (orientation: portrait) {
+          .hero-content {
+            min-height: 260px;
+          }
+        }
+      `}</style>
 
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(15,10,5,0.2) 0%, rgba(15,10,5,0.05) 50%, rgba(15,10,5,0.5) 100%)', zIndex: 1 }} />
+      <video autoPlay loop muted playsInline
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', zIndex: 0 }}>
+        <source src="/videos/Motion Background bhara26 FIXX.mp4" type="video/mp4" />
+      </video>
 
-        <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 'clamp(4rem, 10vw, 12rem)' }}>
-          <TLink href="/about" className="hero-btn">Learn More</TLink>
-        </div>
-      </section>
-    )
-  }
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(15,10,5,0.2) 0%, rgba(15,10,5,0.05) 50%, rgba(15,10,5,0.5) 100%)', zIndex: 1 }} />
+
+      <div className="hero-content">
+        <TLink href="/about" className="hero-btn">Learn More</TLink>
+      </div>
+    </section>
+  )
+}
 
   // ─── Marquee ──────────────────────────────────────────────────────────────────
   function MarqueeTicker({ bg = C.black, borderColor = '#8B1A1A', textColor = C.cream, animName = 'marqueeBounce' }) {

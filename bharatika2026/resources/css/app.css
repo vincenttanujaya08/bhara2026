@@ -19,13 +19,11 @@
 
 html {
     background-color: #0F0A05;
-    /* Sesuaikan dengan warna loader/tema kamu */
 }
 
 body {
     background-color: #0F0A05;
     opacity: 0;
-    /* Ganti ease-in ke cubic-bezier agar lebih mewah transisinya */
     animation: fadeInPage 5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 

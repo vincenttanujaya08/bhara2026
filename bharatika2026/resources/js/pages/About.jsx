@@ -31,11 +31,19 @@ function useFonts() {
 
 function HeroAbout() {
   return (
-    <section style={{ position: 'relative', width: '100%', minHeight: '100vh', overflow: 'hidden', paddingTop: 52 }}>
+    <section style={{ 
+      position: 'relative', 
+      width: '100%', 
+      // Gunakan minHeight yang lebih kecil untuk mobile
+      minHeight: '400px', 
+      overflow: 'hidden', 
+      paddingTop: 52 
+    }}>
       <style>{`
         .hero-about-text {
           position: relative;
           z-index: 3;
+          /* Desktop tetap full screen */
           min-height: calc(100vh - 52px);
           display: flex;
           flex-direction: column;
@@ -47,7 +55,17 @@ function HeroAbout() {
           .hero-about-text { max-width: 80%; }
         }
         @media (max-width: 600px) {
-          .hero-about-text { max-width: 100%; min-height: auto; padding-bottom: 3rem; }
+          .hero-about-text { 
+            max-width: 100%; 
+            /* Paksa min-height jadi pendek di HP */
+            min-height: 320px; 
+            padding-top: 2rem;
+            padding-bottom: 2rem; 
+          }
+          /* Memperkecil section induknya juga */
+          section:has(> .hero-about-text) {
+            min-height: 320px !important;
+          }
         }
       `}</style>
       <video autoPlay loop muted playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, filter: 'grayscale(100%) brightness(0.55)' }}>
@@ -57,9 +75,9 @@ function HeroAbout() {
       <div style={{ position: 'absolute', inset: 0, zIndex: 2, background: 'linear-gradient(to right, rgba(139,26,26,0.97) 0%, rgba(139,26,26,0.85) 18%, rgba(139,26,26,0.3) 32%, rgba(139,26,26,0) 44%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', inset: 0, zIndex: 2, backgroundImage: "url('/images/BG MERAH.svg')", backgroundSize: 'cover', backgroundPosition: 'left center', opacity: 0.4, pointerEvents: 'none', maskImage: 'linear-gradient(to right, black 0%, black 18%, transparent 44%)', WebkitMaskImage: 'linear-gradient(to right, black 0%, black 18%, transparent 44%)' }} />
       <div className="hero-about-text">
-        <img src="/images/BHRTK FOOTER.svg" alt="bharatika" style={{ width: 'clamp(200px, 35vw, 560px)', height: 'auto', marginBottom: '0.5rem' }} />
-        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(10px, 1.3vw, 18px)', color: C.gold, letterSpacing: 4, margin: '0 0 2rem', opacity: 0.85 }}>Creative Design Festival</p>
-        <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(15px, 1.8vw, 28px)', lineHeight: 1.45, color: C.cream, opacity: 0.95, margin: 0, maxWidth: 580, fontWeight: 500 }}>
+        <img src="/images/BHRTK FOOTER.svg" alt="bharatika" style={{ width: 'clamp(180px, 45vw, 560px)', height: 'auto', marginBottom: '0.5rem' }} />
+        <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(10px, 1.3vw, 18px)', color: C.gold, letterSpacing: 4, margin: '0 0 1.5rem', opacity: 0.85 }}>Creative Design Festival</p>
+        <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(14px, 1.8vw, 24px)', lineHeight: 1.4, color: C.cream, opacity: 0.95, margin: 0, maxWidth: 580, fontWeight: 500 }}>
           Berjalan dari tahun 2016 hingga 2026, percikan semangat insan muda terus
           membakar api Bharatika untuk berjalan secara kreatif.
         </p>
