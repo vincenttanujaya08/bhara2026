@@ -218,6 +218,8 @@ export function navigateWithTransition(href, options = {}) {
     if (window.__transitioning) return;
     window.__transitioning = true;
 
+    document.body.classList.add("is-navigating");
+
     injectTransitionStyles();
     const overlay = getOverlay();
     overlay.style.pointerEvents = "all";
@@ -254,4 +256,13 @@ export function navigateWithTransition(href, options = {}) {
 export function setupTransitions() {
     injectTransitionStyles();
     getOverlay();
+
+    if (!window.__transitioning) {
+        // Kita beri delay kecil agar browser sempat merender layout pertama
+        setTimeout(() => {
+            overlay.style.pointerEvents = "all";
+            // Kamu bisa ganti 'openCurtain' dengan animasi favoritmu untuk start-up
+            openCurtain(overlay);
+        }, 50);
+    }
 }
