@@ -333,33 +333,115 @@ function ConnectWithUs() {
 }
 
 function OurTeam() {
+  const teamData = [
+    { title: "BPH", members: ["Marcelino Thionardo", "Staurisa Evangelista", "Vanessa Angelica Lee", "Catherine Alexandra Halim", "Lindsay Theone Imago", "Elaine Gracia Nitisastro", "Princesia Angel Wijaya"] },
+    { title: "ACARA", members: ["Michelle Chen Widagdo", "Patricia Kyla Tanagung", "Britney Livana", "Graciela Cheryl", "Christopher Artlando Jawali", "Nasya Ivana Putri", "Glenn Richardo"] },
+    { title: "LOMBA", members: ["Angelica Feliciona Theritno", "Elizabeth Nadia Dewi", "Gabriella Maria Gosyanto", "Olivia Agatha", "Veronica Alexandra Wang", "Shienny Veyran Ongko", "Tirte Aurellia Ketricia"] },
+    { title: "HOSPITALITY", members: ["Cherrie Nathaniel", "Marcellinus Valio Juanito", "Patricio Kenneth Liemsela", "Clay Jerri Fanggidae", "Felicia Natalie Heryanto", "Frederica Jeannie Sarwono"] },
+    { title: "PUBLIC RELATIONS", members: ["Vanessa Hayley Handoko", "Naomi Christella Tantokusumo", "Jedidia Dinar Kinanthi", "Aurelia Keona Sugianto", "Erica Claresta Aurellia", "Audrey Kanina Andi Wijaya", "Freya So", "Sharon Tiffany"] },
+    { title: "SOCIAL MEDIA", members: ["Elaine Theodora Winarko", "Jessica Edelyne Peter", "Tiffany Annabelle", "Lois Emanuella", "Lucy Christina", "Stefany Michelle Gesiradja"] },
+    { title: "SEKKONKES", members: ["Ilona Arleen Mochtar", "Airin Vylia Lauwinata", "Beatrice Leticia", "Fransisca Shallomita Raniant", "Vanessa Angelique Soesanto", "Angelique Callista"] },
+    { title: "IT", members: ["Bryan Chandra Gunawan", "Vincentius Tanujaya"] },
+    { title: "PERLENGKAPAN", members: ["Sky Kitaro Gunawan", "Mikhael Patar Halomoan Nababan", "Keira Tricia Gonawan", "Marvel Aurelius Irawan", "Christo Stephanus Santoso", "Tjhan Stefano Keanefilbert Santoso", "Jonathan Kusmayadilie", "Griselda Benedicta Christiono"] },
+    { title: "TRANSAVENUE", members: ["Livela Lesmono", "Karina Magdalena Soetikno", "Darrell Gideon Dave Rahardjo", "Glenn Matthew Angkajaya", "Caren Chandra", "Andrew Christian Huang", "Jason Alexander Nggau"] },
+    { title: "DEKORASI", members: ["Chelsea Anggun Pangalila", "Chaterine Cristela", "Olivia Fransisca Halim", "Priscilla Jacqlyn Kurniawan", "Auryn Japira", "Helena Nava Theovilia"] },
+    { title: "SPONSORSHIP", members: ["Bethania Shera", "Aurelina Grace", "Kelly Anastasia Liem", "Jocelin Angelia Wu", "Griffith Fourrencia Galih Anantha"] },
+    { title: "MULTIMEDIA", members: ["Jonathan Kenneth Pongawa", "Delon Antonio Glenova Elie", "Sherlyz Keyshia Limenghwe", "Joyceline Shannon Catryn Tengkilisan", "Brandon Emerson Ruslim", "Michelle Stephanie Pitoyo"] },
+    { title: "MERCHANDISE", members: ["Laura Patricia", "Shelly Claudia Bulain", "Chelsea Octavia Cahya", "Catherine Liem"] },
+    { title: "CDP", members: ["Alicia Christabelle Tjora", "Virly Virginia Chandra", "Agatha Nadya Christie", "Justine Kimberly Sutiawan", "Joyce Sunarko", "Evelyn Gabriella Tjio Santo", "Joanna Patricia Gunawan", "Tantiana Tessalonika"] },
+  ]
+
   return (
-    <section style={{ position: 'relative', overflow: 'hidden', background: '#A50D14' }}>
+    <section style={{ position: 'relative', overflow: 'hidden', background: '#A50D14', paddingBottom: '5rem' }}>
       <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.35, pointerEvents: 'none' }} />
-      <style>{`
-        .ot-grid {
-          position: relative; z-index: 1;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
-          gap: clamp(2rem, 5vw, 4rem);
-          align-items: center;
-        }
-        @media (max-width: 768px) {
-          .ot-grid { grid-template-columns: 1fr; gap: 2rem; }
-        }
-      `}</style>
-      <div className="ot-grid">
-        <div>
-          <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(22px, 4vw, 64px)', color: C.gold, margin: '0 0 -0.2em', fontWeight: 700, letterSpacing: 6, textTransform: 'uppercase' }}>Our</p>
-          <h2 style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 'clamp(72px, 15vw, 200px)', color: C.gold, margin: 0, lineHeight: 0.85, textTransform: 'uppercase', letterSpacing: 2 }}>Team</h2>
-        </div>
-        <div>
-          <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(16px, 2.5vw, 40px)', color: C.gold, margin: '0 0 1rem', fontWeight: 700, letterSpacing: 4, textTransform: 'uppercase' }}>BPH</p>
-          <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(14px, 1.5vw, 22px)', lineHeight: 1.75, color: C.gold, opacity: 0.9, margin: 0 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec dolor eros, facilisis quis vulputate ut, suscipit nec tellus.
-          </p>
-        </div>
+
+      {/* Header — center */}
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem) 2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}>
+        <p style={{
+          fontFamily: "'Nord', sans-serif",
+          fontSize: 'clamp(22px, 4vw, 64px)',
+          color: C.gold,
+          margin: '0 0 -0.2em',
+          fontWeight: 700,
+          letterSpacing: 6,
+          textTransform: 'uppercase',
+          lineHeight: 1,
+        }}>Our</p>
+        <h2 style={{
+          fontFamily: "'CSSalient', sans-serif",
+          fontSize: 'clamp(72px, 15vw, 200px)',
+          color: C.gold,
+          margin: 0,
+          lineHeight: 0.85,
+          textTransform: 'uppercase',
+          letterSpacing: 2,
+        }}>Team</h2>
+        <p style={{
+          fontFamily: "'FamiljenGrotesk', sans-serif",
+          fontSize: 'clamp(14px, 1.5vw, 20px)',
+          lineHeight: 1.6,
+          color: C.gold,
+          opacity: 0.9,
+          margin: '1.5rem 0 0',
+          maxWidth: 'min(800px, 80%)',
+        }}>
+          Di balik kemegahan Bharatika 2026, terdapat individu-individu kreatif yang berkolaborasi mewujudkan visi merajacipta.
+        </p>
+      </div>
+
+      {/* Divider */}
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        margin: '0 clamp(1.5rem, 5vw, 4rem) 3rem',
+        borderTop: `1px solid rgba(200,168,75,0.3)`,
+      }} />
+
+      {/* Team grid */}
+      <div style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '0 clamp(1.5rem, 5vw, 4rem)',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gap: '3rem 2rem',
+      }}>
+        {teamData.map((dept, idx) => (
+          <div key={idx}>
+            <h3 style={{
+              fontFamily: "'Nord', sans-serif",
+              fontSize: '1.2rem',
+              color: C.gold,
+              borderBottom: `1px solid ${C.gold}`,
+              paddingBottom: '0.5rem',
+              marginBottom: '1rem',
+              letterSpacing: 2,
+            }}>
+              {dept.title}
+            </h3>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {dept.members.map((name, i) => (
+                <li key={i} style={{
+                  fontFamily: "'FamiljenGrotesk', sans-serif",
+                  fontSize: '0.95rem',
+                  color: C.cream,
+                  marginBottom: '0.4rem',
+                  opacity: 0.85,
+                }}>
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </section>
   )

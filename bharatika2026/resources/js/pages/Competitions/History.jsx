@@ -82,7 +82,7 @@ function ParchmentCard({ reg }) {
           <WaxSeal status={reg.payment_status} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <CategoryBanner name={reg.competition?.category?.name} />
-            <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(13px,1.6vw,17px)', color: C.cream, margin: '0.5rem 0 0', fontWeight: 600, lineHeight: 1.25, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(14px,4vw,17px)', color: C.cream, margin: '0.5rem 0 0', fontWeight: 600, lineHeight: 1.25, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {reg.competition?.name}
             </h3>
           </div>
@@ -134,15 +134,17 @@ export default function History({ registrations = [] }) {
       <style>{`
         .hist-wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: clamp(72px,10vw,110px) clamp(1rem,4vw,2rem) clamp(3rem,6vw,6rem); }
         .hist-stats { display: flex; justify-content: center; gap: clamp(1.5rem,4vw,2.5rem); margin-top: 1.5rem; flex-wrap: wrap; }
-        .hist-filter { display: flex; gap: 0.75rem; margin-bottom: 2.5rem; flex-wrap: wrap; background: rgba(200,168,75,0.04); border: 1px solid rgba(200,168,75,0.12); padding: 1rem; }
-        .hist-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+        .hist-filter { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.75rem; margin-bottom: 2.5rem; background: rgba(200,168,75,0.04); border: 1px solid rgba(200,168,75,0.12); padding: 1rem; }
+        .hist-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+        
         @media (max-width: 768px) {
-          .hist-filter { flex-direction: column; }
-          .hist-filter input, .hist-filter select { width: 100%; box-sizing: border-box; }
+          .hist-filter { grid-template-columns: 1fr; gap: 0.5rem; }
+          .hist-filter input, .hist-filter select { width: 100% !important; font-size: 14px !important; }
+          .hist-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+          .hist-stats div { padding: 10px; border: 1px solid rgba(200,168,75,0.05); }
         }
         @media (max-width: 480px) {
           .hist-cards { grid-template-columns: 1fr; }
-          .hist-stats { gap: 1rem; }
         }
       `}</style>
       <div style={{ minHeight: '100vh', background: C.dark, position: 'relative', overflow: 'hidden' }}>
@@ -153,7 +155,7 @@ export default function History({ registrations = [] }) {
           {/* Hero */}
           <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem,5vw,3.5rem)' }}>
             <p style={{ fontFamily: "'Cinzel', serif", fontSize: 'clamp(8px,1vw,10px)', letterSpacing: 6, color: C.gold, opacity: 0.6, textTransform: 'uppercase', margin: '0 0 0.75rem' }}>Bharatika 2026</p>
-            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(40px,8vw,96px)', color: C.cream, margin: '0 0 0.5rem', lineHeight: 1 }}>Daftar Pendaftaran</h1>
+            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(40px,10vw,96px)', color: C.cream, margin: '0 0 0.5rem', lineHeight: 1 }}>Daftar Pendaftaran</h1>
             <OrnamentDivider color={C.gold} opacity={0.4} />
             <div className="hist-stats">
               {[
@@ -171,25 +173,83 @@ export default function History({ registrations = [] }) {
           </div>
 
           {/* Filter */}
-          <div className="hist-filter">
-            <input type="text" placeholder="Cari nama kompetisi..." value={search} onChange={e => setSearch(e.target.value)}
-              style={{ flex: '2 1 200px', padding: 'clamp(8px,1.2vw,10px) 14px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(200,168,75,0.2)', color: C.cream, outline: 'none', fontFamily: "'EB Garamond', serif", fontSize: 15, transition: 'border 0.2s' }}
-              onFocus={e => e.target.style.borderColor = 'rgba(200,168,75,0.5)'}
-              onBlur={e => e.target.style.borderColor = 'rgba(200,168,75,0.2)'}
-            />
-            <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
-              style={{ flex: '1 1 140px', padding: 'clamp(8px,1.2vw,10px) 14px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(200,168,75,0.2)', color: C.cream, fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 1, outline: 'none', cursor: 'pointer' }}>
-              <option value="all" style={{ background: C.dark }}>Semua Kategori</option>
-              {categories.map(c => <option key={c} value={c} style={{ background: C.dark }}>{c}</option>)}
-            </select>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              style={{ flex: '1 1 140px', padding: 'clamp(8px,1.2vw,10px) 14px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(200,168,75,0.2)', color: C.cream, fontFamily: "'Cinzel', serif", fontSize: 9, letterSpacing: 1, outline: 'none', cursor: 'pointer' }}>
-              <option value="all" style={{ background: C.dark }}>Semua Status</option>
-              <option value="pending" style={{ background: C.dark }}>Menunggu</option>
-              <option value="approved" style={{ background: C.dark }}>Terdaftar</option>
-              <option value="rejected" style={{ background: C.dark }}>Ditolak</option>
-            </select>
-          </div>
+          // Ganti bagian Filter di dalam return() dengan ini:
+
+<div className="hist-filter">
+  {/* Input Search tetap sama tapi pastikan padding nyaman */}
+  <div style={{ position: 'relative', flex: '2 1 200px' }}>
+    <input 
+      type="text" 
+      placeholder="Cari nama kompetisi..." 
+      value={search} 
+      onChange={e => setSearch(e.target.value)}
+      style={{ 
+        width: '100%',
+        padding: '14px 16px', 
+        background: 'rgba(0,0,0,0.6)', 
+        border: '1px solid rgba(200,168,75,0.3)', 
+        color: C.cream, 
+        outline: 'none', 
+        fontFamily: "'EB Garamond', serif", 
+        fontSize: 16, // Ukuran 16px mencegah auto-zoom iOS
+        boxSizing: 'border-box'
+      }}
+    />
+  </div>
+
+  {/* Select Kategori dengan styling lebih elegan */}
+  <div style={{ position: 'relative', flex: '1 1 140px' }}>
+    <select 
+      value={catFilter} 
+      onChange={e => setCatFilter(e.target.value)}
+      style={{ 
+        width: '100%',
+        padding: '14px', 
+        background: 'rgba(0,0,0,0.6)', 
+        border: '1px solid rgba(200,168,75,0.3)', 
+        color: C.cream, 
+        fontFamily: "'Cinzel', serif", 
+        fontSize: 10, 
+        letterSpacing: 1, 
+        appearance: 'none', // Menghilangkan gaya bawaan browser
+        cursor: 'pointer',
+        borderRadius: 0
+      }}>
+      <option value="all" style={{ background: C.dark }}>SEMUA KATEGORI</option>
+      {categories.map(c => (
+        <option key={c} value={c} style={{ background: C.dark }}>{c.toUpperCase()}</option>
+      ))}
+    </select>
+    {/* Ikon panah custom agar tidak polos */}
+    <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: C.gold, fontSize: 8 }}>▼</div>
+  </div>
+
+  {/* Select Status */}
+  <div style={{ position: 'relative', flex: '1 1 140px' }}>
+    <select 
+      value={statusFilter} 
+      onChange={e => setStatusFilter(e.target.value)}
+      style={{ 
+        width: '100%',
+        padding: '14px', 
+        background: 'rgba(0,0,0,0.6)', 
+        border: '1px solid rgba(200,168,75,0.3)', 
+        color: C.cream, 
+        fontFamily: "'Cinzel', serif", 
+        fontSize: 10, 
+        letterSpacing: 1, 
+        appearance: 'none',
+        cursor: 'pointer',
+        borderRadius: 0
+      }}>
+      <option value="all" style={{ background: C.dark }}>SEMUA STATUS</option>
+      <option value="pending" style={{ background: C.dark }}>MENUNGGU</option>
+      <option value="approved" style={{ background: C.dark }}>TERDAFTAR</option>
+      <option value="rejected" style={{ background: C.dark }}>DITOLAK</option>
+    </select>
+    <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: C.gold, fontSize: 8 }}>▼</div>
+  </div>
+</div>
 
           {/* Cards */}
           {filtered.length === 0 ? (
