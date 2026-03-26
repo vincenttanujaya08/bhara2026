@@ -163,32 +163,68 @@ function Gallery() {
         @keyframes charSide{ from { opacity:0.4; transform:translateX(30px) scale(0.83); } to { opacity:0.4; transform:translateX(0) scale(0.83); } }
         @keyframes descIn  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
         .gal-wrap {
-          position: relative; z-index: 2;
-          display: flex; flex-direction: row;
-          min-height: 600px;
-        }
+  position: relative; 
+  z-index: 2;
+  display: flex; 
+  flex-direction: row;
+  min-height: 700px; /* Sedikit lebih tinggi agar lega */
+}
         .gal-chars {
-          width: 58%;
-          display: flex; align-items: flex-end; justify-content: flex-end;
-          padding-bottom: 2rem; padding-right: 2rem;
-        }
-        .gal-text {
-          width: 42%;
-          display: flex; flex-direction: column; justify-content: flex-end;
-          padding: 0 clamp(1.5rem, 3.5vw, 3.5rem) 3rem clamp(1rem, 2vw, 2rem);
-          border-left: 1px solid rgba(232,217,160,0.18);
-          text-align: right;
-          gap: 1.5rem;
-        }
-        @media (max-width: 900px) {
-          .gal-wrap { flex-direction: column; min-height: auto; }
-          .gal-chars { width: 100%; justify-content: center; min-height: 360px; padding-right: 0; padding-bottom: 1.5rem; }
-          .gal-text { width: 100%; border-left: none; border-top: 1px solid rgba(232,217,160,0.12); padding: 2rem 2.5rem 2.5rem; text-align: right; justify-content: center; gap: 1.25rem; }
-        }
-        @media (max-width: 540px) {
-          .gal-chars { min-height: 280px; }
-          .gal-text { padding: 1.5rem 1.25rem 2rem; gap: 1rem; }
-        }
+  width: 50%; /* Ubah ke 50% */
+  display: flex; 
+  align-items: center; /* Karakter di tengah secara vertikal */
+  justify-content: center; /* Karakter di tengah secara horizontal */
+  padding: 2rem;
+}
+  .gal-text {
+  width: 50%; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center;
+  /* Desktop: Rata kiri agar ada 'jarak' dengan pembatas tengah */
+  align-items: flex-start; 
+  padding: 0 clamp(2rem, 5vw, 5rem); 
+  border-left: 1px solid rgba(232,217,160,0.18);
+  text-align: left; 
+  gap: 2rem;
+}
+
+@media (max-width: 900px) {
+  .gal-wrap { flex-direction: column; min-height: auto; }
+  .gal-chars { width: 100%; min-height: 400px; }
+  .gal-text { 
+    width: 100%; 
+    border-left: none; 
+    border-top: 1px solid rgba(232,217,160,0.12); 
+    padding: 3rem 1.5rem; 
+    /* Mobile: Kembali ke rata tengah agar seimbang */
+    align-items: center; 
+    text-align: center; 
+  }
+       @media (max-width: 540px) {
+  .gal-chars { 
+    min-height: 320px; /* Sedikit lebih tinggi agar gambar tidak sesak */
+    padding-bottom: 1rem;
+    gap: 0.5rem; /* Memberi jarak antar karakter agar tidak menempel */
+  }
+  
+  /* Hilangkan margin negatif agar karakter tidak saling tumpang tindih berlebihan di layar kecil */
+  .gal-chars > div {
+    margin-left: 0 !important; 
+    margin-right: 0 !important;
+  }
+
+  .gal-text { 
+    padding: 1.5rem 1rem 3rem; 
+    gap: 0.75rem; 
+  }
+
+  /* Perkecil sedikit ukuran teks deskripsi di bawah nama karakter agar tidak memenuhi layar */
+  .gal-chars p {
+    max-width: 140px !important;
+    margin: 5px auto 0 !important;
+  }
+}
       `}</style>
       <div className="gal-wrap">
         <div className="gal-chars">

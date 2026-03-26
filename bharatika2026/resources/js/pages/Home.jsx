@@ -110,7 +110,7 @@
         `}</style>
 
         <video autoPlay loop muted playsInline
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}>
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', zIndex: 0 }}>
           <source src="/videos/Motion Background bhara26 FIXX.mp4" type="video/mp4" />
         </video>
 
@@ -244,7 +244,9 @@
             .re-right { min-height: auto; }
           }
           @media (max-width: 640px) {
-            .re-right { grid-template-columns: 1fr; }
+            .re-right { align-items: center;
+    text-align: center;
+    padding: 1.5rem 1.5rem 1rem; }
           }
 
           /* ── Events scroll column ── */

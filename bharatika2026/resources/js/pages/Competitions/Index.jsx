@@ -136,45 +136,38 @@ function ClosedRow({ category, cfg, flipLayout, onToggle }) {
   const isMobile = bp === 'mobile'
   const isTablet = bp === 'tablet'
 
-  // Font size tiers
+  // Responsive sizes
   const nameFontSize = isMobile ? '13vw' : isTablet ? '9vw' : 'clamp(52px,9.5vw,128px)'
   const descFontSize = isMobile ? '13px' : isTablet ? '14px' : 'clamp(14px,1.7vw,22px)'
   const rowMinHeight = isMobile ? '90px' : isTablet ? '120px' : 'clamp(110px,17vw,170px)'
   const chevronSize  = isMobile ? 34 : isTablet ? 40 : 48
 
+  // Mobile Layout (Stacked)
   if (isMobile) {
-    // Mobile: stack vertikally — name besar di atas, desc kecil di bawah, chevron di pojok
     return (
       <button onClick={onToggle} style={{
         display: 'block', width: '100%', background: cfg.bg,
         border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left',
-        position: 'relative', overflow: 'hidden',
-        minHeight: rowMinHeight,
+        position: 'relative', overflow: 'hidden', minHeight: rowMinHeight,
       }}>
         <Dots />
-        <div style={{
-          position: 'relative', zIndex: 1,
-          display: 'flex', flexDirection: 'column',
-          padding: '14px 16px 18px',
-          gap: 4,
+        <div style={{ 
+          position: 'relative', zIndex: 1, 
+          display: 'flex', flexDirection: 'column', 
+          padding: '14px 16px 18px', gap: 4 
         }}>
-          {/* Name row with chevron */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{
-              fontFamily: "'CSSalient',sans-serif",
-              fontSize: nameFontSize,
-              color: cfg.text, lineHeight: 0.85,
-              textTransform: 'uppercase', letterSpacing: 1,
+            <span style={{ 
+              fontFamily: "'CSSalient',sans-serif", fontSize: nameFontSize, 
+              color: cfg.text, lineHeight: 0.85, textTransform: 'uppercase' 
             }}>
               {category.name}
             </span>
             <ChevronCircle color={cfg.text} size={chevronSize} />
           </div>
-          {/* Desc */}
-          <p style={{
-            fontFamily: "'FamiljenGrotesk',sans-serif",
-            fontSize: descFontSize, color: cfg.text,
-            margin: 0, lineHeight: 1.5, opacity: 0.85,
+          <p style={{ 
+            fontFamily: "'FamiljenGrotesk',sans-serif", fontSize: descFontSize, 
+            color: cfg.text, margin: 0, lineHeight: 1.5, opacity: 0.85 
           }}
             dangerouslySetInnerHTML={{ __html: cfg.desc }} />
         </div>
@@ -182,24 +175,28 @@ function ClosedRow({ category, cfg, flipLayout, onToggle }) {
     )
   }
 
-  // Tablet & Desktop: horizontal grid (same logic, tighter on tablet)
-  const hPad = isTablet ? '0 1.5rem' : '0 clamp(1.25rem,4vw,2.5rem)'
-  const gap  = isTablet ? '1rem' : 'clamp(1rem,3vw,2.5rem)'
+  // Tablet & Desktop Layout (Horizontal Grid)
+  const hPad = isTablet ? '0 2rem' : '0 clamp(1.25rem,4vw,2.5rem)'
+  const gap  = isTablet ? '1.5rem' : '3rem' // Jarak antar elemen
 
   return (
     <button onClick={onToggle} style={{
       display: 'block', width: '100%', background: cfg.bg,
       border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left',
-      position: 'relative', overflow: 'hidden',
-      minHeight: rowMinHeight,
+      position: 'relative', overflow: 'hidden', minHeight: rowMinHeight,
     }}>
       <Dots />
       <div style={{
         position: 'relative', zIndex: 1,
         display: 'grid',
+        /* LOGIKA GRID:
+           - max-content: Judul hanya mengambil lebar selebar teksnya saja (tidak lebar/fixed).
+           - 1fr: Mengambil sisa ruang kosong layar sebagai "bantalan" agar Judul & Deskripsi terdorong ke pinggir.
+           - auto: Deskripsi menyesuaikan isi teks.
+        */
         gridTemplateColumns: flipLayout
-          ? `${chevronSize}px 1fr auto`
-          : `auto 1fr ${chevronSize}px`,
+          ? `${chevronSize}px 1fr auto max-content` // Untuk BUANA & AGNI (Judul di kanan)
+          : `max-content auto 1fr ${chevronSize}px`, // Untuk TIRTA & BAYU (Judul di kiri)
         alignItems: 'center',
         gap,
         padding: hPad,
@@ -208,34 +205,40 @@ function ClosedRow({ category, cfg, flipLayout, onToggle }) {
       }}>
         {flipLayout ? (
           <>
+            {/* Urutan: Chevron | Sisa Ruang (1fr) | Deskripsi | Judul */}
             <ChevronCircle color={cfg.text} size={chevronSize} />
+            <div /> {/* Spacer fleksibel untuk mendorong teks ke kanan */}
             <p style={{
               fontFamily: "'FamiljenGrotesk',sans-serif",
               fontSize: descFontSize, color: cfg.text, margin: 0, lineHeight: 1.55,
-            }}
-              dangerouslySetInnerHTML={{ __html: cfg.desc }} />
+              textAlign: 'right', // Teks rata kanan mengikuti judul
+              maxWidth: '450px'
+            }} dangerouslySetInnerHTML={{ __html: cfg.desc }} />
             <span style={{
               fontFamily: "'CSSalient',sans-serif",
               fontSize: nameFontSize, color: cfg.text, lineHeight: 0.85,
-              textTransform: 'uppercase', letterSpacing: 2, flexShrink: 0, whiteSpace: 'nowrap',
+              textTransform: 'uppercase', letterSpacing: 2, flexShrink: 0,
             }}>
               {category.name}
             </span>
           </>
         ) : (
           <>
+            {/* Urutan: Judul | Deskripsi | Sisa Ruang (1fr) | Chevron */}
             <span style={{
               fontFamily: "'CSSalient',sans-serif",
               fontSize: nameFontSize, color: cfg.text, lineHeight: 0.85,
-              textTransform: 'uppercase', letterSpacing: 2, flexShrink: 0, whiteSpace: 'nowrap',
+              textTransform: 'uppercase', letterSpacing: 2, flexShrink: 0,
             }}>
               {category.name}
             </span>
             <p style={{
               fontFamily: "'FamiljenGrotesk',sans-serif",
               fontSize: descFontSize, color: cfg.text, margin: 0, lineHeight: 1.55,
-            }}
-              dangerouslySetInnerHTML={{ __html: cfg.desc }} />
+              textAlign: 'left', // Teks rata kiri mengikuti judul
+              maxWidth: '450px'
+            }} dangerouslySetInnerHTML={{ __html: cfg.desc }} />
+            <div /> {/* Spacer fleksibel untuk mendorong chevron ke kanan */}
             <ChevronCircle color={cfg.text} size={chevronSize} />
           </>
         )}
@@ -244,416 +247,289 @@ function ClosedRow({ category, cfg, flipLayout, onToggle }) {
   )
 }
 
-// ─── OPEN PANEL ───────────────────────────────────────────────────────────────
+// ─── OPEN PANEL (SEAMLESS INFINITE LOOP) ──────────────────────────────────────
 function OpenPanel({ category, cfg, flipLayout, onToggle }) {
   const bp = useBreakpoint()
   const isMobile = bp === 'mobile'
   const isTablet = bp === 'tablet'
 
-  const comps    = category.competitions || []
+  const comps = category.competitions || []
   const trackRef = useRef(null)
+  
+  // State index untuk dot indicator (0 sampai comps.length - 1)
   const [idx, setIdx] = useState(0)
 
-  const drag = useRef({ active: false, startX: 0, startScrollLeft: 0, moved: false })
+  // Duplikasi untuk efek looping: [Terakhir, ...Asli, Pertama]
+  const extendedComps = comps.length > 1 
+    ? [comps[comps.length - 1], ...comps, comps[0]] 
+    : comps
 
-  const syncIdx = useCallback(() => {
-    const el = trackRef.current
-    if (!el) return
-    const slideW = el.offsetWidth
-    if (slideW === 0) return
-    const newIdx = Math.round(el.scrollLeft / slideW)
-    setIdx(Math.min(Math.max(newIdx, 0), comps.length - 1))
+  // Set posisi awal ke index 1 (item asli pertama)
+  useEffect(() => {
+    if (trackRef.current && comps.length > 1) {
+      const slideW = trackRef.current.offsetWidth
+      trackRef.current.scrollLeft = slideW
+    }
   }, [comps.length])
 
-  const scrollTo = useCallback((targetIdx) => {
-    const el = trackRef.current
-    if (!el) return
-    el.scrollTo({ left: targetIdx * el.offsetWidth, behavior: 'smooth' })
-    setIdx(targetIdx)
-  }, [])
+  const drag = useRef({ 
+    active: false, 
+    startX: 0, 
+    startScrollLeft: 0, 
+    moved: false, 
+    lastX: 0 
+  })
 
-  const onPointerDown = useCallback((e) => {
+  // Fungsi untuk reset posisi secara instan (Secret Jump)
+  const handleInfiniteGap = useCallback(() => {
+    const el = trackRef.current
+    if (!el || comps.length <= 1 || drag.current.active) return
+
+    const slideW = el.offsetWidth
+    const currentScroll = el.scrollLeft
+    const totalW = (extendedComps.length - 1) * slideW
+
+    // Jika di Clone Terakhir (Paling Kanan) -> Lompat ke Asli Pertama
+    if (currentScroll >= totalW) {
+      el.style.scrollBehavior = 'auto'
+      el.scrollLeft = slideW
+    }
+    // Jika di Clone Pertama (Paling Kiri) -> Lompat ke Asli Terakhir
+    else if (currentScroll <= 0) {
+      el.style.scrollBehavior = 'auto'
+      el.scrollLeft = comps.length * slideW
+    }
+
+    // Update Dot Indicator berdasarkan posisi scroll
+    const rawIdx = Math.round(el.scrollLeft / slideW) - 1
+    const normalizedIdx = (rawIdx + comps.length) % comps.length
+    if (normalizedIdx !== idx) setIdx(normalizedIdx)
+  }, [comps.length, extendedComps.length, idx])
+
+  const scrollTo = (targetIdx) => {
     const el = trackRef.current
     if (!el) return
+    el.style.scrollBehavior = 'smooth'
+    // +1 karena ada clone di index 0
+    el.scrollLeft = (targetIdx + 1) * el.offsetWidth
+  }
+
+  const onPointerDown = (e) => {
+    if (comps.length <= 1) return
+    const el = trackRef.current
+    const startX = e.clientX || (e.touches && e.touches[0].clientX)
+    
     drag.current = {
       active: true,
-      startX: e.touches ? e.touches[0].clientX : e.clientX,
+      startX,
+      lastX: startX,
       startScrollLeft: el.scrollLeft,
       moved: false,
     }
+    el.style.scrollSnapType = 'none'
     el.style.scrollBehavior = 'auto'
-  }, [])
+  }
 
-  const onPointerMove = useCallback((e) => {
+  const onPointerMove = (e) => {
     if (!drag.current.active) return
-    if (e.cancelable) e.preventDefault()
     const el = trackRef.current
-    if (!el) return
-    const x  = e.touches ? e.touches[0].clientX : e.clientX
-    const dx = drag.current.startX - x
-    if (Math.abs(dx) > 5) drag.current.moved = true
-    el.scrollLeft = drag.current.startScrollLeft + dx
-  }, [])
+    const currentX = e.clientX || (e.touches && e.touches[0].clientX)
+    
+    // Multiplier 1.3 agar geser terasa ringan (minim effort)
+    const dx = (drag.current.startX - currentX) * 1.3 
+    
+    if (Math.abs(dx) > 3) {
+      drag.current.moved = true
+      el.scrollLeft = drag.current.startScrollLeft + dx
+    }
+    drag.current.lastX = currentX
+  }
 
-  const onPointerUp = useCallback(() => {
+  const onPointerUp = () => {
     if (!drag.current.active) return
     drag.current.active = false
     const el = trackRef.current
     if (!el) return
+
+    el.style.scrollSnapType = 'x mandatory'
     el.style.scrollBehavior = 'smooth'
-    if (drag.current.moved) {
-      const slideW  = el.offsetWidth
-      const nearest = Math.round(el.scrollLeft / slideW)
-      scrollTo(Math.min(Math.max(nearest, 0), comps.length - 1))
-    }
-  }, [comps.length, scrollTo])
 
-  const handleBtnClick = useCallback((action, e) => {
-    if (drag.current.moved) {
-      e.preventDefault()
-      e.stopPropagation()
-      drag.current.moved = false
-      return
-    }
-    action()
-  }, [])
+    const slideW = el.offsetWidth
+    const velocity = drag.current.startX - drag.current.lastX
+    
+    // Hitung target berdasarkan posisi scroll saat ini
+    let targetIdx = Math.round(el.scrollLeft / slideW) - 1
 
-  // ── Responsive sizing values ────────────────────────────────────────────────
-  const nameFontSize = isMobile ? '11vw' : isTablet ? '6vw' : 'clamp(34px,5.2vw,78px)'
-  const descFontSize = isMobile ? '12px' : isTablet ? '13px' : 'clamp(12px,1.4vw,18px)'
+    // Swipe detection: jika cepat, paksa geser slide
+    if (Math.abs(velocity) > 25) {
+      targetIdx = velocity > 0 ? targetIdx + 1 : targetIdx - 1
+    }
+
+    scrollTo(targetIdx)
+    
+    // Beri sedikit jeda untuk animasi smooth selesai, lalu cek gap loop
+    setTimeout(handleInfiniteGap, 450)
+  }
+
+  // ── Sizing Logic ──────────────────────────────────────────────────────────
+  const nameFontSize = isMobile ? '13vw' : isTablet ? '9vw' : 'clamp(52px,9.5vw,128px)';
+const descFontSize = isMobile ? '13px' : isTablet ? '14px' : 'clamp(14px,1.7vw,22px)';
   const compTitleSize = isMobile ? '18px' : isTablet ? '20px' : 'clamp(16px,2.4vw,30px)'
   const compDescSize  = isMobile ? '13px' : isTablet ? '14px' : 'clamp(13px,1.45vw,19px)'
   const iconSize      = isMobile ? '72px' : isTablet ? '88px' : 'clamp(76px,10vw,130px)'
   const btnPadH       = isMobile ? '10px 22px' : isTablet ? '10px 26px' : 'clamp(9px,1.3vw,13px) clamp(22px,3.5vw,44px)'
   const btnFontSize   = isMobile ? '9px' : '10px'
   const chevronSize   = isMobile ? 34 : isTablet ? 38 : 44
-
-  // ── Character overlay — hidden on mobile, smaller on tablet ────────────────
-  // On mobile we skip the character overlay completely to give full width to content
-  const showChar = !isMobile
-  // The padding we reserve for the character panel
-  const charWidthPx = isTablet ? 220 : 'clamp(280px,45%,580px)'
-  // In tablet mode we use a fixed pixel amount
-  const charPadStyle = showChar
-    ? (flipLayout
-        ? { paddingLeft:  isTablet ? 220 : charWidthPx }
-        : { paddingRight: isTablet ? 220 : charWidthPx })
+  const showChar      = !isMobile
+  const charWidthPx   = isTablet ? 220 : 'clamp(280px,45%,580px)'
+  const panelMinH     = isMobile ? 'auto' : isTablet ? '380px' : 'clamp(420px,56vw,680px)'
+  
+  const charPadStyle  = showChar
+    ? (flipLayout ? { paddingLeft: isTablet ? 220 : charWidthPx } : { paddingRight: isTablet ? 220 : charWidthPx })
     : {}
 
-  const panelMinH = isMobile ? 'auto' : isTablet ? '380px' : 'clamp(420px,56vw,680px)'
-
-  // Close button offset
-  const closeBtnPos = isMobile
+  const closeBtnPos   = isMobile
     ? { top: '12px', right: '12px' }
-    : (flipLayout
-        ? { top: 'clamp(14px,2vw,24px)', left:  'clamp(14px,2vw,24px)' }
-        : { top: 'clamp(14px,2vw,24px)', right: 'clamp(14px,2vw,24px)' })
-
-  // ── Character overlay element ───────────────────────────────────────────────
-  const CharOverlay = showChar && (
-    <div style={{
-      position: 'absolute',
-      bottom: 0,
-      ...(flipLayout
-        ? { left: 0, width: isTablet ? 220 : charWidthPx }
-        : { right: 0, width: isTablet ? 220 : charWidthPx }
-      ),
-      height: '100%',
-      zIndex: 5,
-      pointerEvents: 'none',
-    }}>
-      {/* Gradient blend */}
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-        background: flipLayout
-          ? `linear-gradient(to right, ${cfg.bg} 0%, ${cfg.bg}BB 20%, transparent 55%)`
-          : `linear-gradient(to left,  ${cfg.bg} 0%, ${cfg.bg}BB 20%, transparent 55%)`,
-      }} />
-      <img
-        src={cfg.photo} alt={category.name}
-        style={{
-          position: 'absolute', bottom: 0,
-          ...(flipLayout
-            ? { right: '-30%', left: 'auto' }
-            : { left:  '-30%', right: 'auto' }
-          ),
-          height: '100%', width: 'auto',
-          objectFit: 'contain', objectPosition: 'bottom center',
-          filter: 'drop-shadow(0 0 24px rgba(0,0,0,0.45))',
-          zIndex: 3, userSelect: 'none',
-        }}
-        onError={e => { e.target.style.display = 'none' }}
-      />
-    </div>
-  )
-
-  // ── Content inner area ──────────────────────────────────────────────────────
-  const hPad = isMobile ? '1rem 1rem 1.25rem' : isTablet ? '1.25rem 1.5rem' : 'clamp(1.5rem,3vw,2.5rem) clamp(1.5rem,4vw,3.5rem)'
-
-  const ContentArea = (
-    <div style={{
-      display: 'flex', flexDirection: 'column',
-      padding: hPad,
-      justifyContent: 'space-between',
-      overflow: 'hidden',
-      position: 'relative',
-      minHeight: panelMinH,
-    }}>
-      {/* ── Category header ── */}
-      <div style={{ marginBottom: '0.75rem', flexShrink: 0 }}>
-        {/* On mobile: always stacked, no flip */}
-        {isMobile ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <h2 style={{
-              fontFamily: "'CSSalient',sans-serif",
-              fontSize: nameFontSize,
-              color: cfg.text, margin: 0, lineHeight: 0.88,
-              textTransform: 'uppercase',
-            }}>{category.name}</h2>
-            <p style={{
-              fontFamily: "'FamiljenGrotesk',sans-serif",
-              fontSize: descFontSize,
-              color: cfg.text, margin: 0, lineHeight: 1.5,
-            }}
-              dangerouslySetInnerHTML={{ __html: cfg.desc }} />
-          </div>
-        ) : flipLayout ? (
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'clamp(0.75rem,1.5vw,1.25rem)', flexWrap: 'wrap' }}>
-            <p style={{
-              fontFamily: "'FamiljenGrotesk',sans-serif",
-              fontSize: descFontSize,
-              color: cfg.text, margin: 'clamp(4px,0.8vw,10px) 0 0',
-              lineHeight: 1.5, maxWidth: 280,
-            }} dangerouslySetInnerHTML={{ __html: cfg.desc }} />
-            <h2 style={{
-              fontFamily: "'CSSalient',sans-serif",
-              fontSize: nameFontSize,
-              color: cfg.text, margin: 0, lineHeight: 0.88,
-              textTransform: 'uppercase', flexShrink: 0,
-            }}>{category.name}</h2>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'clamp(0.75rem,1.5vw,1.25rem)', flexWrap: 'wrap' }}>
-            <h2 style={{
-              fontFamily: "'CSSalient',sans-serif",
-              fontSize: nameFontSize,
-              color: cfg.text, margin: 0, lineHeight: 0.88,
-              textTransform: 'uppercase', flexShrink: 0,
-            }}>{category.name}</h2>
-            <p style={{
-              fontFamily: "'FamiljenGrotesk',sans-serif",
-              fontSize: descFontSize,
-              color: cfg.text, margin: 'clamp(4px,0.8vw,10px) 0 0',
-              lineHeight: 1.5, maxWidth: 280,
-            }} dangerouslySetInnerHTML={{ __html: cfg.desc }} />
-          </div>
-        )}
-      </div>
-
-      {/* ── Carousel track ── */}
-      <div
-        ref={trackRef}
-        onMouseDown={onPointerDown}
-        onMouseMove={onPointerMove}
-        onMouseUp={onPointerUp}
-        onMouseLeave={onPointerUp}
-        onTouchStart={onPointerDown}
-        onTouchMove={onPointerMove}
-        onTouchEnd={onPointerUp}
-        onScroll={syncIdx}
-        style={{
-          flex: 1,
-          display: 'flex',
-          overflowX: 'scroll',
-          overflowY: 'hidden',
-          scrollSnapType: 'x mandatory',
-          scrollBehavior: 'smooth',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          cursor: comps.length > 1 ? 'grab' : 'default',
-          userSelect: 'none',
-          WebkitOverflowScrolling: 'touch',
-          minHeight: 0,
-          // Prevent accidental vertical scroll stealing on mobile
-          touchAction: 'pan-x',
-        }}
-      >
-        <style>{`[data-comp-track]::-webkit-scrollbar { display: none; }`}</style>
-
-        {comps.map((comp, i) => {
-          const isApproved = comp?.registrations?.[0]?.payment_status === 'approved'
-          return (
-            <div
-              key={i}
-              style={{
-                minWidth: '100%',
-                width: '100%',
-                flexShrink: 0,
-                scrollSnapAlign: 'center',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center',
-                textAlign: 'center',
-                padding: isMobile ? '0 4px' : '0 8px',
-                boxSizing: 'border-box',
-              }}
-            >
-              {/* Icon */}
-              <img
-                src={getIconSrc(comp.name)}
-                alt={comp.name}
-                style={{
-                  width: iconSize, height: iconSize,
-                  marginBottom: isMobile ? '0.6rem' : '0.9rem',
-                  filter: 'drop-shadow(0 4px 18px rgba(200,168,75,0.6))',
-                  pointerEvents: 'none',
-                  objectFit: 'contain',
-                  userSelect: 'none',
-                }}
-                onError={e => { e.target.style.opacity = '0.3' }}
-              />
-
-              {/* Competition name */}
-              <h3 style={{
-                fontFamily: "'Cinzel',serif",
-                fontSize: compTitleSize,
-                color: cfg.text, margin: '0 0 0.5rem',
-                letterSpacing: isMobile ? '1px' : 'clamp(2px,0.4vw,5px)',
-                textTransform: 'uppercase', fontWeight: 700,
-              }}>{comp.name}</h3>
-
-              {/* Description */}
-              <p style={{
-                fontFamily: "'EB Garamond',serif",
-                fontSize: compDescSize,
-                color: cfg.text, opacity: 0.88,
-                lineHeight: 1.65,
-                margin: `0 0 ${isMobile ? '0.6rem' : 'clamp(0.75rem,1.5vw,1.25rem)'}`,
-                maxWidth: isMobile ? '90%' : 420,
-              }}>
-                {`Peserta diminta untuk mengikuti lomba ${comp.name} sesuai dengan tema dan ketentuan dari panitia.`}
-              </p>
-
-              {/* Participants */}
-              <p style={{
-                fontFamily: "'Cinzel',serif",
-                fontSize: isMobile ? '8px' : 'clamp(8px,0.9vw,10px)',
-                color: cfg.text, opacity: 0.5,
-                letterSpacing: 3, textTransform: 'uppercase',
-                margin: `0 0 ${isMobile ? '0.75rem' : 'clamp(0.75rem,1.5vw,1.25rem)'}`,
-              }}>
-                {comp.min_participants === comp.max_participants
-                  ? `${comp.min_participants} Peserta`
-                  : `${comp.min_participants}–${comp.max_participants} Peserta`}
-              </p>
-
-              {/* Action buttons */}
-              <div style={{
-                display: 'flex',
-                gap: isMobile ? '0.5rem' : 'clamp(0.6rem,1.5vw,1rem)',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-              }}>
-                <button
-                  style={{
-                    padding: btnPadH,
-                    borderRadius: 50,
-                    border: `1.5px solid ${cfg.text}`,
-                    background: 'transparent', color: cfg.text,
-                    fontFamily: "'Cinzel',serif",
-                    fontSize: btnFontSize,
-                    fontWeight: 700, letterSpacing: 3,
-                    textTransform: 'uppercase', cursor: 'pointer',
-                    transition: 'background 0.2s',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = `${cfg.text}18`}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                  onClick={(e) => handleBtnClick(() => { /* brief action */ }, e)}
-                >BRIEF</button>
-
-                <button
-                  style={{
-                    padding: btnPadH,
-                    borderRadius: 50, border: 'none',
-                    background: isApproved ? '#7ECBA1' : CREAM,
-                    color: isApproved ? '#0A2818' : CRIMSON,
-                    fontFamily: "'Cinzel',serif",
-                    fontSize: btnFontSize,
-                    fontWeight: 900, letterSpacing: 3,
-                    textTransform: 'uppercase', cursor: 'pointer',
-                    boxShadow: '0 4px 14px rgba(0,0,0,0.28)',
-                    transition: 'transform 0.18s',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-                  onClick={(e) => handleBtnClick(() => {
-                    const reg = comp.registrations?.[0]
-                    if (reg?.payment_status === 'approved') {
-                      navigateWithTransition(`/history/${reg.id}`)
-                    } else {
-                      navigateWithTransition(`/competitions/${comp.id}/register`)
-                    }
-                  }, e)}
-                >{isApproved ? 'TERDAFTAR ✓' : 'DAFTAR'}</button>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* ── Dot indicator ── */}
-      {comps.length > 1 && (
-        <div style={{
-          display: 'flex', justifyContent: 'center',
-          gap: isMobile ? '6px' : '8px',
-          marginTop: isMobile ? '0.75rem' : '1rem',
-          flexShrink: 0,
-        }}>
-          {comps.map((_, i) => (
-            <div
-              key={i}
-              style={{
-                width: i === idx ? 20 : 8, height: 8, borderRadius: 4,
-                background: i === idx ? cfg.text : `${cfg.text}40`,
-                transition: 'all 0.35s ease',
-                cursor: 'pointer',
-              }}
-              onClick={() => scrollTo(i)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  )
+    : (flipLayout ? { top: '24px', left: '24px' } : { top: '24px', right: '24px' })
 
   return (
-    <div style={{
-      position: 'relative', background: cfg.bg,
-      overflow: 'hidden',
-      minHeight: panelMinH,
-    }}>
+    <div style={{ position: 'relative', background: cfg.bg, overflow: 'hidden', minHeight: panelMinH }}>
       <Dots />
 
-      {/* Content wrapper — padded away from character overlay on tablet/desktop */}
-      <div style={{
-        position: 'relative', zIndex: 1,
-        ...charPadStyle,
-        minHeight: panelMinH,
-      }}>
-        {ContentArea}
+      <div style={{ position: 'relative', zIndex: 1, ...charPadStyle, minHeight: panelMinH }}>
+        <div style={{
+          display: 'flex', flexDirection: 'column',
+          padding: isMobile ? '1.5rem 1rem' : '2.5rem 3.5rem',
+          justifyContent: 'space-between', minHeight: panelMinH,
+          boxSizing: 'border-box'
+        }}>
+          
+          {/* Header */}
+          <div style={{ marginBottom: '0.75rem', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.25rem', flexDirection: isMobile ? 'column' : (flipLayout ? 'row-reverse' : 'row') }}>
+              <h2 style={{
+                fontFamily: "'CSSalient',sans-serif", fontSize: nameFontSize,
+                color: cfg.text, margin: 0, lineHeight: 0.88, textTransform: 'uppercase',
+              }}>{category.name}</h2>
+              <p style={{
+                fontFamily: "'FamiljenGrotesk',sans-serif", fontSize: descFontSize,
+                color: cfg.text, margin: isMobile ? 0 : '10px 0 0', lineHeight: 1.5, maxWidth: 280,
+              }} dangerouslySetInnerHTML={{ __html: cfg.desc }} />
+            </div>
+          </div>
+
+          {/* Seamless Track */}
+          <div
+            ref={trackRef}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerLeave={onPointerUp}
+            onScroll={handleInfiniteGap}
+            style={{
+              flex: 1, display: 'flex', overflowX: 'hidden',
+              scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+              cursor: comps.length > 1 ? (drag.current.active ? 'grabbing' : 'grab') : 'default',
+              userSelect: 'none', touchAction: 'pan-y',
+            }}
+          >
+            {extendedComps.map((comp, i) => {
+              const isApproved = comp?.registrations?.[0]?.payment_status === 'approved'
+              return (
+                <div key={i} style={{
+                  minWidth: '100%', width: '100%', flexShrink: 0,
+                  scrollSnapAlign: 'center', display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+                }}>
+                  <img
+                    src={getIconSrc(comp.name)}
+                    alt=""
+                    draggable={false}
+                    style={{
+                      width: iconSize, height: iconSize, marginBottom: '0.9rem',
+                      filter: 'drop-shadow(0 4px 18px rgba(200,168,75,0.6))',
+                      pointerEvents: 'none', userSelect: 'none'
+                    }}
+                  />
+                  <h3 style={{
+                    fontFamily: "'Cinzel',serif", fontSize: compTitleSize,
+                    color: cfg.text, margin: '0 0 0.5rem', textTransform: 'uppercase', fontWeight: 700,
+                  }}>{comp.name}</h3>
+                  <p style={{
+                    fontFamily: "'EB Garamond',serif", fontSize: compDescSize,
+                    color: cfg.text, opacity: 0.88, lineHeight: 1.65, margin: '0 0 1.25rem', maxWidth: 420,
+                  }}>
+                    {`Peserta diminta untuk mengikuti lomba ${comp.name} sesuai dengan tema dan ketentuan dari panitia.`}
+                  </p>
+                  
+                  <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                    <button style={{
+                      padding: btnPadH, borderRadius: 50, border: `1.5px solid ${cfg.text}`,
+                      background: 'transparent', color: cfg.text, fontFamily: "'Cinzel',serif",
+                      fontSize: btnFontSize, fontWeight: 700, textTransform: 'uppercase', cursor: 'pointer',
+                    }}>BRIEF</button>
+                    <button 
+                      onClick={() => {
+                        if (drag.current.moved) return;
+                        const reg = comp.registrations?.[0]
+                        if (reg?.payment_status === 'approved') {
+                          navigateWithTransition(`/history/${reg.id}`)
+                        } else {
+                          navigateWithTransition(`/competitions/${comp.id}/register`)
+                        }
+                      }}
+                      style={{
+                        padding: btnPadH, borderRadius: 50, border: 'none',
+                        background: isApproved ? '#7ECBA1' : CREAM, color: isApproved ? '#0A2818' : CRIMSON,
+                        fontFamily: "'Cinzel',serif", fontSize: btnFontSize, fontWeight: 900,
+                        textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,0.28)',
+                      }}
+                    >{isApproved ? 'TERDAFTAR ✓' : 'DAFTAR'}</button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Indicators */}
+          {comps.length > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '1rem' }}>
+              {comps.map((_, i) => (
+                <div key={i} onClick={() => scrollTo(i)} style={{
+                  width: i === idx ? 20 : 8, height: 8, borderRadius: 4,
+                  background: i === idx ? cfg.text : `${cfg.text}40`,
+                  transition: 'all 0.35s ease', cursor: 'pointer',
+                }} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Character overlay */}
-      {CharOverlay}
+      {/* Character Overlay */}
+      {showChar && (
+        <div style={{
+          position: 'absolute', bottom: 0, height: '100%', zIndex: 5, pointerEvents: 'none',
+          ...(flipLayout ? { left: 0, width: isTablet ? 220 : charWidthPx } : { right: 0, width: isTablet ? 220 : charWidthPx }),
+        }}>
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 2,
+            background: flipLayout
+              ? `linear-gradient(to right, ${cfg.bg} 0%, ${cfg.bg}BB 20%, transparent 55%)`
+              : `linear-gradient(to left,  ${cfg.bg} 0%, ${cfg.bg}BB 20%, transparent 55%)`,
+          }} />
+          <img src={cfg.photo} alt="" style={{
+            position: 'absolute', bottom: 0, height: '100%', width: 'auto',
+            ...(flipLayout ? { right: '-30%' } : { left: '-30%' }),
+            objectFit: 'contain', filter: 'drop-shadow(0 0 24px rgba(0,0,0,0.45))', zIndex: 3,
+          }} />
+        </div>
+      )}
 
-      {/* Close button */}
+      {/* Close Button */}
       <button onClick={onToggle} style={{
-        position: 'absolute',
-        zIndex: 20,
-        background: 'transparent', border: 'none',
-        cursor: 'pointer', padding: 0, lineHeight: 0,
-        ...closeBtnPos,
+        position: 'absolute', zIndex: 20, background: 'transparent', border: 'none',
+        cursor: 'pointer', padding: 0, ...closeBtnPos,
       }}>
         <ChevronCircle color={cfg.text} up size={chevronSize} />
       </button>
@@ -661,20 +537,65 @@ function OpenPanel({ category, cfg, flipLayout, onToggle }) {
   )
 }
 
-// ─── Category item ────────────────────────────────────────────────────────────
-function CategoryItem({ category, index }) {
+function CategoryItem({ category, index, total }) {
   const [open, setOpen] = useState(false)
   const key        = category.name?.toUpperCase()
   const cfg        = CAT[key] || DEFAULT_CAT
   const flipLayout = index % 2 !== 0
   const toggle     = useCallback(() => setOpen(o => !o), [])
 
+  const bp = useBreakpoint()
+  
+  // Height Logic
+  const closedHeight = bp === 'mobile' ? '90px' : bp === 'tablet' ? '120px' : '150px'
+  // Gunakan min-height atau clamp yang cukup besar saat open agar menutup layar
+  const openedHeight = bp === 'mobile' ? '550px' : '650px'
+
   return (
-    <div>
-      {open
-        ? <OpenPanel  category={category} cfg={cfg} flipLayout={flipLayout} onToggle={toggle} />
-        : <ClosedRow  category={category} cfg={cfg} flipLayout={flipLayout} onToggle={toggle} />
-      }
+    <div style={{
+      position: 'relative',
+      overflow: 'hidden',
+      // Transisi height harus smooth
+      height: open ? openedHeight : closedHeight,
+      transition: 'height 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+      // Hilangkan border bawah pada item terakhir supaya tidak ada gap 1px
+      borderBottom: index === total - 1 ? 'none' : `1px solid ${cfg.text}15`,
+      background: cfg.bg,
+      margin: 0,
+      padding: 0,
+    }}>
+      {/* SEKSI CLOSED */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, width: '100%',
+        height: closedHeight, // Pastikan tinggi container closed sama dengan parent saat closed
+        opacity: open ? 0 : 1,
+        transform: open ? 'scale(0.98) translateY(-10px)' : 'scale(1) translateY(0)',
+        transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+        pointerEvents: open ? 'none' : 'auto',
+        zIndex: open ? 1 : 2,
+      }}>
+        <ClosedRow category={category} cfg={cfg} flipLayout={flipLayout} onToggle={toggle} />
+      </div>
+
+      {/* SEKSI OPEN */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, width: '100%', height: '100%',
+        opacity: open ? 1 : 0,
+        transform: open ? 'translateY(0)' : 'translateY(40px)',
+        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        pointerEvents: open ? 'auto' : 'none',
+        zIndex: open ? 2 : 1,
+      }}>
+        <OpenPanel 
+          category={category} 
+          cfg={cfg} 
+          flipLayout={flipLayout} 
+          onToggle={toggle} 
+          isOpen={open} 
+        />
+      </div>
     </div>
   )
 }
@@ -691,10 +612,23 @@ export default function CompetitionsIndex({ categories = [] }) {
 
   return (
     <MainLayout>
-      <div style={{ paddingTop: 52 }}>
+      {/* 1. paddingTop 52 diganti ke div pembungkus.
+          2. Ditambahkan background AGNI pada container jika sorted.length > 0 
+             supaya kalau ada sisa pixel di paling bawah, warnanya tetap merah.
+      */}
+      <div style={{ 
+        paddingTop: 52, 
+        background: sorted.length > 0 ? CAT[sorted[sorted.length - 1].name.toUpperCase()]?.bg : 'transparent' 
+      }}>
         {sorted.map((cat, i) => (
-          <CategoryItem key={cat.id} category={cat} index={i} />
+          <CategoryItem 
+            key={cat.id} 
+            category={cat} 
+            index={i} 
+            total={sorted.length} 
+          />
         ))}
+        
         {sorted.length === 0 && (
           <div style={{ textAlign: 'center', padding: '8rem 2rem', background: '#0F0A05' }}>
             <p style={{
