@@ -468,11 +468,31 @@ function Hero() {
           </div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <a href="#"
-            onMouseEnter={() => setBtnHover(true)}
-            onMouseLeave={() => setBtnHover(false)}
-            style={{ display: 'inline-block', padding: 'clamp(10px, 1.3vw, 14px) clamp(28px, 5vw, 52px)', background: btnHover ? 'transparent' : C.crimson, color: btnHover ? C.crimson : C.cream, border: `1.5px solid ${C.crimson}`, fontFamily: "'Nord', sans-serif", fontSize: 'clamp(9px, 1.1vw, 12px)', letterSpacing: 4, textDecoration: 'none', textTransform: 'uppercase', borderRadius: 50, transition: 'all 0.3s', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >Here</a>
+          <a 
+  href="https://www.instagram.com/bhajukita/"
+  target="_blank"
+  rel="noopener noreferrer"
+  onMouseEnter={() => setBtnHover(true)}
+  onMouseLeave={() => setBtnHover(false)}
+  style={{
+    display: 'inline-block',
+    padding: 'clamp(10px, 1.3vw, 14px) clamp(28px, 5vw, 52px)',
+    background: btnHover ? 'transparent' : C.crimson,
+    color: btnHover ? C.crimson : C.cream,
+    border: `1.5px solid ${C.crimson}`,
+    fontFamily: "'Nord', sans-serif",
+    fontSize: 'clamp(9px, 1.1vw, 12px)',
+    letterSpacing: 4,
+    textDecoration: 'none',
+    textTransform: 'uppercase',
+    borderRadius: 50,
+    transition: 'all 0.3s',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap'
+  }}
+>
+  Here
+</a>
         </div>
       </section>
     )

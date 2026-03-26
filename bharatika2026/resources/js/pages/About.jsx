@@ -369,97 +369,113 @@ function OurTeam() {
     { title: "CDP", members: ["Alicia Christabelle Tjora", "Virly Virginia Chandra", "Agatha Nadya Christie", "Justine Kimberly Sutiawan", "Joyce Sunarko", "Evelyn Gabriella Tjio Santo", "Joanna Patricia Gunawan", "Tantiana Tessalonika"] },
   ]
 
+  const [openIdx, setOpenIdx] = useState(null)
+  const toggle = (i) => setOpenIdx(prev => prev === i ? null : i)
+
   return (
     <section style={{ position: 'relative', overflow: 'hidden', background: '#A50D14', paddingBottom: '5rem' }}>
       <img src="/images/BITMAP.svg" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.35, pointerEvents: 'none' }} />
 
-      {/* Header — center */}
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
-        padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem) 2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}>
-        <p style={{
-          fontFamily: "'Nord', sans-serif",
-          fontSize: 'clamp(22px, 4vw, 64px)',
-          color: C.gold,
-          margin: '0 0 -0.2em',
-          fontWeight: 700,
-          letterSpacing: 6,
-          textTransform: 'uppercase',
-          lineHeight: 1,
-        }}>Our</p>
-        <h2 style={{
-          fontFamily: "'CSSalient', sans-serif",
-          fontSize: 'clamp(72px, 15vw, 200px)',
-          color: C.gold,
-          margin: 0,
-          lineHeight: 0.85,
-          textTransform: 'uppercase',
-          letterSpacing: 2,
-        }}>Team</h2>
-        <p style={{
-          fontFamily: "'FamiljenGrotesk', sans-serif",
-          fontSize: 'clamp(14px, 1.5vw, 20px)',
-          lineHeight: 1.6,
-          color: C.gold,
-          opacity: 0.9,
-          margin: '1.5rem 0 0',
-          maxWidth: 'min(800px, 80%)',
-        }}>
+      {/* Header */}
+      <div style={{ position: 'relative', zIndex: 1, padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem) 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(22px, 4vw, 64px)', color: C.gold, margin: '0 0 -0.2em', fontWeight: 700, letterSpacing: 6, textTransform: 'uppercase', lineHeight: 1 }}>Our</p>
+        <h2 style={{ fontFamily: "'CSSalient', sans-serif", fontSize: 'clamp(72px, 15vw, 200px)', color: C.gold, margin: 0, lineHeight: 0.85, textTransform: 'uppercase', letterSpacing: 2 }}>Team</h2>
+        <p style={{ fontFamily: "'FamiljenGrotesk', sans-serif", fontSize: 'clamp(14px, 1.5vw, 20px)', lineHeight: 1.6, color: C.gold, opacity: 0.9, margin: '1.5rem 0 0', maxWidth: 'min(800px, 80%)' }}>
           Di balik kemegahan Bharatika 2026, terdapat individu-individu kreatif yang berkolaborasi mewujudkan visi merajacipta.
         </p>
       </div>
 
-      {/* Divider */}
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
-        margin: '0 clamp(1.5rem, 5vw, 4rem) 3rem',
-        borderTop: `1px solid rgba(200,168,75,0.3)`,
-      }} />
+      <div style={{ position: 'relative', zIndex: 1, margin: '0 clamp(1.5rem, 5vw, 4rem) 3rem', borderTop: `1px solid rgba(200,168,75,0.3)` }} />
 
-      {/* Team grid */}
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
-        padding: '0 clamp(1.5rem, 5vw, 4rem)',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '3rem 2rem',
-      }}>
+      <style>{`
+        /* Desktop: grid biasa */
+        .ot-grid {
+          position: relative; z-index: 1;
+          padding: 0 clamp(1.5rem, 5vw, 4rem);
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 3rem 2rem;
+        }
+        .ot-dept-title {
+          font-family: 'Nord', sans-serif;
+          font-size: 1.2rem;
+          color: ${C.gold};
+          border-bottom: 1px solid ${C.gold};
+          padding-bottom: 0.5rem;
+          margin-bottom: 1rem;
+          letter-spacing: 2px;
+        }
+        .ot-dept-members { list-style: none; padding: 0; margin: 0; }
+        .ot-dept-members li {
+          font-family: 'FamiljenGrotesk', sans-serif;
+          font-size: 0.95rem;
+          color: ${C.cream};
+          margin-bottom: 0.4rem;
+          opacity: 0.85;
+        }
+
+        /* Mobile: accordion */
+        .ot-accordion { display: none; position: relative; z-index: 1; padding: 0 1.25rem; }
+        .ot-acc-item { border-bottom: 1px solid rgba(200,168,75,0.25); }
+        .ot-acc-btn {
+          display: flex; align-items: center; justify-content: space-between;
+          width: 100%; background: none; border: none; padding: 0.9rem 0;
+          cursor: pointer; text-align: left;
+        }
+        .ot-acc-label {
+          font-family: 'Nord', sans-serif;
+          font-size: 0.95rem; font-weight: 700;
+          color: ${C.gold}; letter-spacing: 2px; text-transform: uppercase;
+        }
+        .ot-acc-chevron {
+          color: ${C.gold}; font-size: 18px; transition: transform 0.3s; flex-shrink: 0;
+        }
+        .ot-acc-chevron.open { transform: rotate(180deg); }
+        .ot-acc-body {
+          overflow: hidden; max-height: 0; transition: max-height 0.35s ease;
+        }
+        .ot-acc-body ul { list-style: none; padding: 0 0 1rem; margin: 0; }
+        .ot-acc-body li {
+          font-family: 'FamiljenGrotesk', sans-serif;
+          font-size: 0.9rem; color: ${C.cream}; opacity: 0.85; padding: 4px 0;
+        }
+
+        @media (max-width: 640px) {
+          .ot-grid { display: none; }
+          .ot-accordion { display: block; }
+        }
+      `}</style>
+
+      {/* Desktop grid */}
+      <div className="ot-grid">
         {teamData.map((dept, idx) => (
           <div key={idx}>
-            <h3 style={{
-              fontFamily: "'Nord', sans-serif",
-              fontSize: '1.2rem',
-              color: C.gold,
-              borderBottom: `1px solid ${C.gold}`,
-              paddingBottom: '0.5rem',
-              marginBottom: '1rem',
-              letterSpacing: 2,
-            }}>
-              {dept.title}
-            </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {dept.members.map((name, i) => (
-                <li key={i} style={{
-                  fontFamily: "'FamiljenGrotesk', sans-serif",
-                  fontSize: '0.95rem',
-                  color: C.cream,
-                  marginBottom: '0.4rem',
-                  opacity: 0.85,
-                }}>
-                  {name}
-                </li>
-              ))}
+            <h3 className="ot-dept-title">{dept.title}</h3>
+            <ul className="ot-dept-members">
+              {dept.members.map((name, i) => <li key={i}>{name}</li>)}
             </ul>
           </div>
         ))}
+      </div>
+
+      {/* Mobile accordion */}
+      <div className="ot-accordion">
+        {teamData.map((dept, idx) => {
+          const isOpen = openIdx === idx
+          return (
+            <div key={idx} className="ot-acc-item">
+              <button className="ot-acc-btn" onClick={() => toggle(idx)}>
+                <span className="ot-acc-label">{dept.title}</span>
+                <span className={`ot-acc-chevron${isOpen ? ' open' : ''}`}>⌃</span>
+              </button>
+              <div className="ot-acc-body" style={{ maxHeight: isOpen ? `${dept.members.length * 32 + 20}px` : '0px' }}>
+                <ul>
+                  {dept.members.map((name, i) => <li key={i}>{name}</li>)}
+                </ul>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </section>
   )
