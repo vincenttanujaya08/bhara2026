@@ -466,7 +466,7 @@ function OurTeam() {
             <div key={idx} className="ot-acc-item">
               <button className="ot-acc-btn" onClick={() => toggle(idx)}>
                 <span className="ot-acc-label">{dept.title}</span>
-                <span className={`ot-acc-chevron${isOpen ? ' open' : ''}`}>⌃</span>
+                <span className={`ot-acc-chevron${isOpen ? ' open' : ''}`}>∨</span>
               </button>
               <div className="ot-acc-body" style={{ maxHeight: isOpen ? `${dept.members.length * 32 + 20}px` : '0px' }}>
                 <ul>
