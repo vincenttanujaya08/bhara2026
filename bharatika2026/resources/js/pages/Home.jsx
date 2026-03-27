@@ -270,11 +270,11 @@ function Hero() {
           <img
             src="/images/PIALA BHARATIKA GOLD 1.svg"
             alt="Piala Bharatika"
-            style={{ width: 'clamp(110px, 19vw, 250px)', height: 'auto', display: 'block', objectFit: 'contain', filter: 'drop-shadow(0 12px 32px rgba(139,26,26,0.5))' }}
+            style={{ width: 'clamp(110px, 19vw, 250px)', height: 'auto', display: 'block', objectFit: 'contain' }}
           />
         </div>
 
-        {/* Piala Kanan — Piala_Bharatika_3.svg (rotate +11°) */}
+        {/* Piala Kanan — Piala_Bharatika_3.svg */}
         <div className="trophy-right" style={{ position: 'relative', zIndex: 2, marginLeft: '-8%', flexShrink: 0 }}>
           <img
             src="/images/PIALA BHARATIKA BRONZE 1.svg"
