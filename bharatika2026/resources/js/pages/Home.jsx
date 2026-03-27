@@ -341,7 +341,7 @@ function Hero() {
             overflow: hidden;
             position: relative;
             padding: 1.25rem 1rem 1.25rem 0.5rem;
-            height: clamp(300px, 42vw, 560px);
+            height: clamp(420px, 56vw, 560px);
           }
           @media (max-width: 900px) {
             .re-right-events { height: clamp(240px, 50vw, 380px); }
@@ -406,7 +406,7 @@ function Hero() {
           {/* ── LEFT: Register ── */}
           <div className="re-left">
             <div className="re-left-title-wrap">
-              <p style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(10px, 1.3vw, 12px)', letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0', fontWeight: 700 }}>Register</p>
+              <p style={{  fontFamily: "'Nord', sans-serif", fontSize: 'clamp(30px, 1.3vw, 35px)', letterSpacing: 5, color: C.crimson, textTransform: 'uppercase', margin: '0', fontWeight: 700 }}>Register</p>
               <h2 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: 'clamp(48px, 9vw, 100px)', color: C.crimson, margin: 0, lineHeight: 0.9, position: 'relative', zIndex: 2, marginBottom: isMobile ? '-1.5rem' : '-3rem' }}>Now!</h2>
             </div>
 
@@ -459,8 +459,8 @@ function Hero() {
             </div>
 
             {/* Events scroll column */}
-            <div className="re-right-events">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'eventsScrollUpDown 14s ease-in-out infinite' }}>
+            <div className="re-right-events" style={{ position: 'relative' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'eventsScrollUpDown 14s ease-in-out infinite' , paddingBottom: '1.5rem' }}>
                 {[...EVENTS, ...EVENTS].map((ev, i) => (
                   <div key={i} style={{ flexShrink: 0 }}>
 
