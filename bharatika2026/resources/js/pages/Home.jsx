@@ -261,7 +261,7 @@ function Hero() {
           <img
             src="/images/PIALA BHARATIKA SILVER 1.svg"
             alt="Piala Bharatika"
-            style={{ width: 'clamp(80px, 14vw, 185px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(-14deg)' }}
+            style={{ width: 'clamp(80px, 14vw, 185px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(12deg)' }}
           />
         </div>
 
@@ -279,7 +279,7 @@ function Hero() {
           <img
             src="/images/PIALA BHARATIKA BRONZE 1.svg"
             alt="Piala Bharatika"
-            style={{ width: 'clamp(75px, 13vw, 175px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(11deg)' }}
+            style={{ width: 'clamp(75px, 13vw, 175px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(-12deg)' }}
           />
         </div>
       </div>
