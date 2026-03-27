@@ -259,7 +259,7 @@ function Hero() {
         {/* Piala Kiri — Piala_Bharatika_4.svg (rotate -14°) */}
         <div className="trophy-left" style={{ position: 'relative', zIndex: 1, marginRight: '-8%', flexShrink: 0 }}>
           <img
-            src="/images/Piala Bharatika 4.svg"
+            src="/images/PIALA BHARATIKA SILVER 1.svg"
             alt="Piala Bharatika"
             style={{ width: 'clamp(80px, 14vw, 185px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(-14deg)' }}
           />
@@ -268,7 +268,7 @@ function Hero() {
         {/* Piala Tengah — Piala_Bharatika_2.svg (tegak, terdepan) */}
         <div className="trophy-center" style={{ position: 'relative', zIndex: 3, flexShrink: 0, marginBottom: '0.5rem' }}>
           <img
-            src="/images/Piala Bharatika 2.svg"
+            src="/images/PIALA BHARATIKA GOLD 1.svg"
             alt="Piala Bharatika"
             style={{ width: 'clamp(110px, 19vw, 250px)', height: 'auto', display: 'block', objectFit: 'contain', filter: 'drop-shadow(0 12px 32px rgba(139,26,26,0.5))' }}
           />
@@ -277,7 +277,7 @@ function Hero() {
         {/* Piala Kanan — Piala_Bharatika_3.svg (rotate +11°) */}
         <div className="trophy-right" style={{ position: 'relative', zIndex: 2, marginLeft: '-8%', flexShrink: 0 }}>
           <img
-            src="/images/Piala Bharatika 3.svg"
+            src="/images/PIALA BHARATIKA BRONZE 1.svg"
             alt="Piala Bharatika"
             style={{ width: 'clamp(75px, 13vw, 175px)', height: 'auto', display: 'block', objectFit: 'contain', transform: 'rotate(11deg)' }}
           />
