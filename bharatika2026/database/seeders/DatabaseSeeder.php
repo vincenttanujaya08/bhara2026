@@ -15,22 +15,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Memanggil seeder pendukung secara berurutan
         $this->call([
-            CategorySeeder::class,
+            CategorySeeder::class,    // Harus pertama karena Competition butuh category_id
+            CompetitionSeeder::class, // Mengisi data lomba
+            AdminSeeder::class,       // Mengisi daftar admin yang baru Anda buat
         ]);
 
-        $this->call([
-            CompetitionSeeder::class,
-        ]);
-
-        User::factory()->create([
-            'name'     => 'Admin Bharatika',
-            'email'    => 'admin@bharatika.com',
-            'password' => bcrypt('admin123'),
-            'role'     => 'admin',
-            'instansi' => 'Panitia Bharatika 2026',
-            'whatsapp' => '081234567890',
-            'line_id'  => 'admin.bharatika',
-        ]);
+        // Opsional: Tetap mempertahankan satu super admin utama jika diperlukan
+        User::updateOrCreate(
+            ['email' => 'admin@bharatika.com'],
+            [
+                'name'     => 'Admin Bharatika',
+                'password' => bcrypt('admin123'),
+                'role'     => 'admin',
+                'instansi' => 'Panitia Bharatika 2026',
+                'whatsapp' => '081234567890',
+                'line_id'  => 'admin.bharatika',
+            ]
+        );
     }
 }

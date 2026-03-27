@@ -257,7 +257,7 @@ function Hero() {
         `}</style>
 
         {/* Piala Kiri — Piala_Bharatika_4.svg (rotate -14°) */}
-        <div className="trophy-left" style={{ position: 'relative', zIndex: 1, marginRight: '-8%', flexShrink: 0 }}>
+        <div className="trophy-left" style={{ position: 'relative', zIndex: 1, marginRight: '-10%', flexShrink: 0 }}>
           <img
             src="/images/PIALA BHARATIKA SILVER 1.svg"
             alt="Piala Bharatika"
@@ -275,7 +275,7 @@ function Hero() {
         </div>
 
         {/* Piala Kanan — Piala_Bharatika_3.svg */}
-        <div className="trophy-right" style={{ position: 'relative', zIndex: 2, marginLeft: '-8%', flexShrink: 0 }}>
+        <div className="trophy-right" style={{ position: 'relative', zIndex: 2, marginLeft: '-10%', flexShrink: 0 }}>
           <img
             src="/images/PIALA BHARATIKA BRONZE 1.svg"
             alt="Piala Bharatika"
@@ -415,9 +415,9 @@ function Hero() {
               <TrophyGroup />
             </div>
 
-            <div className="re-left-date">
+            <div className="re-left-date" style={{justifyContent: 'center'}}>
               <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(9px, 1.3vw, 12px)', color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: 'nowrap' }}>00 JAN</span>
-              <div style={{ flex: 1, height: 1.5, background: C.crimson, opacity: 0.6 }} />
+              <div style={{ flex: 0.4, height: 1.5, background: C.crimson, opacity: 0.6 }} />
               <span style={{ fontFamily: "'Nord', sans-serif", fontSize: 'clamp(9px, 1.3vw, 12px)', color: C.crimson, fontWeight: 700, letterSpacing: 2, whiteSpace: 'nowrap' }}>00 FEB</span>
             </div>
 

@@ -29,7 +29,7 @@ class CompetitionSeeder extends Seeder
             // AGNI
             ['category_id' => $agni->id, 'code' => '201', 'name' => 'Public Seating Design', 'min_participants' => 1, 'max_participants' => 1],
             ['category_id' => $agni->id, 'code' => '202', 'name' => 'Children Room Design', 'min_participants' => 1, 'max_participants' => 2],
-            ['category_id' => $agni->id, 'code' => '203', 'name' => 'Pop Up Installation Design', 'min_participants' => 1, 'max_participants' => 2],
+
 
             // BAYU
             ['category_id' => $bayu->id, 'code' => '301', 'name' => 'Film Making', 'min_participants' => 3, 'max_participants' => 3],
