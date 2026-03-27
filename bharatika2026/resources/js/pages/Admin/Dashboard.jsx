@@ -124,7 +124,7 @@ export function AdminNav({ active = 'dashboard' }) {
         <div className="admin-nav-inner">
           {/* Left: logo + nav */}
           <div className="admin-nav-left">
-            <Link href="/" className="admin-nav-logo">BHARATIKA</Link>
+            <Link href="" className="admin-nav-logo">BHARATIKA</Link>
 
             <nav className="admin-nav-links">
               {NAV_ITEMS.map(({ label, href, key }) => (
