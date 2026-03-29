@@ -33,7 +33,6 @@ class CompetitionSeeder extends Seeder
 
             // BAYU
             ['category_id' => $bayu->id, 'code' => '301', 'name' => 'Film Making', 'min_participants' => 3, 'max_participants' => 3],
-            ['category_id' => $bayu->id, 'code' => '302', 'name' => 'Sneakers Design', 'min_participants' => 1, 'max_participants' => 1],
 
             // BUANA
             ['category_id' => $buana->id, 'code' => '401', 'name' => 'Comic Strip', 'min_participants' => 1, 'max_participants' => 2],
